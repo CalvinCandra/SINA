@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme {
+  --color-biru-disabled: #dbe9fe;
+  --color-teks-disabled: #5fa2fb;
+  --color-biru-active: #1c4ad9;
+  --color-biru-hover: #235fed;
+  --color-biru-primary: #2e77f7;
+}
+
+@plugin "daisyui" {
+  themes: light;
+}
+
+* {
+  scroll-behavior: smooth;
+  box-sizing: border-box;
+  font-family: "Poppins";
+}
