@@ -3,10 +3,12 @@ export default function FieldInput(props) {
   const variants = {
     biasa: (
       <>
-        <legend className="fieldset-legend">{text}</legend>
+        <legend className="fieldset-legend text-base font-normal">
+          {text}
+        </legend>
         <input
           type={type}
-          className="border rounded-lg input"
+          className="border rounded-lg input w-full"
           placeholder="Type here"
         />
       </>
@@ -19,5 +21,5 @@ export default function FieldInput(props) {
       </>
     ),
   };
-  return <fieldset className="fieldset">{variants[variant]}</fieldset>;
+  return <fieldset className="fieldset mb-4">{variants[variant]}</fieldset>;
 }
