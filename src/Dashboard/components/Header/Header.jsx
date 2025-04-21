@@ -4,7 +4,7 @@ import { ChevronDownIcon } from "@heroicons/react/16/solid";
 
 function Header() {
   return (
-    <div className="navbar sticky top-0 z-10 bg-white">
+    <div className="navbar sticky top-0 z-10 bg-white border-b border-border-grey">
       {/* Sidebar toggle for mobile */}
       <div className="flex-1">
         <label
