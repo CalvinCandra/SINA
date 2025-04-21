@@ -1,11 +1,15 @@
 import React from "react";
-import { UserGroupIcon } from "@heroicons/react/24/outline";
+import { UserGroupIcon, CalendarDaysIcon } from "@heroicons/react/24/outline";
 import Grafik from "../components/Chart/Grafik";
+import Calender from "../components/Calender/Calender";
 
 function Dashboard() {
   return (
-    <div className="">
-      <h2 className="text-2xl font-semibold">Highlight</h2>
+    <div className="lg:py-5">
+      <div className="flex w-full justify-between items-center">
+        <h2 className="text-2xl font-semibold">Highlight</h2>
+        <Calender></Calender>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-10">
         <div className="bg-white p-4 rounded-lg shadow-md">

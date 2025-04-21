@@ -6,6 +6,8 @@
   --color-biru-active: #1c4ad9;
   --color-biru-hover: #235fed;
   --color-biru-primary: #2e77f7;
+  --color-hijau-success: #00ca92;
+  --color-border-grey: #d1d5dc;
 }
 
 @plugin "daisyui" {

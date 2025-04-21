@@ -31,7 +31,7 @@ function Layout() {
       <div className="drawer-content flex flex-col bg-biru-disabled">
         <Header />
         <main
-          className="flex-1 overflow-y-auto md:pt-4 pt-4 px-6 bg-base-200"
+          className="flex-1 overflow-y-auto px-4 pt-4 lg:px-6  bg-base-200"
           ref={mainContentRef}
         >
           <Outlet />

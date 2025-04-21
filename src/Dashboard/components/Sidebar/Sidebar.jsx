@@ -20,7 +20,12 @@ function Sidebar() {
 
   // Active states
   const isDashboardActive = path === "/dashboard";
-  const isAdminActive = path === "/dashboard/admin";
+  const isAdminActive = [
+    "/dashboard/admin",
+    "/dashboard/admin/tambah",
+    "/dashboard/admin/update",
+  ].includes(path);
+  const isKelasActive = path === "/dashboard/kelas";
   const isAkademikActive = path.startsWith("/dashboard/akademik"); //untuk dropdown
   const isGuruActive = path.startsWith("/dashboard/guru"); //untuk dropdown
   const isSiswaActive = path.startsWith("/dashboard/siswa"); //untuk dropdown
@@ -80,6 +85,36 @@ function Sidebar() {
           >
             <UserIcon className="w-6 h-6 me-1" />
             <span>Admin</span>
+          </Link>
+        </li>
+
+        {/* Kelas */}
+        <li
+          className={`mb-3 ${
+            isKelasActive ? "bg-biru-active text-white  rounded-sm" : ""
+          }`}
+        >
+          <Link
+            to="/dashboard/kelas"
+            className="flex items-center w-full rounded-sm"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width={24}
+              height={24}
+              viewBox="0 0 24 24"
+              className="me-1"
+            >
+              <path
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M13 4h3a2 2 0 0 1 2 2v14M2 20h3m8 0h9m-12-8v.01m3-7.448v16.157a1 1 0 0 1-1.242.97L5 20V5.562a2 2 0 0 1 1.515-1.94l4-1A2 2 0 0 1 13 4.561Z"
+              ></path>
+            </svg>
+            <span>Kelas</span>
           </Link>
         </li>
 
