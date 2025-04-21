@@ -6,6 +6,9 @@ import Dashboard from "./Dashboard/pages/Dashboard";
 import Admin from "./Dashboard/pages/Admin/Admin";
 import TambahAdmin from "./Dashboard/pages/Admin/TambahAdmin";
 import UpdateAdmin from "./Dashboard/pages/Admin/UpdateAdmin";
+import Kelas from "./Dashboard/pages/Kelas/Kelas";
+import TambahKelas from "./Dashboard/pages/Kelas/TambahKelas";
+import UpdateKelas from "./Dashboard/pages/Kelas/UpdateKelas";
 
 function App() {
   return (
@@ -24,6 +27,9 @@ function App() {
         <Route path="admin/update" element={<UpdateAdmin />} />
 
         {/* Kelas */}
+        <Route path="kelas" element={<Kelas />} />
+        <Route path="kelas/tambah" element={<TambahKelas />} />
+        <Route path="kelas/update" element={<UpdateKelas />} />
       </Route>
     </Routes>
   );

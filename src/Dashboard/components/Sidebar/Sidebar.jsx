@@ -25,7 +25,11 @@ function Sidebar() {
     "/dashboard/admin/tambah",
     "/dashboard/admin/update",
   ].includes(path);
-  const isKelasActive = path === "/dashboard/kelas";
+  const isKelasActive = [
+    "/dashboard/kelas",
+    "/dashboard/kelas/tambah",
+    "/dashboard/kelas/update",
+  ].includes(path);
   const isAkademikActive = path.startsWith("/dashboard/akademik"); //untuk dropdown
   const isGuruActive = path.startsWith("/dashboard/guru"); //untuk dropdown
   const isSiswaActive = path.startsWith("/dashboard/siswa"); //untuk dropdown

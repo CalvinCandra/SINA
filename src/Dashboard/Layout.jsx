@@ -5,7 +5,7 @@ import Loading from "../component/Loading/Loading";
 import Sidebar from "./components/Sidebar/Sidebar";
 import { Outlet } from "react-router-dom";
 
-function Layout() {
+export default function Layout() {
   const mainContentRef = useRef(null);
 
   // Scroll to top on page change (based on title change)
@@ -41,5 +41,3 @@ function Layout() {
     </div>
   );
 }
-
-export default Layout;

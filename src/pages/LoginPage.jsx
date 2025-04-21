@@ -4,7 +4,7 @@ import FieldInput from "../component/Input/FieldInput";
 import ImageImport from "../data/ImageImport";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
-function LoginPage() {
+export default function LoginPage() {
   const [Password, setPassword] = useState(true);
   // Fungsi untuk toggle tipe input
   const togglePasswordVisibility = () => {
@@ -60,5 +60,3 @@ function LoginPage() {
     </section>
   );
 }
-
-export default LoginPage;

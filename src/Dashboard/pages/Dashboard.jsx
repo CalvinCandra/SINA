@@ -3,7 +3,7 @@ import { UserGroupIcon, CalendarDaysIcon } from "@heroicons/react/24/outline";
 import Grafik from "../components/Chart/Grafik";
 import Calender from "../components/Calender/Calender";
 
-function Dashboard() {
+export default function Dashboard() {
   return (
     <div className="lg:py-5">
       <div className="flex w-full justify-between items-center">
@@ -61,5 +61,3 @@ function Dashboard() {
     </div>
   );
 }
-
-export default Dashboard;
