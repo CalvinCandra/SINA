@@ -1,5 +1,5 @@
 export default function FieldInput(props) {
-  const { text, type, name, variant } = props;
+  const { text, type, name, variant, value = "" } = props;
   const variants = {
     biasa_text_sm: (
       <>
@@ -7,6 +7,7 @@ export default function FieldInput(props) {
         <input
           type={type}
           name={name}
+          value={value}
           className="border border-border-grey rounded-lg input w-full"
           placeholder="Type here"
           required
@@ -21,6 +22,7 @@ export default function FieldInput(props) {
         <input
           type={type}
           name={name}
+          value={value}
           className="border border-border-grey rounded-lg input w-full"
           placeholder="Type here"
           required

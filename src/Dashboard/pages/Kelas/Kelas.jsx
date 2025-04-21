@@ -2,15 +2,19 @@ import React from "react";
 import Calender from "../../components/Calender/Calender";
 import ButtonHref from "../../../component/Button/ButtonHref";
 import Search from "../../../component/Input/Search";
-import DataAdmin from "../../../data/Admin/DataAdmin";
+import DataKelas from "../../../data/Kelas/DataKelas";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
 import Button from "../../../component/Button/Button";
+import { useState } from "react";
 
-export default function Admin() {
+export default function Kelas() {
+  // simpan data kelas
+  const [selectedKelas, setSelectedKelas] = useState(null);
+
   return (
     <div className="lg:py-5">
       <div className="flex flex-col lg:flex-row w-full justify-between items-center">
-        <h2 className="text-2xl font-semibold">Admin / Staf</h2>
+        <h2 className="text-2xl font-semibold">Kelas</h2>
         <Calender className="w-40 lg:w-full"></Calender>
       </div>
 
@@ -19,8 +23,8 @@ export default function Admin() {
         <div className="w-full flex flex-col lg:flex-row justify-between items-center mb-5">
           <div className="w-40 mb-6 lg:mb-0">
             <ButtonHref
-              text="Tambah Admin"
-              href="/dashboard/admin/tambah"
+              text="Tambah Kelas"
+              href="/dashboard/kelas/tambah"
               variant="tambah"
             ></ButtonHref>
           </div>
@@ -31,57 +35,44 @@ export default function Admin() {
 
         {/* Table */}
         <div className="overflow-x-auto w-full">
-          {DataAdmin && DataAdmin.length > 0 ? (
+          {DataKelas && DataKelas.length > 0 ? (
             <table className="table w-full">
               <thead>
                 <tr className="border-b border-t border-border-grey">
                   <th>No</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Bergabung</th>
+                  <th>Nama Kelas</th>
+                  <th>Tingkat Kelas</th>
+                  <th>Wali Kelas</th>
+                  <th>Tahun Akademik</th>
+                  <th>Dibuat</th>
                 </tr>
               </thead>
               <tbody>
-                {DataAdmin.map((data, index) => (
+                {DataKelas.map((data, index) => (
                   <tr
                     className="border-b border-t border-border-grey"
                     key={data.id}
                   >
                     <td>{index + 1}</td>
-                    <td className="whitespace-nowrap">
-                      <div className="flex items-center space-x-3">
-                        <div className="avatar">
-                          <div className="mask mask-circle w-12 h-12">
-                            {data.image ? (
-                              <img src={data.image} alt="Avatar" />
-                            ) : (
-                              <img
-                                src="https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
-                                alt="Avatar"
-                              ></img>
-                            )}
-                          </div>
-                        </div>
-                        <div>
-                          <div className="font-bold">{data.nama}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="whitespace-nowrap">{data.email}</td>
+                    <td className="whitespace-nowrap">{data.nama_kelas}</td>
+                    <td className="whitespace-nowrap">{data.tingkat}</td>
+                    <td className="whitespace-nowrap">{data.wali_kelas}</td>
+                    <td className="whitespace-nowrap">{data.tahun_akademik}</td>
                     <td className="whitespace-nowrap">{data.tgl}</td>
                     <td>
                       <div className="flex items-center justify-evenly w-20">
                         <ButtonHref
-                          href="/dashboard/admin/update"
+                          href={`/dashboard/kelas/update`}
                           variant="update"
                           text=<PencilSquareIcon className="w-5 h-5 text-amber-300"></PencilSquareIcon>
                         ></ButtonHref>
                         |
                         <button
                           className="border-0 cursor-pointer"
-                          onClick={() =>
-                            document.getElementById("my_modal_3").showModal()
-                          }
+                          onClick={() => {
+                            setSelectedKelas(data); // simpan data ke state
+                            document.getElementById("my_modal_3").showModal();
+                          }}
                         >
                           <TrashIcon className="w-5 h-5 text-red-500"></TrashIcon>
                         </button>
@@ -93,7 +84,7 @@ export default function Admin() {
             </table>
           ) : (
             <div className="italic text-gray-400 mt-5 text-center">
-              Data Admin Belum Ada
+              Data Kelas Belum Ada
             </div>
           )}
         </div>
@@ -102,7 +93,7 @@ export default function Admin() {
       {/* Pagination */}
       <div className="flex flex-col lg:flex-row justify-between items-center w-full my-4">
         <p className="text-sm mb-3 lg:mb-0">
-          Menampilkan Data 6 Dari 100 Data Admin
+          Menampilkan Data 6 Dari 100 Data kelas
         </p>
         <div className="join">
           <button className="join-item btn border-0 rounded-ss rounded-es bg-biru-primary text-white">
@@ -134,9 +125,15 @@ export default function Admin() {
           </form>
           <div className="mt-5">
             <h1 className="font-bold text-3xl text-center">Konfirmasi!</h1>
-            <p className="text-center my-2">
-              Anda yakin ingin menghapus data <b>Willy Candra</b>?
-            </p>
+            {selectedKelas && (
+              <p className="text-center my-2">
+                Anda yakin ingin menghapus data{" "}
+                <b>
+                  {selectedKelas.nama_kelas} Tingkat {selectedKelas.tingkat}
+                </b>
+                ?
+              </p>
+            )}
             <div className="w-56 mx-auto p-1 flex justify-between items-center mt-4">
               <form method="dialog" className="w-full me-1">
                 <Button variant="button_submit_cancel" text="Cancel"></Button>
