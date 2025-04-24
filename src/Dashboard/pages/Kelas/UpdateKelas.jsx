@@ -1,14 +1,44 @@
 import FieldInput from "../../../component/Input/FieldInput";
 import Button from "../../../component/Button/Button";
 import ButtonHref from "../../../component/Button/ButtonHref";
+import SelectField from "../../../component/Input/SelectField";
 
 export default function UpdateKelas() {
+  const WaliKelas = [
+    {
+      value: "dravin1",
+      label: "Draviin",
+    },
+    {
+      value: "dravin1",
+      label: "Draviinn",
+    },
+    {
+      value: "dravin1",
+      label: "Draviiinnn",
+    },
+  ];
+
+  const TahunAkademik = [
+    {
+      value: "2023/2024",
+      label: "2023 / 2024",
+    },
+    {
+      value: "2023/2024",
+      label: "2023 / 2024",
+    },
+    {
+      value: "2023/2024",
+      label: "2023 / 2024",
+    },
+  ];
   return (
     <div className="lg:py-5">
       <div className="w-full p-5 rounded-md bg-white mt-5">
         {/* Header Table */}
         <div className="w-full flex flex-col lg:flex-row justify-between items-center mb-5">
-          <p className="font-semibold text-lg">Tambah Data Kelas</p>
+          <p className="font-semibold text-lg">Update Data Kelas</p>
         </div>
 
         <hr className="border-border-grey border"></hr>
@@ -16,8 +46,8 @@ export default function UpdateKelas() {
         {/* Form */}
         <form>
           {/* Input Field */}
-          <div className="w-full flex justify-between mt-2">
-            <div className="w-1/2 me-1">
+          <div className="w-full flex flex-col lg:flex-row justify-between mt-2">
+            <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>
                   Nama Kelas <span className="text-red-500">*</span>
@@ -28,7 +58,7 @@ export default function UpdateKelas() {
               ></FieldInput>
             </div>
 
-            <div className="w-1/2 ms-1">
+            <div className="w-full lg:w-1/2 lg:ms-1">
               <FieldInput
                 text=<span>
                   Tingkat Kelas <span className="text-red-500">*</span>
@@ -40,43 +70,16 @@ export default function UpdateKelas() {
             </div>
           </div>
 
-          <div className="w-full flex justify-between mt-2">
-            <div className="w-1/2 me-1">
-              <fieldset className="fieldset">
-                <legend className="fieldset-legend text-sm font-normal">
-                  Pilih Wali Kelas<span className="text-red-500">*</span>
-                </legend>
-                <select
-                  defaultValue="Pick a browser"
-                  className="select border border-border-grey w-full rounded-lg"
-                >
-                  <option value="" selected hidden>
-                    -- Pilih --
-                  </option>
-                  <option>test 1</option>
-                  <option>test 2</option>
-                  <option>test 3</option>
-                </select>
-              </fieldset>
+          <div className="w-full flex flex-col lg:flex-row justify-between mt-2">
+            <div className="w-full lg:w-1/2 lg:me-1">
+              <SelectField text="Wali Kelas" option={WaliKelas}></SelectField>
             </div>
 
-            <div className="w-1/2 ms-1">
-              <fieldset className="fieldset">
-                <legend className="fieldset-legend text-sm font-normal">
-                  Pilih Tahun Akademik<span className="text-red-500">*</span>
-                </legend>
-                <select
-                  defaultValue="Pick a browser"
-                  className="select border border-border-grey w-full rounded-lg"
-                >
-                  <option value="" selected hidden>
-                    -- Pilih --
-                  </option>
-                  <option>test 1</option>
-                  <option>test 2</option>
-                  <option>test 3</option>
-                </select>
-              </fieldset>
+            <div className="w-full lg:w-1/2 lg:ms-1">
+              <SelectField
+                text="Tahun Akademik"
+                option={TahunAkademik}
+              ></SelectField>
             </div>
           </div>
 

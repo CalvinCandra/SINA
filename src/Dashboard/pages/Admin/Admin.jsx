@@ -5,8 +5,12 @@ import Search from "../../../component/Input/Search";
 import DataAdmin from "../../../data/Admin/DataAdmin";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
 import Button from "../../../component/Button/Button";
+import { useState } from "react";
 
 export default function Admin() {
+  // simpan data admin
+  const [selectedAdmin, setSelectedAdmin] = useState(null);
+
   return (
     <div className="lg:py-5">
       <div className="flex flex-col lg:flex-row w-full justify-between items-center">
@@ -17,7 +21,7 @@ export default function Admin() {
       <div className="w-full p-5 rounded-md bg-white mt-5">
         {/* Header Table */}
         <div className="w-full flex flex-col lg:flex-row justify-between items-center mb-5">
-          <div className="w-40 mb-6 lg:mb-0">
+          <div className="lg:w-40 mb-6 lg:mb-0">
             <ButtonHref
               text="Tambah Admin"
               href="/dashboard/admin/tambah"
@@ -79,9 +83,10 @@ export default function Admin() {
                         |
                         <button
                           className="border-0 cursor-pointer"
-                          onClick={() =>
-                            document.getElementById("my_modal_3").showModal()
-                          }
+                          onClick={() => {
+                            setSelectedAdmin(data); // simpan data ke state
+                            document.getElementById("my_modal_3").showModal();
+                          }}
                         >
                           <TrashIcon className="w-5 h-5 text-red-500"></TrashIcon>
                         </button>
@@ -134,9 +139,11 @@ export default function Admin() {
           </form>
           <div className="mt-5">
             <h1 className="font-bold text-3xl text-center">Konfirmasi!</h1>
-            <p className="text-center my-2">
-              Anda yakin ingin menghapus data <b>Willy Candra</b>?
-            </p>
+            {selectedAdmin && (
+              <p className="text-center my-2">
+                Anda yakin ingin menghapus data <b>{selectedAdmin.nama}</b>?
+              </p>
+            )}
             <div className="w-56 mx-auto p-1 flex justify-between items-center mt-4">
               <form method="dialog" className="w-full me-1">
                 <Button variant="button_submit_cancel" text="Cancel"></Button>

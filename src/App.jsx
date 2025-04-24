@@ -9,6 +9,12 @@ import UpdateAdmin from "./Dashboard/pages/Admin/UpdateAdmin";
 import Kelas from "./Dashboard/pages/Kelas/Kelas";
 import TambahKelas from "./Dashboard/pages/Kelas/TambahKelas";
 import UpdateKelas from "./Dashboard/pages/Kelas/UpdateKelas";
+import Kurikulum from "./Dashboard/pages/Akademik/Kurikulum/Kurikulum";
+import TambahKurikulum from "./Dashboard/pages/Akademik/Kurikulum/TambahKurikulum";
+import UpdateKurikulum from "./Dashboard/pages/Akademik/Kurikulum/UpdateKurikulum";
+import TahunAkademik from "./Dashboard/pages/Akademik/Tahun Akademik/TahunAkademik";
+import TambahTahun from "./Dashboard/pages/Akademik/Tahun Akademik/TambahTahun";
+import UpdateTahun from "./Dashboard/pages/Akademik/Tahun Akademik/UpdateTahun";
 
 function App() {
   return (
@@ -30,6 +36,25 @@ function App() {
         <Route path="kelas" element={<Kelas />} />
         <Route path="kelas/tambah" element={<TambahKelas />} />
         <Route path="kelas/update" element={<UpdateKelas />} />
+
+        {/* Akademik */}
+        {/* Kurikulum */}
+        <Route path="akademik/kurikulum" element={<Kurikulum />} />
+        <Route path="akademik/kurikulum/tambah" element={<TambahKurikulum />} />
+        <Route path="akademik/kurikulum/update" element={<UpdateKurikulum />} />
+
+        {/* Tahun Akademik */}
+        <Route path="akademik/tahun-akademik" element={<TahunAkademik />} />
+        <Route
+          path="akademik/tahun-akademik/tambah"
+          element={<TambahTahun />}
+        />
+        <Route
+          path="akademik/tahun-akademik/update"
+          element={<UpdateTahun />}
+        />
+
+        {/* Mata Pelajaran */}
       </Route>
     </Routes>
   );

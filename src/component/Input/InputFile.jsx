@@ -2,7 +2,9 @@ export default function InputFile(props) {
   const { fungsi } = props;
   return (
     <fieldset>
-      <legend className="text-sm font-semibold text-gray-700">File Foto</legend>
+      <legend className="text-sm font-semibold text-gray-700">
+        File Foto<span className="text-red-500">*</span>
+      </legend>
       <div className="flex items-center">
         <label className="relative inline-block">
           <input

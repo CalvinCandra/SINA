@@ -20,20 +20,21 @@ function Sidebar() {
 
   // Active states
   const isDashboardActive = path === "/dashboard";
-  const isAdminActive = [
-    "/dashboard/admin",
-    "/dashboard/admin/tambah",
-    "/dashboard/admin/update",
-  ].includes(path);
-  const isKelasActive = [
-    "/dashboard/kelas",
-    "/dashboard/kelas/tambah",
-    "/dashboard/kelas/update",
-  ].includes(path);
+  const isAdminActive = path.startsWith("/dashboard/admin");
+  const isKelasActive = path.startsWith("/dashboard/kelas");
   const isAkademikActive = path.startsWith("/dashboard/akademik"); //untuk dropdown
+  const isKurikulumActive = path.startsWith("/dashboard/akademik/kurikulum");
+  const isTahunAkademikActive = path.startsWith(
+    "/dashboard/akademik/tahun-akademik"
+  );
+  const isJadwalActive = path.startsWith("/dashboard/akademik/jadwal");
+  const isMataPelajaranActive = path.startsWith(
+    "/dashboard/akademik/mata_pelajaran"
+  );
+  const isKhsActive = path.startsWith("/dashboard/akademik/khs");
   const isGuruActive = path.startsWith("/dashboard/guru"); //untuk dropdown
   const isSiswaActive = path.startsWith("/dashboard/siswa"); //untuk dropdown
-  const isPengumumanActive = path === "/dashboard/pengumuman";
+  const isPengumumanActive = path.startsWith("/dashboard/pengumuman");
   const isLogoutActive = path === "/";
 
   return (
@@ -123,13 +124,13 @@ function Sidebar() {
         </li>
 
         {/* Akademik Dropdown */}
-        <li
-          className={`mb-3 ${
-            isAkademikActive ? "bg-biru-active text-white  rounded-sm" : ""
-          }`}
-        >
+        <li className="mb-3">
           <details open={isAkademikActive}>
-            <summary className="flex items-center cursor-pointer py-2">
+            <summary
+              className={`flex items-center cursor-pointer py-2 px-2 rounded-sm ${
+                isAkademikActive ? "bg-biru-active text-white" : ""
+              }`}
+            >
               <BookOpenIcon className="w-6 h-6 me-1" />
               <span>Akademik</span>
             </summary>
@@ -139,7 +140,7 @@ function Sidebar() {
                 <Link
                   to="/dashboard/akademik/kurikulum"
                   className={`block py-1 ${
-                    path === "/dashboard/akademik/kurikulum"
+                    isKurikulumActive
                       ? "text-black font-semibold"
                       : "text-gray-500"
                   }`}
@@ -150,9 +151,9 @@ function Sidebar() {
               {/* sub menu */}
               <li className="mb-2">
                 <Link
-                  to="/dashboard/akademik/tahun"
+                  to="/dashboard/akademik/tahun-akademik"
                   className={`block py-1 ${
-                    path === "/dashboard/akademik/tahun"
+                    isTahunAkademikActive
                       ? "text-black font-semibold"
                       : "text-gray-500"
                   }`}
@@ -165,7 +166,7 @@ function Sidebar() {
                 <Link
                   to="/dashboard/akademik/mata-pelajaran"
                   className={`block py-1 ${
-                    path === "/dashboard/akademik/mata-pelajaran"
+                    isMataPelajaranActive
                       ? "text-black font-semibold"
                       : "text-gray-500"
                   }`}
@@ -178,7 +179,7 @@ function Sidebar() {
                 <Link
                   to="/dashboard/akademik/jadwal"
                   className={`block py-1 ${
-                    path === "/dashboard/akademik/jadwal"
+                    isJadwalActive
                       ? "text-black font-semibold"
                       : "text-gray-500"
                   }`}
@@ -191,9 +192,7 @@ function Sidebar() {
                 <Link
                   to="/dashboard/akademik/khs"
                   className={`block py-1 ${
-                    path === "/dashboard/akademik/khs"
-                      ? "text-black font-semibold"
-                      : "text-gray-500"
+                    isKhsActive ? "text-black font-semibold" : "text-gray-500"
                   }`}
                 >
                   KHS
