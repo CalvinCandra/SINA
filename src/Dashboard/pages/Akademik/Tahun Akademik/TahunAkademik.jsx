@@ -1,30 +1,30 @@
 import React from "react";
-import Calender from "../../components/Calender/Calender";
-import ButtonHref from "../../../component/Button/ButtonHref";
-import Search from "../../../component/Input/Search";
-import DataKelas from "../../../data/Kelas/DataKelas";
+import Calender from "../../../components/Calender/Calender";
+import ButtonHref from "../../../../component/Button/ButtonHref";
+import Search from "../../../../component/Input/Search";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
-import Button from "../../../component/Button/Button";
+import Button from "../../../../component/Button/Button";
 import { useState } from "react";
+import DataTahun from "../../../../data/Akademik/Tahun Akademik/DataTahun";
 
-export default function Kelas() {
-  // simpan data kelas
-  const [selectedKelas, setSelectedKelas] = useState(null);
+export default function TahunAkademik() {
+  // simpan data
+  const [selectedTahun, setSelectedTahun] = useState(null);
 
   return (
     <div className="lg:py-5">
       <div className="flex flex-col lg:flex-row w-full justify-between items-center">
-        <h2 className="text-2xl font-semibold">Kelas</h2>
+        <h2 className="text-2xl font-semibold">Tahun Kurikulum</h2>
         <Calender className="w-40 lg:w-full"></Calender>
       </div>
 
       <div className="w-full p-5 rounded-md bg-white mt-5">
         {/* Header Table */}
         <div className="w-full flex flex-col lg:flex-row justify-between items-center mb-5">
-          <div className="lg:w-40 mb-6 lg:mb-0">
+          <div className="lg:w-60 mb-6 lg:mb-0">
             <ButtonHref
-              text="Tambah Kelas"
-              href="/dashboard/kelas/tambah"
+              text="Tambah Tahun Kurikulum"
+              href="/dashboard/akademik/tahun-akademik/tambah"
               variant="tambah"
             ></ButtonHref>
           </div>
@@ -35,34 +35,30 @@ export default function Kelas() {
 
         {/* Table */}
         <div className="overflow-x-auto w-full">
-          {DataKelas && DataKelas.length > 0 ? (
+          {DataTahun && DataTahun.length > 0 ? (
             <table className="table w-full">
               <thead>
                 <tr className="border-b border-t border-border-grey">
                   <th>No</th>
-                  <th>Nama Kelas</th>
-                  <th>Tingkat Kelas</th>
-                  <th>Wali Kelas</th>
-                  <th>Tahun Akademik</th>
-                  <th>Dibuat</th>
+                  <th>Nama Kurikulum</th>
+                  <th>Tanggal Mulai</th>
+                  <th>Tanggal Berakhir</th>
                 </tr>
               </thead>
               <tbody>
-                {DataKelas.map((data, index) => (
+                {DataTahun.map((data, index) => (
                   <tr
                     className="border-b border-t border-border-grey"
                     key={data.id}
                   >
                     <td>{index + 1}</td>
-                    <td className="whitespace-nowrap">{data.nama_kelas}</td>
-                    <td className="whitespace-nowrap">{data.tingkat}</td>
-                    <td className="whitespace-nowrap">{data.wali_kelas}</td>
-                    <td className="whitespace-nowrap">{data.tahun_akademik}</td>
-                    <td className="whitespace-nowrap">{data.tgl}</td>
+                    <td className="whitespace-nowrap">{data.kurikulum}</td>
+                    <td className="text-justify">{data.tgl_mulai}</td>
+                    <td className="whitespace-nowrap">{data.tgl_akhir}</td>
                     <td>
                       <div className="flex items-center justify-evenly w-20">
                         <ButtonHref
-                          href={`/dashboard/kelas/update`}
+                          href="/dashboard/akademik/tahun-akademik/update"
                           variant="update"
                           text=<PencilSquareIcon className="w-5 h-5 text-amber-300"></PencilSquareIcon>
                         ></ButtonHref>
@@ -70,7 +66,7 @@ export default function Kelas() {
                         <button
                           className="border-0 cursor-pointer"
                           onClick={() => {
-                            setSelectedKelas(data); // simpan data ke state
+                            setSelectedKurikulum(data); // simpan data ke state
                             document.getElementById("my_modal_3").showModal();
                           }}
                         >
@@ -84,7 +80,7 @@ export default function Kelas() {
             </table>
           ) : (
             <div className="italic text-gray-400 mt-5 text-center">
-              Data Kelas Belum Ada
+              Data Tahun Kurikulum Belum Ada
             </div>
           )}
         </div>
@@ -93,7 +89,7 @@ export default function Kelas() {
       {/* Pagination */}
       <div className="flex flex-col lg:flex-row justify-between items-center w-full my-4">
         <p className="text-sm mb-3 lg:mb-0">
-          Menampilkan Data 6 Dari 100 Data kelas
+          Menampilkan Data 6 Dari 100 Data Tahun Kurikulum
         </p>
         <div className="join">
           <button className="join-item btn border-0 rounded-ss rounded-es bg-biru-primary text-white">
@@ -125,12 +121,9 @@ export default function Kelas() {
           </form>
           <div className="mt-5">
             <h1 className="font-bold text-3xl text-center">Konfirmasi!</h1>
-            {selectedKelas && (
+            {selectedTahun && (
               <p className="text-center my-2">
-                Anda yakin ingin menghapus data{" "}
-                <b>
-                  {selectedKelas.nama_kelas} Tingkat {selectedKelas.tingkat}
-                </b>
+                Anda yakin ingin menghapus data <b>{selectedTahun.kurikulum}</b>
                 ?
               </p>
             )}

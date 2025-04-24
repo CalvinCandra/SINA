@@ -52,19 +52,23 @@ export default function UpdateAdmin() {
           </div>
 
           {/* Input Field */}
-          <div className="w-full flex justify-between">
-            <div className="w-1/2 me-1">
+          <div className="w-full flex flex-col lg:flex-row justify-between mt-5">
+            <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
-                text="Nama Lengkap"
+                text=<span>
+                  Nama Lengkap <span className="text-red-500">*</span>
+                </span>
                 type="text"
                 name="nama_admin"
                 variant="biasa_text_sm"
               ></FieldInput>
             </div>
 
-            <div className="w-1/2 ms-1">
+            <div className="w-full lg:w-1/2 lg:ms-1">
               <FieldInput
-                text="Email Admin"
+                text=<span>
+                  Email Admin <span className="text-red-500">*</span>
+                </span>
                 type="email"
                 name="email"
                 variant="biasa_text_sm"
