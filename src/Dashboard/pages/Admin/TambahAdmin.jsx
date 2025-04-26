@@ -48,7 +48,7 @@ export default function TambahAdmin() {
               ></img>
             </div>
 
-            <InputFile fungsi={handleImageChange}></InputFile>
+            <InputFile text="Pilih Foto" fungsi={handleImageChange}></InputFile>
           </div>
 
           {/* Input Field */}
