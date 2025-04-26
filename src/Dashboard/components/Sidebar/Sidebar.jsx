@@ -7,6 +7,7 @@ import {
   UserGroupIcon,
   PresentationChartBarIcon,
   ArrowLeftStartOnRectangleIcon,
+  InformationCircleIcon,
 } from "@heroicons/react/24/outline";
 import ImageImport from "../../../data/ImageImport";
 
@@ -296,7 +297,7 @@ function Sidebar() {
             to="/dashboard/pengumuman"
             className="flex items-center w-full rounded-sm"
           >
-            <PresentationChartBarIcon className="w-6 h-6 me-1" />
+            <InformationCircleIcon className="w-6 h-6 me-1" />
             <span>Pengumuman</span>
           </Link>
         </li>
