@@ -3,7 +3,9 @@ export default function FieldInput(props) {
   const variants = {
     biasa_text_sm: (
       <>
-        <legend className="fieldset-legend text-sm font-normal">{text}</legend>
+        <legend className="fieldset-legend text-sm font-semibold">
+          {text}
+        </legend>
         <input
           type={type}
           name={name}

@@ -21,6 +21,10 @@ import UpdateMataPelajaran from "./Dashboard/pages/Akademik/Mata Pelajaran/Updat
 import DataGuru from "./Dashboard/pages/Guru/DataGuru/DataGuru";
 import TambahDataGuru from "./Dashboard/pages/Guru/DataGuru/TambahDataGuru";
 import UpdateDataGuru from "./Dashboard/pages/Guru/DataGuru/UpdateDataGuru";
+import Pengumuman from "./Dashboard/pages/Pengumuman/Pengumuman";
+import TambahPengumuman from "./Dashboard/pages/Pengumuman/TambahPengumuman";
+import DetailPengumuman from "./Dashboard/pages/Pengumuman/DetailPengumuman";
+import UpdatePengumuman from "./Dashboard/pages/Pengumuman/UpdatePengumuman";
 
 function App() {
   return (
@@ -82,6 +86,12 @@ function App() {
         <Route path="guru" element={<DataGuru />} />
         <Route path="guru/tambah" element={<TambahDataGuru />} />
         <Route path="guru/update" element={<UpdateDataGuru />} />
+
+        {/* Pengumuman */}
+        <Route path="pengumuman" element={<Pengumuman />} />
+        <Route path="pengumuman/tambah" element={<TambahPengumuman />} />
+        <Route path="pengumuman/detail/:id" element={<DetailPengumuman />} />
+        <Route path="pengumuman/update/:id" element={<UpdatePengumuman />} />
       </Route>
     </Routes>
   );

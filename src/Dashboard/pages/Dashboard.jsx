@@ -1,5 +1,9 @@
 import React from "react";
-import { UserGroupIcon, CalendarDaysIcon } from "@heroicons/react/24/outline";
+import {
+  UserGroupIcon,
+  CalendarDaysIcon,
+  InformationCircleIcon,
+} from "@heroicons/react/24/outline";
 import Grafik from "../components/Chart/Grafik";
 import Calender from "../components/Calender/Calender";
 
@@ -13,7 +17,7 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-10">
         <div className="bg-white p-4 rounded-lg shadow-md">
-          <h3 className="font-normal text-lg mb-10">Siswa Keseluruhan</h3>
+          <h3 className="font-medium text-sm mb-10">Siswa Keseluruhan</h3>
           <div className="flex items-center justify-between">
             <UserGroupIcon className="w-9 h-9"></UserGroupIcon>
             <p className="font-semibold text-xl">1950</p>
@@ -21,26 +25,26 @@ export default function Dashboard() {
         </div>
 
         <div className="bg-white p-4 rounded-lg shadow-md">
-          <h3 className="font-normal text-lg mb-10">Siswa Keseluruhan</h3>
+          <h3 className="font-medium text-sm mb-10">Guru Keseluruhan</h3>
           <div className="flex items-center justify-between">
             <UserGroupIcon className="w-9 h-9"></UserGroupIcon>
-            <p className="font-semibold text-xl">1950</p>
+            <p className="font-semibold text-xl">95</p>
           </div>
         </div>
 
         <div className="bg-white p-4 rounded-lg shadow-md">
-          <h3 className="font-normal text-lg mb-10">Siswa Keseluruhan</h3>
+          <h3 className="font-medium text-sm mb-10">Admin / Staf</h3>
           <div className="flex items-center justify-between">
             <UserGroupIcon className="w-9 h-9"></UserGroupIcon>
-            <p className="font-semibold text-xl">1950</p>
+            <p className="font-semibold text-xl">4</p>
           </div>
         </div>
 
         <div className="bg-white p-4 rounded-lg shadow-md">
-          <h3 className="font-normal text-lg mb-10">Siswa Keseluruhan</h3>
+          <h3 className="font-medium text-sm mb-10">Pengumuman</h3>
           <div className="flex items-center justify-between">
-            <UserGroupIcon className="w-9 h-9"></UserGroupIcon>
-            <p className="font-semibold text-xl">1950</p>
+            <InformationCircleIcon className="w-9 h-9"></InformationCircleIcon>
+            <p className="font-semibold text-xl">3</p>
           </div>
         </div>
       </div>

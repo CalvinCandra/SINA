@@ -8,7 +8,7 @@ export default function Calender() {
     year: "numeric",
   });
   return (
-    <div className="shadow py-1 px-2 bg-white rounded-md border border-biru-active text-gray-400 flex items-center">
+    <div className="shadow py-1 px-2 bg-white rounded-md border border-biru-disabled text-gray-400 flex items-center">
       <CalendarDaysIcon className="w-5 h-5 me-2"></CalendarDaysIcon>
       <span className="text-sm mt-1">{tanggalFormat}</span>
     </div>
