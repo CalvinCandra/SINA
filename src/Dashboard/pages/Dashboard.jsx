@@ -45,14 +45,25 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 w-full lg:w-[60%] mt-8">
-        <div className="bg-white p-4 rounded-lg shadow-md">
+      <div className="flex flex-col lg:flex-row justify-between w-full mt-8">
+        <div className="bg-white p-4 rounded-lg shadow-md my-2 lg:my-0">
           <div className="flex flex-col lg:flex-row items-center justify-between">
-            <h3 className="font-normal text-lg lg:mb-10">Rekapan Absen</h3>
+            <h3 className="font-normal text-lg lg:mb-10">
+              Rekapan Absen Siswa
+            </h3>
             <h3 className="font-normal text-md mb-10 text-gray-500">
               Semua Kelas
             </h3>
           </div>
+          <div className="flex items-center justify-between">
+            <Grafik className="w-10"></Grafik>
+          </div>
+        </div>
+
+        <div className="bg-white p-4 rounded-lg shadow-md my-2 lg:my-0">
+          <h3 className="font-normal text-lg lg:mb-10 text-center mb-10">
+            Rekapan Guru
+          </h3>
           <div className="flex items-center justify-between">
             <Grafik className="w-10"></Grafik>
           </div>

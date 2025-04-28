@@ -15,6 +15,12 @@ import UpdateKurikulum from "./Dashboard/pages/Akademik/Kurikulum/UpdateKurikulu
 import TahunAkademik from "./Dashboard/pages/Akademik/Tahun Akademik/TahunAkademik";
 import TambahTahun from "./Dashboard/pages/Akademik/Tahun Akademik/TambahTahun";
 import UpdateTahun from "./Dashboard/pages/Akademik/Tahun Akademik/UpdateTahun";
+import MataPelajaran from "./Dashboard/pages/Akademik/Mata Pelajaran/MataPelajaran";
+import TambahMataPelajaran from "./Dashboard/pages/Akademik/Mata Pelajaran/TambahMataPelajaran";
+import UpdateMataPelajaran from "./Dashboard/pages/Akademik/Mata Pelajaran/UpdateMataPelajaran";
+import DataGuru from "./Dashboard/pages/Guru/DataGuru/DataGuru";
+import TambahDataGuru from "./Dashboard/pages/Guru/DataGuru/TambahDataGuru";
+import UpdateDataGuru from "./Dashboard/pages/Guru/DataGuru/UpdateDataGuru";
 
 function App() {
   return (
@@ -55,6 +61,27 @@ function App() {
         />
 
         {/* Mata Pelajaran */}
+        <Route path="akademik/mata-pelajaran" element={<MataPelajaran />} />
+        <Route
+          path="akademik/mata-pelajaran/tambah"
+          element={<TambahMataPelajaran />}
+        />
+        <Route
+          path="akademik/mata-pelajaran/update"
+          element={<UpdateMataPelajaran />}
+        />
+
+        {/* Guru */}
+        {/* Data Guru */}
+        <Route path="guru" element={<DataGuru />} />
+        <Route path="guru/tambah" element={<TambahDataGuru />} />
+        <Route path="guru/update" element={<UpdateDataGuru />} />
+        {/* Absen Guru */}
+
+        {/* Siswa */}
+        <Route path="guru" element={<DataGuru />} />
+        <Route path="guru/tambah" element={<TambahDataGuru />} />
+        <Route path="guru/update" element={<UpdateDataGuru />} />
       </Route>
     </Routes>
   );

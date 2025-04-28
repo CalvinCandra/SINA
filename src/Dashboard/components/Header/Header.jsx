@@ -18,11 +18,8 @@ function Header() {
       {/* Right side controls */}
       <div className="flex-none">
         {/* Profile dropdown (static) */}
-        <div className="dropdown dropdown-end ml-4">
-          <div
-            tabIndex={0}
-            className="flex items-center btn border-0 btn-ghost"
-          >
+        <div className="ml-4">
+          <div className="flex items-center me-3.5">
             <div className="w-10 h-10 overflow-hidden rounded-full">
               {/* Avatar */}
               <div className="w-full object-cover">
@@ -35,25 +32,7 @@ function Header() {
 
             {/* Nama Pengguna */}
             <h1 className="text-sm font-semibold ms-2">Super Admin</h1>
-
-            {/* Ikon panah dropdown */}
-            <ChevronDownIcon className="w-5 h-5 ml-2" />
           </div>
-          <ul
-            tabIndex={0}
-            className="menu menu-compact dropdown-content mt-3 p-2 shadow rounded-box w-52 bg-white"
-          >
-            <li>
-              <Link to="#">Profile Settings</Link>
-            </li>
-            <li>
-              <Link to="#">Bill History</Link>
-            </li>
-            <div className="divider mt-0 mb-0"></div>
-            <li>
-              <a href="#">Logout</a>
-            </li>
-          </ul>
         </div>
       </div>
     </div>
