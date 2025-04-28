@@ -5,16 +5,16 @@ import Search from "../../../../component/Input/Search";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
 import Button from "../../../../component/Button/Button";
 import { useState } from "react";
-import DataTahun from "../../../../data/Akademik/Tahun Akademik/DataTahun";
+import DataPelajaran from "../../../../data/Akademik/Mata Pelajaran/DataPelajaran";
 
-export default function TahunAkademik() {
+export default function MataPelajaran() {
   // simpan data
-  const [selectedTahun, setSelectedTahun] = useState(null);
+  const [selectedPelajaran, setSelectedPelajaran] = useState(null);
 
   return (
     <div className="lg:py-5">
       <div className="flex flex-col lg:flex-row w-full justify-between items-center">
-        <h2 className="text-2xl font-semibold">Tahun Kurikulum</h2>
+        <h2 className="text-2xl font-semibold">Mata Pelajaran</h2>
         <Calender className="w-40 lg:w-full"></Calender>
       </div>
 
@@ -23,8 +23,8 @@ export default function TahunAkademik() {
         <div className="w-full flex flex-col lg:flex-row justify-between items-center mb-5">
           <div className="lg:w-60 mb-6 lg:mb-0">
             <ButtonHref
-              text="Tambah Tahun Kurikulum"
-              href="/dashboard/akademik/tahun-akademik/tambah"
+              text="Tambah Mata Pelajaran"
+              href="/dashboard/akademik/mata-pelajaran/tambah"
               variant="tambah"
             ></ButtonHref>
           </div>
@@ -35,30 +35,28 @@ export default function TahunAkademik() {
 
         {/* Table */}
         <div className="overflow-x-auto w-full">
-          {DataTahun && DataTahun.length > 0 ? (
+          {DataPelajaran && DataPelajaran.length > 0 ? (
             <table className="table w-full">
               <thead>
                 <tr className="border-b border-t border-border-grey">
                   <th>No</th>
-                  <th>Nama Kurikulum</th>
-                  <th>Tanggal Mulai</th>
-                  <th>Tanggal Berakhir</th>
+                  <th>Mata Pelajaran</th>
+                  <th>KKM</th>
                 </tr>
               </thead>
               <tbody>
-                {DataTahun.map((data, index) => (
+                {DataPelajaran.map((data, index) => (
                   <tr
                     className="border-b border-t border-border-grey"
                     key={data.id}
                   >
                     <td>{index + 1}</td>
-                    <td className="whitespace-nowrap">{data.kurikulum}</td>
-                    <td className="text-justify">{data.tgl_mulai}</td>
-                    <td className="whitespace-nowrap">{data.tgl_akhir}</td>
+                    <td className="whitespace-nowrap">{data.mata_pelajar}</td>
+                    <td className="text-justify">{data.kkm}</td>
                     <td>
                       <div className="flex items-center justify-evenly w-20">
                         <ButtonHref
-                          href="/dashboard/akademik/tahun-akademik/update"
+                          href="/dashboard/akademik/mata-pelajaran/update"
                           variant="update"
                           text=<PencilSquareIcon className="w-5 h-5 text-amber-300"></PencilSquareIcon>
                         ></ButtonHref>
@@ -66,7 +64,7 @@ export default function TahunAkademik() {
                         <button
                           className="border-0 cursor-pointer"
                           onClick={() => {
-                            setSelectedTahun(data); // simpan data ke state
+                            setSelectedPelajaran(data); // simpan data ke state
                             document.getElementById("my_modal_3").showModal();
                           }}
                         >
@@ -89,7 +87,7 @@ export default function TahunAkademik() {
       {/* Pagination */}
       <div className="flex flex-col lg:flex-row justify-between items-center w-full my-4">
         <p className="text-sm mb-3 lg:mb-0">
-          Menampilkan Data 6 Dari 100 Data Tahun Kurikulum
+          Menampilkan Data 6 Dari 100 Data Mata Pelajaran
         </p>
         <div className="join">
           <button className="join-item btn border-0 rounded-ss rounded-es bg-biru-primary text-white">
@@ -121,10 +119,10 @@ export default function TahunAkademik() {
           </form>
           <div className="mt-5">
             <h1 className="font-bold text-3xl text-center">Konfirmasi!</h1>
-            {selectedTahun && (
+            {selectedPelajaran && (
               <p className="text-center my-2">
-                Anda yakin ingin menghapus data <b>{selectedTahun.kurikulum}</b>
-                ?
+                Anda yakin ingin menghapus data{" "}
+                <b>{selectedPelajaran.mata_pelajar}</b>?
               </p>
             )}
             <div className="w-56 mx-auto p-1 flex justify-between items-center mt-4">

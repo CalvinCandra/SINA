@@ -30,7 +30,7 @@ function Sidebar() {
   );
   const isJadwalActive = path.startsWith("/dashboard/akademik/jadwal");
   const isMataPelajaranActive = path.startsWith(
-    "/dashboard/akademik/mata_pelajaran"
+    "/dashboard/akademik/mata-pelajaran"
   );
   const isKhsActive = path.startsWith("/dashboard/akademik/khs");
   const isGuruActive = path.startsWith("/dashboard/guru"); //untuk dropdown
@@ -128,7 +128,7 @@ function Sidebar() {
         <li className="mb-3">
           <details open={isAkademikActive}>
             <summary
-              className={`flex items-center cursor-pointer py-2 px-2 rounded-sm ${
+              className={`flex items-center cursor-pointer rounded-sm ${
                 isAkademikActive ? "bg-biru-active text-white" : ""
               }`}
             >
@@ -204,13 +204,13 @@ function Sidebar() {
         </li>
 
         {/* Guru Dropdown */}
-        <li
-          className={`mb-3 ${
-            isGuruActive ? "bg-biru-active text-white  rounded-sm" : ""
-          }`}
-        >
+        <li className="mb-3">
           <details open={isGuruActive}>
-            <summary className="flex items-center cursor-pointer py-2">
+            <summary
+              className={`flex items-center cursor-pointer py-2 ${
+                isGuruActive ? "bg-biru-active text-white  rounded-sm" : ""
+              }`}
+            >
               <UserGroupIcon className="w-6 h-6 me-1" />
               <span>Guru</span>
             </summary>
@@ -218,11 +218,9 @@ function Sidebar() {
               {/* sub menu */}
               <li className="mb-2">
                 <Link
-                  to="/dashboard/guru/data"
+                  to="/dashboard/guru"
                   className={`block py-1 ${
-                    path === "/dashboard/guru/data"
-                      ? "text-black font-semibold"
-                      : "text-gray-500"
+                    isGuruActive ? "text-black font-semibold" : "text-gray-500"
                   }`}
                 >
                   Data Guru
