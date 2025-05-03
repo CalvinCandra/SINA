@@ -1,7 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import DataPengumuman from "../../../data/Pengumuman/DataPengumuman";
-import Button from "../../../component/Button/Button";
 import ButtonHref from "../../../component/Button/ButtonHref";
 
 export default function DetailPengumuman() {

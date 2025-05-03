@@ -5,11 +5,11 @@ import {
   UserIcon,
   BookOpenIcon,
   UserGroupIcon,
-  PresentationChartBarIcon,
   ArrowLeftStartOnRectangleIcon,
   InformationCircleIcon,
 } from "@heroicons/react/24/outline";
 import ImageImport from "../../../data/ImageImport";
+import { useEffect } from "react";
 
 function Sidebar() {
   const location = useLocation();
@@ -37,6 +37,14 @@ function Sidebar() {
   const isSiswaActive = path.startsWith("/dashboard/siswa"); //untuk dropdown
   const isPengumumanActive = path.startsWith("/dashboard/pengumuman");
   const isLogoutActive = path === "/";
+
+  // useEffect untuk menghapus localStorage saat berpindah dari halaman Admin
+  useEffect(() => {
+    // Jika berpindah dari halaman admin
+    if (!isAdminActive) {
+      localStorage.removeItem("adminList"); // Hapus data admin
+    }
+  }, [isAdminActive]); // Memantau perubahan path
 
   return (
     <div className="drawer-side z-30 shadow-black shadow-md font-semibold">
@@ -297,14 +305,6 @@ function Sidebar() {
           >
             <InformationCircleIcon className="w-6 h-6 me-1" />
             <span>Pengumuman</span>
-          </Link>
-        </li>
-
-        {/* Logout */}
-        <li className="mb-3">
-          <Link to="/" className="flex items-center w-full rounded-sm">
-            <ArrowLeftStartOnRectangleIcon className="w-6 h-6 me-1" />
-            <span>Logout</span>
           </Link>
         </li>
       </ul>

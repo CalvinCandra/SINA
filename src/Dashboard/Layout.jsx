@@ -1,11 +1,9 @@
 import Header from "./components/Header/Header";
-import { Suspense, useRef, useEffect, useState } from "react";
-import { Routes, Route } from "react-router-dom";
-import Loading from "../component/Loading/Loading";
+import { useRef, useEffect } from "react";
 import Sidebar from "./components/Sidebar/Sidebar";
 import { Outlet } from "react-router-dom";
 
-export default function Layout() {
+function Layout() {
   const mainContentRef = useRef(null);
 
   // Scroll to top on page change (based on title change)
@@ -31,7 +29,7 @@ export default function Layout() {
       <div className="drawer-content flex flex-col bg-biru-disabled">
         <Header />
         <main
-          className="flex-1 overflow-y-auto px-4 pt-4 lg:px-6  bg-base-200"
+          className="flex-1 overflow-y-auto md:pt-4 pt-4 px-6 bg-base-200"
           ref={mainContentRef}
         >
           <Outlet />
@@ -41,3 +39,5 @@ export default function Layout() {
     </div>
   );
 }
+
+export default Layout;

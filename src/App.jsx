@@ -40,7 +40,7 @@ function App() {
         {/* Admin*/}
         <Route path="admin" element={<Admin />} />
         <Route path="admin/tambah" element={<TambahAdmin />} />
-        <Route path="admin/update" element={<UpdateAdmin />} />
+        <Route path="admin/update/:id" element={<UpdateAdmin />} />
 
         {/* Kelas */}
         <Route path="kelas" element={<Kelas />} />
