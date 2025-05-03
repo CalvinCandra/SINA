@@ -1,10 +1,14 @@
 import Bars3Icon from "@heroicons/react/24/outline/Bars3Icon";
 import { Link } from "react-router-dom";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
+import {
+  ArrowLeftStartOnRectangleIcon,
+  UserCircleIcon,
+} from "@heroicons/react/24/outline";
 
 function Header() {
   return (
-    <div className="navbar sticky top-0 z-10 bg-white border-b border-border-grey">
+    <div className="navbar sticky top-0 z-10 bg-white">
       {/* Sidebar toggle for mobile */}
       <div className="flex-1">
         <label
@@ -18,8 +22,11 @@ function Header() {
       {/* Right side controls */}
       <div className="flex-none">
         {/* Profile dropdown (static) */}
-        <div className="ml-4">
-          <div className="flex items-center me-3.5">
+        <div className="dropdown dropdown-end ml-4">
+          <div
+            tabIndex={0}
+            className="flex items-center btn border-0 btn-ghost"
+          >
             <div className="w-10 h-10 overflow-hidden rounded-full">
               {/* Avatar */}
               <div className="w-full object-cover">
@@ -32,7 +39,28 @@ function Header() {
 
             {/* Nama Pengguna */}
             <h1 className="text-sm font-semibold ms-2">Super Admin</h1>
+
+            {/* Ikon panah dropdown */}
+            <ChevronDownIcon className="w-5 h-5 ml-2" />
           </div>
+          <ul
+            tabIndex={0}
+            className="menu menu-compact dropdown-content mt-3 p-2 shadow rounded-box w-52 bg-white border-border-grey"
+          >
+            <li className="hover:bg-biru-hover hover:text-white">
+              <Link to="/" className="flex items-center w-full rounded-sm">
+                <UserCircleIcon className="w-6 h-6 me-1" />
+                <span>Profile</span>
+              </Link>
+            </li>
+            <div className="divider mt-0 mb-0"></div>
+            <li className="hover:bg-biru-hover hover:text-white">
+              <Link to="/" className="flex items-center w-full rounded-sm">
+                <ArrowLeftStartOnRectangleIcon className="w-6 h-6 me-1" />
+                <span>Logout</span>
+              </Link>
+            </li>
+          </ul>
         </div>
       </div>
     </div>

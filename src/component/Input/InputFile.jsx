@@ -26,7 +26,7 @@ export default function InputFile(props) {
         </div>
       </div>
       <label className="text-xs text-gray-500 mt-2 block">
-        PNG, JPG, JPEG | Max size 2MB
+        PNG, JPG, JPEG | Max size 5MB
       </label>
     </fieldset>
   );
