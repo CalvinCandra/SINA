@@ -46,6 +46,14 @@ function Sidebar() {
     }
   }, [isAdminActive]); // Memantau perubahan path
 
+  // useEffect untuk menghapus localStorage saat berpindah dari halaman Admin
+  useEffect(() => {
+    // Jika berpindah dari halaman admin
+    if (!isKelasActive) {
+      localStorage.removeItem("kelasList"); // Hapus data kelas
+    }
+  }, [isKelasActive]); // Memantau perubahan path
+
   return (
     <div className="drawer-side z-30 shadow-black shadow-md font-semibold">
       <label htmlFor="left-sidebar-drawer" className="drawer-overlay"></label>

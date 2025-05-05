@@ -1,16 +1,17 @@
 export default function SelectField(props) {
-  const { text, option = [], value = "" } = props;
+  const { text, option = [], name, value, onChange, defaultValue } = props;
   return (
     <fieldset className="fieldset mb-4">
-      <legend className="fieldset-legend text-sm font-normal">
+      <legend className="fieldset-legend text-sm font-semibold">
         {text}
         <span className="text-red-500">*</span>
       </legend>
       <select
-        value={value}
+        {...(value !== undefined ? { value, onChange } : { defaultValue })}
         className="select border border-border-grey w-full rounded-lg"
+        name={name}
       >
-        <option value="" selected hidden>
+        <option value="" hidden>
           -- Pilih --
         </option>
         {option.map((item, index) => (

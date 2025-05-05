@@ -3,7 +3,6 @@ import FieldInput from "../../../component/Input/FieldInput";
 import Button from "../../../component/Button/Button";
 import InputFile from "../../../component/Input/InputFile";
 import ButtonHref from "../../../component/Button/ButtonHref";
-import DataAdmin from "../../../data/Admin/DataAdmin";
 import { useParams } from "react-router-dom";
 import Toast from "../../../component/Toast/Toast";
 import Loading from "../../../component/Loading/Loading";
@@ -19,13 +18,13 @@ export default function UpdateAdmin() {
 
   useEffect(() => {
     const storedAdmins = JSON.parse(localStorage.getItem("adminList")) || [];
-    const combinedData = [...DataAdmin, ...storedAdmins];
-    const foundData = combinedData.find((item) => item.id === parseInt(id));
+    const foundData = storedAdmins.find((item) => item.id === parseInt(id));
 
     if (!foundData) {
-      setToastMessage("Data Admin tidak ditemukan");
-      setToastVariant("error");
-      return;
+      localStorage.setItem("adminInvalid", "error");
+      setTimeout(() => {
+        window.location.href = "/dashboard/admin";
+      }, 10);
     }
 
     setNamaAdmin(foundData.nama);
@@ -65,15 +64,21 @@ export default function UpdateAdmin() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // reset pesan toast
+    setToastMessage("");
+    setToastVariant("");
+
     if (namaAdmin.trim() === "" || emailAdmin.trim() === "") {
-      setToastMessage("Nama dan Email tidak boleh kosong");
-      setToastVariant("error");
+      setTimeout(() => {
+        setToastMessage("Nama dan Email tidak boleh kosong");
+        setToastVariant("error");
+      }, 10);
       return;
     }
 
     setIsLoading(true);
 
-    const storedAdmins = JSON.parse(localStorage.getItem("adminList")) || [];
+    const storedAdmins = JSON.parse(localStorage.getItem("adminList"));
 
     const updatedAdmins = storedAdmins.map((admin) =>
       admin.id === parseInt(id)
@@ -107,7 +112,7 @@ export default function UpdateAdmin() {
 
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col justify-center items-center">
-            <div className="p-1 w-60 h-64 my-3 overflow-hidden">
+            <div className="p-1 w-full lg:w-60 h-64 my-3 overflow-hidden">
               <img
                 src={preview}
                 id="ImagePreview"
@@ -126,7 +131,6 @@ export default function UpdateAdmin() {
                   </span>
                 }
                 type="text"
-                name="nama_admin"
                 variant="biasa_text_sm"
                 value={namaAdmin}
                 onChange={(e) => setNamaAdmin(e.target.value)}

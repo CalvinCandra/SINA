@@ -53,7 +53,9 @@ export default function Kurikulum() {
                   >
                     <td>{index + 1}</td>
                     <td className="whitespace-nowrap">{data.nama_kurikulum}</td>
-                    <td className="text-justify">{data.deskripsi}</td>
+                    <td className="text-justify line-clamp-4">
+                      <p className="h-[75px] bg-red-300">{data.deskripsi}</p>
+                    </td>
                     <td className="whitespace-nowrap">{data.tgl}</td>
                     <td>
                       <div className="flex items-center justify-evenly w-20">

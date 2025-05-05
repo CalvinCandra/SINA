@@ -5,14 +5,120 @@ import Search from "../../../component/Input/Search";
 import DataKelas from "../../../data/Kelas/DataKelas";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
 import Button from "../../../component/Button/Button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Toast from "../../../component/Toast/Toast";
+import Loading from "../../../component/Loading/Loading";
 
 export default function Kelas() {
   // simpan data kelas
   const [selectedKelas, setSelectedKelas] = useState(null);
+  const [dataKelas, setdatakelas] = useState([]);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastVariant, setToastVariant] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const dataPerPage = 5;
+
+  useEffect(() => {
+    const fetchData = () => {
+      const storedData = localStorage.getItem("kelasList");
+      if (!storedData || storedData === "undefined") {
+        localStorage.setItem("kelasList", JSON.stringify(DataKelas));
+        setdatakelas(DataKelas);
+      } else {
+        try {
+          const parsedData = JSON.parse(storedData);
+          setdatakelas(parsedData);
+        } catch (e) {
+          console.error("Data di localStorage rusak:", e);
+          setdatakelas(DataKelas); // fallback
+        }
+      }
+    };
+
+    // Tampilkan toast bila tambah atau update berhasil
+    const invalidStatus = localStorage.getItem("kelasInvalid");
+    const addedStatus = localStorage.getItem("kelasAdded");
+    const updateStatus = localStorage.getItem("kelasUpdate");
+    const deleteStatus = localStorage.getItem("kelasDelete");
+
+    if (invalidStatus === "error") {
+      setToastMessage("Kelas tidak ditemukan");
+      setToastVariant("error");
+      localStorage.removeItem("adminInvalid");
+    }
+
+    if (addedStatus === "success") {
+      setToastMessage("Kelas berhasil ditambahkan");
+      setToastVariant("success");
+      localStorage.removeItem("kelasAdded");
+    }
+
+    if (updateStatus === "success") {
+      setToastMessage("Kelas berhasil diupdate");
+      setToastVariant("success");
+      localStorage.removeItem("kelasUpdate");
+    }
+
+    if (deleteStatus === "success") {
+      setToastMessage("Kelas berhasil dihapus");
+      setToastVariant("success");
+      localStorage.removeItem("kelasDelete");
+    }
+
+    fetchData();
+
+    // Tambah event listener untuk menangani perubahan localStorage
+    const handleStorageChange = () => {
+      fetchData();
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
+  // Pagination
+  const indexOfLastData = currentPage * dataPerPage;
+  const indexOfFirstData = indexOfLastData - dataPerPage;
+  const currentData = dataKelas
+    .sort((a, b) => b.id - a.id)
+    .slice(indexOfFirstData, indexOfLastData);
+  const totalPages = Math.ceil(dataKelas.length / dataPerPage);
+
+  const handleDeleteKelas = () => {
+    if (!selectedKelas) return;
+
+    setIsLoading(true); // Set loading state
+
+    // Hapus dari data
+    const filteredData = dataKelas.filter(
+      (item) => item.id !== selectedKelas.id
+    );
+
+    // Simpan data yang sudah dihapus ke localStorage
+    localStorage.setItem("kelasList", JSON.stringify(filteredData));
+
+    // reset
+    setToastMessage("");
+    setToastVariant("");
+
+    setTimeout(() => {
+      setIsLoading(false); // Reset loading state
+      setdatakelas(filteredData);
+      setSelectedKelas(null);
+      // Set toast message setelah berhasil hapus
+      setToastMessage("Kelas berhasil dihapus");
+      setToastVariant("success");
+      document.getElementById("my_modal_3").close(); // Tutup modal
+    }, 1000);
+  };
 
   return (
     <div className="lg:py-5">
+      {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
       <div className="flex flex-col lg:flex-row w-full justify-between items-center">
         <h2 className="text-2xl font-semibold">Kelas</h2>
         <Calender className="w-40 lg:w-full"></Calender>
@@ -35,7 +141,7 @@ export default function Kelas() {
 
         {/* Table */}
         <div className="overflow-x-auto w-full">
-          {DataKelas && DataKelas.length > 0 ? (
+          {currentData && currentData.length > 0 ? (
             <table className="table w-full">
               <thead>
                 <tr className="border-b border-t border-border-grey">
@@ -48,12 +154,12 @@ export default function Kelas() {
                 </tr>
               </thead>
               <tbody>
-                {DataKelas.map((data, index) => (
+                {currentData.map((data, index) => (
                   <tr
                     className="border-b border-t border-border-grey"
                     key={data.id}
                   >
-                    <td>{index + 1}</td>
+                    <td>{indexOfFirstData + index + 1}</td>
                     <td className="whitespace-nowrap">{data.nama_kelas}</td>
                     <td className="whitespace-nowrap">{data.tingkat}</td>
                     <td className="whitespace-nowrap">{data.wali_kelas}</td>
@@ -62,7 +168,7 @@ export default function Kelas() {
                     <td>
                       <div className="flex items-center justify-evenly w-20">
                         <ButtonHref
-                          href={`/dashboard/kelas/update`}
+                          href={`/dashboard/kelas/update/${data.id}`}
                           variant="update"
                           text=<PencilSquareIcon className="w-5 h-5 text-amber-300"></PencilSquareIcon>
                         ></ButtonHref>
@@ -93,24 +199,26 @@ export default function Kelas() {
       {/* Pagination */}
       <div className="flex flex-col lg:flex-row justify-between items-center w-full my-4">
         <p className="text-sm mb-3 lg:mb-0">
-          Menampilkan Data 6 Dari 100 Data kelas
+          Menampilkan Data {indexOfFirstData + 1} -{" "}
+          {indexOfLastData > dataKelas.length
+            ? dataKelas.length
+            : indexOfLastData}{" "}
+          dari {dataKelas.length} Data Kelas
         </p>
         <div className="join">
-          <button className="join-item btn border-0 rounded-ss rounded-es bg-biru-primary text-white">
-            1
-          </button>
-          <button className="join-item btn border-0 bg-biru-primary text-white">
-            2
-          </button>
-          <button className="join-item btn border-0 bg-gray-400 text-white">
-            ...
-          </button>
-          <button className="join-item btn border-0 bg-biru-primary text-white">
-            99
-          </button>
-          <button className="join-item btn border-0 rounded-se rounded-ee bg-biru-primary text-white">
-            100
-          </button>
+          {[...Array(totalPages)].map((_, index) => (
+            <button
+              key={index}
+              className={`join-item btn border-0 ${
+                currentPage === index + 1
+                  ? "bg-biru-primary text-white"
+                  : "bg-gray-200 text-black"
+              }`}
+              onClick={() => setCurrentPage(index + 1)}
+            >
+              {index + 1}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -138,9 +246,18 @@ export default function Kelas() {
               <form method="dialog" className="w-full me-1">
                 <Button variant="button_submit_cancel" text="Cancel"></Button>
               </form>
-              <form className="w-full ms-1">
+              <form
+                className="w-full ms-1"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleDeleteKelas();
+                }}
+              >
                 <div className="w-full">
-                  <Button variant="button_submit_dash" text="Hapus"></Button>
+                  <Button
+                    variant="button_submit_dash"
+                    text={isLoading ? <Loading /> : "Hapus Kelas"}
+                  ></Button>
                 </div>
               </form>
             </div>

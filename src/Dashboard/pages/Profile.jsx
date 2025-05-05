@@ -1,21 +1,19 @@
 import { useState } from "react";
-import FieldInput from "../../../component/Input/FieldInput";
-import Button from "../../../component/Button/Button";
-import InputFile from "../../../component/Input/InputFile";
-import ButtonHref from "../../../component/Button/ButtonHref";
-import Loading from "../../../component/Loading/Loading";
-import Toast from "../../../component/Toast/Toast";
+import FieldInput from "../../component/Input/FieldInput";
+import Button from "../../component/Button/Button";
+import InputFile from "../../component/Input/InputFile";
+import ButtonHref from "../../component/Button/ButtonHref";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
-export default function TambahAdmin() {
-  const [preview, setPreview] = useState(
-    "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
-  );
-
+export default function Profile() {
   const [namaAdmin, setNamaAdmin] = useState("");
   const [emailAdmin, setEmailAdmin] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastVariant, setToastVariant] = useState("");
+
+  const [Password, setPassword] = useState(true);
+  // Fungsi untuk toggle tipe input
+  const togglePasswordVisibility = () => {
+    setPassword((prevPassword) => !prevPassword);
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -52,96 +50,21 @@ export default function TambahAdmin() {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    // reset pesan toast terlebih dahulu
-    setToastMessage("");
-    setToastVariant("");
-
-    // Validasi input
-    if (
-      preview ===
-      "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
-    ) {
-      setTimeout(() => {
-        setToastMessage("Gambar wajib diisi");
-        setToastVariant("error");
-      }, 10);
-      return;
-    }
-
-    if (namaAdmin.trim() === "") {
-      setTimeout(() => {
-        setToastMessage("Nama Admin tidak boleh kosong");
-        setToastVariant("error");
-      }, 10);
-      return;
-    }
-
-    if (emailAdmin.trim() === "") {
-      setTimeout(() => {
-        setToastMessage("Email Admin tidak boleh kosong");
-        setToastVariant("error");
-      }, 10);
-      return;
-    }
-
-    setIsLoading(true);
-
-    // Ambil data admin yang sudah ada di localStorage
-    const storedAdmins = JSON.parse(localStorage.getItem("adminList")) || [];
-
-    const lastId =
-      storedAdmins.length > 0
-        ? Math.max(...storedAdmins.map((item) => item.id))
-        : 0;
-
-    // Membuat data admin baru
-    const newAdmin = {
-      id: lastId + 1, // id auto increment
-      image: preview,
-      nama: namaAdmin,
-      email: emailAdmin,
-      tgl: new Date().toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }),
-    };
-
-    // Tambahkan admin baru ke data
-    const tambahAdmins = [...storedAdmins, newAdmin];
-
-    // Simpan data ke localStorage
-    localStorage.setItem("adminList", JSON.stringify(tambahAdmins));
-
-    // Simpan status berhasil tambah
-    localStorage.setItem("adminAdded", "success");
-
-    setTimeout(() => {
-      setIsLoading(false);
-      // Redirect ke halaman dashboard admin
-      window.location.href = "/dashboard/admin";
-    }, 2000);
-  };
-
   return (
     <div className="lg:py-5">
-      {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
       <div className="w-full p-5 rounded-md bg-white mt-5">
         <div className="w-full flex flex-col lg:flex-row justify-between items-center mb-5">
-          <p className="font-semibold text-lg">Tambah Data Admin / Staf</p>
+          <p className="font-semibold text-lg">Profile</p>
         </div>
 
         <hr className="border-border-grey border"></hr>
 
-        <form onSubmit={handleSubmit}>
+        <form>
           {/* Gambar */}
           <div className="flex flex-col justify-center items-center">
             <div className="p-1 w-60 h-64 my-3 overflow-hidden">
               <img
-                src={preview}
+                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 alt="Preview"
                 id="ImagePreview"
                 className="w-full h-full object-object rounded"
@@ -161,7 +84,6 @@ export default function TambahAdmin() {
                   </span>
                 }
                 type="text"
-                name="nama_admin"
                 variant="biasa_text_sm"
                 value={namaAdmin}
                 onChange={(e) => setNamaAdmin(e.target.value)}
@@ -176,7 +98,6 @@ export default function TambahAdmin() {
                   </span>
                 }
                 type="email"
-                name="email"
                 variant="biasa_text_sm"
                 value={emailAdmin}
                 onChange={(e) => setEmailAdmin(e.target.value)}
@@ -184,21 +105,53 @@ export default function TambahAdmin() {
             </div>
           </div>
 
+          <div className="w-full flex flex-col lg:flex-row justify-between">
+            <div className="w-full lg:w-1/2 lg:me-1">
+              <div className="w-full relative">
+                <FieldInput
+                  text="Password Baru"
+                  type={`${Password ? "password" : "text"}`}
+                  variant="biasa_text_base"
+                  name="password"
+                ></FieldInput>
+
+                <span onClick={togglePasswordVisibility}>
+                  {Password ? (
+                    <EyeIcon className="absolute w-10 h-5 bottom-3.5 right-2 cursor-pointer"></EyeIcon>
+                  ) : (
+                    <EyeSlashIcon className="absolute w-10 h-5 bottom-3.5 right-2 cursor-pointer"></EyeSlashIcon>
+                  )}
+                </span>
+              </div>
+            </div>
+
+            <div className="w-full lg:w-1/2 lg:ms-1">
+              <div className="w-full relative">
+                <FieldInput
+                  text="Password Baru"
+                  type={`${Password ? "password" : "text"}`}
+                  variant="biasa_text_base"
+                  name="password"
+                ></FieldInput>
+
+                <span onClick={togglePasswordVisibility}>
+                  {Password ? (
+                    <EyeIcon className="absolute w-10 h-5 bottom-3.5 right-2 cursor-pointer"></EyeIcon>
+                  ) : (
+                    <EyeSlashIcon className="absolute w-10 h-5 bottom-3.5 right-2 cursor-pointer"></EyeSlashIcon>
+                  )}
+                </span>
+              </div>
+            </div>
+          </div>
+
           {/* Button */}
           <div className="flex justify-end items-center mt-5">
             <div className="me-2">
-              <ButtonHref
-                text="Cancel"
-                variant="cancel"
-                href="/dashboard/admin"
-              />
+              <ButtonHref text="Cancel" variant="cancel" href="/dashboard" />
             </div>
             <div className="w-40">
-              <Button
-                text={isLoading ? <Loading /> : "Tambah Admin"}
-                variant="button_submit_dash"
-                disabled={isLoading}
-              />
+              <Button text="Update Profile" variant="button_submit_dash" />
             </div>
           </div>
         </form>

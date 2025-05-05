@@ -25,6 +25,7 @@ import Pengumuman from "./Dashboard/pages/Pengumuman/Pengumuman";
 import TambahPengumuman from "./Dashboard/pages/Pengumuman/TambahPengumuman";
 import DetailPengumuman from "./Dashboard/pages/Pengumuman/DetailPengumuman";
 import UpdatePengumuman from "./Dashboard/pages/Pengumuman/UpdatePengumuman";
+import Profile from "./Dashboard/pages/Profile";
 
 function App() {
   return (
@@ -37,6 +38,9 @@ function App() {
       <Route path="/dashboard" element={<Layout />}>
         <Route index element={<Dashboard />} />
 
+        {/* Profile */}
+        <Route path="profile" element={<Profile />} />
+
         {/* Admin*/}
         <Route path="admin" element={<Admin />} />
         <Route path="admin/tambah" element={<TambahAdmin />} />
@@ -45,7 +49,7 @@ function App() {
         {/* Kelas */}
         <Route path="kelas" element={<Kelas />} />
         <Route path="kelas/tambah" element={<TambahKelas />} />
-        <Route path="kelas/update" element={<UpdateKelas />} />
+        <Route path="kelas/update/:id" element={<UpdateKelas />} />
 
         {/* Akademik */}
         {/* Kurikulum */}

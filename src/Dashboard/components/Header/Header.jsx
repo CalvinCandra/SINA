@@ -48,7 +48,10 @@ function Header() {
             className="menu menu-compact dropdown-content mt-3 p-2 shadow rounded-box w-52 bg-white border-border-grey"
           >
             <li className="hover:bg-biru-hover hover:text-white">
-              <Link to="/" className="flex items-center w-full rounded-sm">
+              <Link
+                to="/dashboard/profile"
+                className="flex items-center w-full rounded-sm"
+              >
                 <UserCircleIcon className="w-6 h-6 me-1" />
                 <span>Profile</span>
               </Link>
