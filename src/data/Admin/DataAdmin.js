@@ -39,13 +39,6 @@ const DataAdmin = [
     email: "admin5@gmail.com",
     tgl: "20 September 2000",
   },
-  {
-    id: 6,
-    image: "https://i.pravatar.cc/100?img=1",
-    nama: "Admin 6",
-    email: "admin6@gmail.com",
-    tgl: "20 September 2000",
-  },
 ];
 
 export default DataAdmin;

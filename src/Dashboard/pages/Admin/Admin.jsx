@@ -35,9 +35,16 @@ export default function Admin() {
     };
 
     // Tampilkan toast bila tambah atau update berhasil
+    const invalidStatus = localStorage.getItem("adminInvalid");
     const addedStatus = localStorage.getItem("adminAdded");
     const updateStatus = localStorage.getItem("adminUpdate");
     const deleteStatus = localStorage.getItem("adminDelete");
+
+    if (invalidStatus === "error") {
+      setToastMessage("Admin Tidak ditemukan");
+      setToastVariant("error");
+      localStorage.removeItem("adminInvalid");
+    }
 
     if (addedStatus === "success") {
       setToastMessage("Admin berhasil ditambahkan");
@@ -74,17 +81,23 @@ export default function Admin() {
   // Pagination
   const indexOfLastData = currentPage * dataPerPage;
   const indexOfFirstData = indexOfLastData - dataPerPage;
-  const currentData = dataAdmin.slice(indexOfFirstData, indexOfLastData);
+  const currentData = dataAdmin
+    .sort((a, b) => b.id - a.id)
+    .slice(indexOfFirstData, indexOfLastData);
   const totalPages = Math.ceil(dataAdmin.length / dataPerPage);
 
   // Hapus admin (method kosong, Anda bisa implementasikan)
-  const handleDeleteAdmin = () => {
+  const handleDeleteAdmin = (e) => {
+    e.preventDefault();
+
     if (!selectedAdmin) return;
 
     setIsLoading(true); // Set loading state
 
     // Hapus admin dari data
-    const filteredData = dataAdmin.filter((d) => d.id !== selectedAdmin.id);
+    const filteredData = dataAdmin.filter(
+      (item) => item.id !== selectedAdmin.id
+    );
 
     // Simpan data yang sudah dihapus ke localStorage
     localStorage.setItem("adminList", JSON.stringify(filteredData));
@@ -102,7 +115,7 @@ export default function Admin() {
       setToastMessage("Admin berhasil dihapus");
       setToastVariant("success");
       document.getElementById("my_modal_3").close(); // Tutup modal
-    }, 2000); // Delay 2 detik
+    }, 1000); // Delay 2 detik
   };
 
   return (
@@ -246,13 +259,7 @@ export default function Admin() {
                 <form method="dialog" className="w-full me-1">
                   <Button variant="button_submit_cancel" text="Cancel" />
                 </form>
-                <form
-                  className="w-full ms-1"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleDeleteAdmin();
-                  }}
-                >
+                <form className="w-full ms-1" onSubmit={handleDeleteAdmin}>
                   <div className="w-full">
                     <Button
                       text={isLoading ? <Loading /> : "Hapus Admin"}

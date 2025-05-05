@@ -2,10 +2,7 @@ export default function InputFile(props) {
   const { text, fungsi } = props;
   return (
     <fieldset>
-      <legend className="text-sm font-semibold text-gray-700">
-        {text}
-        <span className="text-red-500">*</span>
-      </legend>
+      <legend className="text-sm font-semibold text-gray-700">{text}</legend>
       <div className="flex items-center">
         <label className="relative inline-block">
           <input
@@ -14,7 +11,7 @@ export default function InputFile(props) {
             className="absolute inset-0 opacity-0 cursor-pointer"
             onChange={fungsi}
           />
-          <span className="bg-black text-white py-2 px-4 cursor-pointer inline-block rounded-ss rounded-es">
+          <span className="bg-black text-white py-2 px-3 lg:py-2 lg:px-4 cursor-pointer inline-block rounded-ss rounded-es">
             Pilih File
           </span>
         </label>

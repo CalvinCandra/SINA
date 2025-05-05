@@ -1,15 +1,27 @@
 import React from "react";
 import {
   UserGroupIcon,
-  CalendarDaysIcon,
   InformationCircleIcon,
 } from "@heroicons/react/24/outline";
 import Grafik from "../components/Chart/Grafik";
 import Calender from "../components/Calender/Calender";
+import Toast from "../../component/Toast/Toast";
+import { useState } from "react";
 
 export default function Dashboard() {
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastVariant, setToastVariant] = useState("");
+
+  const statusLogin = localStorage.getItem("login");
+
+  if (statusLogin == "success") {
+    setToastMessage("Berhasil Login");
+    setToastVariant("success");
+    localStorage.removeItem("login");
+  }
   return (
     <div className="lg:py-5">
+      {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
       <div className="flex w-full justify-between items-center">
         <h2 className="text-2xl font-semibold">Highlight</h2>
         <Calender></Calender>

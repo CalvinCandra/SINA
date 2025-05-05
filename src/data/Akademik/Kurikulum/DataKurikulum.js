@@ -3,7 +3,7 @@ const DataKurikulum = [
     id: 1,
     nama_kurikulum: "Kurikulum Merdeka Belajar 1",
     deskripsi:
-      "Kurikulum Merdeka Belajar adalah sebuah pendekatan pembelajaran yang memberikan kebebasan dan fleksibilitas kepada siswa maupun guru dalam menentukan cara, materi, serta ritme belajar yang sesuai dengan kebutuhan dan potensi masing..",
+      "Kurikulum Merdeka Belajar adalah sebuah pendekatan pembelajaran yang memberikan kebebasan dan fleksibilitas kepada siswa maupun guru dalam menentukan cara, materi, serta ritme belajar yang sesuai dengan kebutuhan dan potensi masing.Kurikulum Merdeka Belajar adalah sebuah pendekatan pembelajaran yang memberikan kebebasan dan fleksibilitas kepada siswa maupun guru dalam menentukan cara, materi, serta ritme belajar yang sesuai dengan kebutuhan dan potensi masing.Kurikulum Merdeka Belajar adalah sebuah pendekatan pembelajaran yang memberikan kebebasan dan fleksibilitas kepada siswa maupun guru dalam menentukan cara, materi, serta ritme belajar yang sesuai dengan kebutuhan dan potensi masing.",
     tgl: "20 September 2000",
   },
   {
