@@ -3,11 +3,12 @@ import FieldInput from "../../../component/Input/FieldInput";
 import Button from "../../../component/Button/Button";
 import InputFile from "../../../component/Input/InputFile";
 import ButtonHref from "../../../component/Button/ButtonHref";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Toast from "../../../component/Toast/Toast";
 import Loading from "../../../component/Loading/Loading";
 
 export default function UpdateAdmin() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [preview, setPreview] = useState("");
   const [namaAdmin, setNamaAdmin] = useState("");
@@ -96,7 +97,7 @@ export default function UpdateAdmin() {
 
     setTimeout(() => {
       setIsLoading(false);
-      window.location.href = "/dashboard/admin";
+      navigate("/dashboard/admin");
     }, 2000);
   };
 

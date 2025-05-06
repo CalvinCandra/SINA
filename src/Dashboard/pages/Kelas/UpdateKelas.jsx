@@ -5,10 +5,11 @@ import SelectField from "../../../component/Input/SelectField";
 import { useState, useEffect } from "react";
 import Loading from "../../../component/Loading/Loading";
 import Toast from "../../../component/Toast/Toast";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import DinamisSelect from "../../../component/Input/DinamisSelect";
 
 export default function UpdateKelas() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [jenjang, setJenjang] = useState("");
   const [tingkat, setTingkat] = useState("");
@@ -178,7 +179,7 @@ export default function UpdateKelas() {
 
     setTimeout(() => {
       setIsLoading(false);
-      window.location.href = "/dashboard/kelas";
+      navigate("/dashboard/kelas");
     }, 1000);
   };
 
@@ -265,6 +266,7 @@ export default function UpdateKelas() {
               <Button
                 text={isLoading ? <Loading /> : "Update Kelas"}
                 variant="button_submit_dash"
+                disabled={isLoading}
               ></Button>
             </div>
           </div>

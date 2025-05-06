@@ -26,6 +26,7 @@ import TambahPengumuman from "./Dashboard/pages/Pengumuman/TambahPengumuman";
 import DetailPengumuman from "./Dashboard/pages/Pengumuman/DetailPengumuman";
 import UpdatePengumuman from "./Dashboard/pages/Pengumuman/UpdatePengumuman";
 import Profile from "./Dashboard/pages/Profile";
+import MiddlewareLogin from "./utils/middlewareLogin";
 
 function App() {
   return (
@@ -35,7 +36,14 @@ function App() {
       </Route>
 
       {/* Semua halaman dashboard dibungkus Layout */}
-      <Route path="/dashboard" element={<Layout />}>
+      <Route
+        path="/dashboard"
+        element={
+          <MiddlewareLogin>
+            <Layout />
+          </MiddlewareLogin>
+        }
+      >
         <Route index element={<Dashboard />} />
 
         {/* Profile */}
@@ -55,7 +63,10 @@ function App() {
         {/* Kurikulum */}
         <Route path="akademik/kurikulum" element={<Kurikulum />} />
         <Route path="akademik/kurikulum/tambah" element={<TambahKurikulum />} />
-        <Route path="akademik/kurikulum/update" element={<UpdateKurikulum />} />
+        <Route
+          path="akademik/kurikulum/update/:id"
+          element={<UpdateKurikulum />}
+        />
 
         {/* Tahun Akademik */}
         <Route path="akademik/tahun-akademik" element={<TahunAkademik />} />
@@ -64,7 +75,7 @@ function App() {
           element={<TambahTahun />}
         />
         <Route
-          path="akademik/tahun-akademik/update"
+          path="akademik/tahun-akademik/update/:id"
           element={<UpdateTahun />}
         />
 

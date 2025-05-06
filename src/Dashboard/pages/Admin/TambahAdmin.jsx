@@ -5,8 +5,10 @@ import InputFile from "../../../component/Input/InputFile";
 import ButtonHref from "../../../component/Button/ButtonHref";
 import Loading from "../../../component/Loading/Loading";
 import Toast from "../../../component/Toast/Toast";
+import { useNavigate } from "react-router-dom";
 
 export default function TambahAdmin() {
+  const navigate = useNavigate();
   const [preview, setPreview] = useState(
     "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
   );
@@ -121,8 +123,7 @@ export default function TambahAdmin() {
 
     setTimeout(() => {
       setIsLoading(false);
-      // Redirect ke halaman dashboard admin
-      window.location.href = "/dashboard/admin";
+      navigate("/dashboard/admin");
     }, 2000);
   };
 
