@@ -42,6 +42,7 @@ export default function MataPelajaran() {
                   <th>No</th>
                   <th>Mata Pelajaran</th>
                   <th>KKM</th>
+                  <th>Aksi</th>
                 </tr>
               </thead>
               <tbody>

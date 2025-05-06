@@ -29,12 +29,6 @@ const DataTahun = [
     tgl_mulai: "20 September 2000",
     tgl_akhir: "30 Desember 2001",
   },
-  {
-    id: 6,
-    kurikulum: "Kampus Belajara Merdeka 6",
-    tgl_mulai: "20 September 2000",
-    tgl_akhir: "30 Desember 2001",
-  },
 ];
 
 export default DataTahun;

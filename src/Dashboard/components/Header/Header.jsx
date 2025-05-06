@@ -1,5 +1,5 @@
 import Bars3Icon from "@heroicons/react/24/outline/Bars3Icon";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import {
   ArrowLeftStartOnRectangleIcon,
@@ -7,6 +7,15 @@ import {
 } from "@heroicons/react/24/outline";
 
 function Header() {
+  const navigate = useNavigate(); // Hook untuk navigasi
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+
+    sessionStorage.removeItem("session");
+    navigate("/");
+    window.location.reload();
+  };
   return (
     <div className="navbar sticky top-0 z-10 bg-white">
       {/* Sidebar toggle for mobile */}
@@ -58,10 +67,13 @@ function Header() {
             </li>
             <div className="divider mt-0 mb-0"></div>
             <li className="hover:bg-biru-hover hover:text-white">
-              <Link to="/" className="flex items-center w-full rounded-sm">
+              <button
+                onClick={handleLogout}
+                className="flex items-center w-full rounded-sm"
+              >
                 <ArrowLeftStartOnRectangleIcon className="w-6 h-6 me-1" />
                 <span>Logout</span>
-              </Link>
+              </button>
             </li>
           </ul>
         </div>

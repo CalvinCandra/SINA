@@ -4,15 +4,125 @@ import ButtonHref from "../../../../component/Button/ButtonHref";
 import Search from "../../../../component/Input/Search";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
 import Button from "../../../../component/Button/Button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DataTahun from "../../../../data/Akademik/Tahun Akademik/DataTahun";
+import Toast from "../../../../component/Toast/Toast";
+import Loading from "../../../../component/Loading/Loading";
 
 export default function TahunAkademik() {
   // simpan data
   const [selectedTahun, setSelectedTahun] = useState(null);
+  const [dataTahun, setdataTahun] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastVariant, setToastVariant] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const dataPerPage = 5;
+
+  useEffect(() => {
+    const fetchData = () => {
+      const storedData = localStorage.getItem("tahunList");
+      if (!storedData || storedData === "undefined") {
+        localStorage.setItem("tahunList", JSON.stringify(DataTahun));
+        setdataTahun(DataTahun);
+      } else {
+        try {
+          const parsedData = JSON.parse(storedData);
+          setdataTahun(parsedData);
+        } catch (e) {
+          console.error("Data di localStorage rusak:", e);
+          setdataTahun(DataKurikulum); // fallback
+        }
+      }
+    };
+
+    // Tampilkan toast bila tambah atau update berhasil
+    const invalidStatus = localStorage.getItem("tahunInvalid");
+    const addedStatus = localStorage.getItem("tahunAdded");
+    const updateStatus = localStorage.getItem("tahunUpdate");
+    const deleteStatus = localStorage.getItem("tahunDelete");
+
+    if (invalidStatus === "error") {
+      setToastMessage("Tahun Akdemik Tidak ditemukan");
+      setToastVariant("error");
+      localStorage.removeItem("tahunInvalid");
+    }
+
+    if (addedStatus === "success") {
+      setToastMessage("Tahun Akademik berhasil ditambahkan");
+      setToastVariant("success");
+      localStorage.removeItem("tahunAdded");
+    }
+
+    if (updateStatus === "success") {
+      setToastMessage("Tahun Akdemik berhasil diupdate");
+      setToastVariant("success");
+      localStorage.removeItem("tahunUpdate");
+    }
+
+    if (deleteStatus === "success") {
+      setToastMessage("Tahun Akademik berhasil dihapus");
+      setToastVariant("success");
+      localStorage.removeItem("tahunDelete");
+    }
+
+    fetchData();
+
+    // Tambah event listener untuk menangani perubahan localStorage
+    const handleStorageChange = () => {
+      fetchData();
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
+  // Pagination
+  const indexOfLastData = currentPage * dataPerPage;
+  const indexOfFirstData = indexOfLastData - dataPerPage;
+  const currentData = dataTahun
+    .sort((a, b) => b.id - a.id)
+    .slice(indexOfFirstData, indexOfLastData);
+  const totalPages = Math.ceil(dataTahun.length / dataPerPage);
+
+  // Hapus
+  const handleDeleteTahun = (e) => {
+    e.preventDefault();
+
+    if (!selectedTahun) return;
+
+    setIsLoading(true); // Set loading state
+
+    // Hapus dari data
+    const filteredData = dataTahun.filter(
+      (item) => item.id !== selectedTahun.id
+    );
+
+    // Simpan data yang sudah dihapus ke localStorage
+    localStorage.setItem("tahunList", JSON.stringify(filteredData));
+
+    // reset
+    setToastMessage("");
+    setToastVariant("");
+
+    // Simulasi delay untuk loading
+    setTimeout(() => {
+      setIsLoading(false); // Reset loading state
+      setdataTahun(filteredData); // Update state
+      setSelectedTahun(null); // Reset
+      // Set toast message setelah berhasil hapus
+      setToastMessage("Data Tahun Akademik berhasil dihapus");
+      setToastVariant("success");
+      document.getElementById("my_modal_3").close(); // Tutup modal
+    }, 1000); // Delay 2 detik
+  };
 
   return (
     <div className="lg:py-5">
+      {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
       <div className="flex flex-col lg:flex-row w-full justify-between items-center">
         <h2 className="text-2xl font-semibold">Tahun Kurikulum</h2>
         <Calender className="w-40 lg:w-full"></Calender>
@@ -35,7 +145,7 @@ export default function TahunAkademik() {
 
         {/* Table */}
         <div className="overflow-x-auto w-full">
-          {DataTahun && DataTahun.length > 0 ? (
+          {currentData && currentData.length > 0 ? (
             <table className="table w-full">
               <thead>
                 <tr className="border-b border-t border-border-grey">
@@ -43,10 +153,11 @@ export default function TahunAkademik() {
                   <th>Nama Kurikulum</th>
                   <th>Tanggal Mulai</th>
                   <th>Tanggal Berakhir</th>
+                  <th>Aksi</th>
                 </tr>
               </thead>
               <tbody>
-                {DataTahun.map((data, index) => (
+                {currentData.map((data, index) => (
                   <tr
                     className="border-b border-t border-border-grey"
                     key={data.id}
@@ -58,7 +169,7 @@ export default function TahunAkademik() {
                     <td>
                       <div className="flex items-center justify-evenly w-20">
                         <ButtonHref
-                          href="/dashboard/akademik/tahun-akademik/update"
+                          href={`/dashboard/akademik/tahun-akademik/update/${data.id}`}
                           variant="update"
                           text=<PencilSquareIcon className="w-5 h-5 text-amber-300"></PencilSquareIcon>
                         ></ButtonHref>
@@ -89,24 +200,26 @@ export default function TahunAkademik() {
       {/* Pagination */}
       <div className="flex flex-col lg:flex-row justify-between items-center w-full my-4">
         <p className="text-sm mb-3 lg:mb-0">
-          Menampilkan Data 6 Dari 100 Data Tahun Kurikulum
+          Menampilkan Data {indexOfFirstData + 1} -{" "}
+          {indexOfLastData > dataTahun.length
+            ? dataTahun.length
+            : indexOfLastData}{" "}
+          dari {dataTahun.length} Data Tahun Akademik
         </p>
         <div className="join">
-          <button className="join-item btn border-0 rounded-ss rounded-es bg-biru-primary text-white">
-            1
-          </button>
-          <button className="join-item btn border-0 bg-biru-primary text-white">
-            2
-          </button>
-          <button className="join-item btn border-0 bg-gray-400 text-white">
-            ...
-          </button>
-          <button className="join-item btn border-0 bg-biru-primary text-white">
-            99
-          </button>
-          <button className="join-item btn border-0 rounded-se rounded-ee bg-biru-primary text-white">
-            100
-          </button>
+          {[...Array(totalPages)].map((_, index) => (
+            <button
+              key={index}
+              className={`join-item btn border-0 ${
+                currentPage === index + 1
+                  ? "bg-biru-primary text-white"
+                  : "bg-gray-200 text-black"
+              }`}
+              onClick={() => setCurrentPage(index + 1)}
+            >
+              {index + 1}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -131,9 +244,13 @@ export default function TahunAkademik() {
               <form method="dialog" className="w-full me-1">
                 <Button variant="button_submit_cancel" text="Cancel"></Button>
               </form>
-              <form className="w-full ms-1">
+              <form className="w-full ms-1" onSubmit={handleDeleteTahun}>
                 <div className="w-full">
-                  <Button variant="button_submit_dash" text="Hapus"></Button>
+                  <Button
+                    variant="button_submit_dash"
+                    text={isLoading ? <Loading /> : "Hapus"}
+                    disabled={isLoading}
+                  ></Button>
                 </div>
               </form>
             </div>

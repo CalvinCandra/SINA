@@ -6,8 +6,10 @@ import SelectField from "../../../component/Input/SelectField";
 import DinamisSelect from "../../../component/Input/DinamisSelect";
 import Toast from "../../../component/Toast/Toast";
 import Loading from "../../../component/Loading/Loading";
+import { useNavigate } from "react-router-dom";
 
 export default function TambahKelas() {
+  const navigate = useNavigate();
   const [jenjang, setJenjang] = useState("");
   const [tingkat, setTingkat] = useState("");
   const [walikelas, setWaliKelas] = useState("");
@@ -168,7 +170,7 @@ export default function TambahKelas() {
 
     setTimeout(() => {
       setIsLoading(false);
-      window.location.href = "/dashboard/kelas";
+      navigate("/dashboard/kelas");
     }, 2000);
   };
 
@@ -257,6 +259,7 @@ export default function TambahKelas() {
               <Button
                 text={isLoading ? <Loading /> : `Tambah Kelas`}
                 variant="button_submit_dash"
+                disabled={isLoading}
               ></Button>
             </div>
           </div>

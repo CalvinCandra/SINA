@@ -36,23 +36,38 @@ function Sidebar() {
   const isGuruActive = path.startsWith("/dashboard/guru"); //untuk dropdown
   const isSiswaActive = path.startsWith("/dashboard/siswa"); //untuk dropdown
   const isPengumumanActive = path.startsWith("/dashboard/pengumuman");
-  const isLogoutActive = path === "/";
 
-  // useEffect untuk menghapus localStorage saat berpindah dari halaman Admin
+  // useEffect untuk menghapus localStorage saat berpindah dari halaman
   useEffect(() => {
-    // Jika berpindah dari halaman admin
+    // Jika berpindah dari halaman
     if (!isAdminActive) {
-      localStorage.removeItem("adminList"); // Hapus data admin
+      localStorage.removeItem("adminList");
     }
   }, [isAdminActive]); // Memantau perubahan path
 
-  // useEffect untuk menghapus localStorage saat berpindah dari halaman Admin
+  // useEffect untuk menghapus localStorage saat berpindah dari halaman
   useEffect(() => {
-    // Jika berpindah dari halaman admin
+    // Jika berpindah dari halaman
     if (!isKelasActive) {
-      localStorage.removeItem("kelasList"); // Hapus data kelas
+      localStorage.removeItem("kelasList");
     }
   }, [isKelasActive]); // Memantau perubahan path
+
+  // useEffect untuk menghapus localStorage saat berpindah dari halaman
+  useEffect(() => {
+    // Jika berpindah dari halaman
+    if (!isKurikulumActive) {
+      localStorage.removeItem("kurikulumList");
+    }
+  }, [isKurikulumActive]); // Memantau perubahan path
+
+  // useEffect untuk menghapus localStorage saat berpindah dari halaman
+  useEffect(() => {
+    // Jika berpindah dari halaman
+    if (!isTahunAkademikActive) {
+      localStorage.removeItem("tahunList");
+    }
+  }, [isTahunAkademikActive]); // Memantau perubahan path
 
   return (
     <div className="drawer-side z-30 shadow-black shadow-md font-semibold">

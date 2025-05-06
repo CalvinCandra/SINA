@@ -47,6 +47,7 @@ export default function Pengumuman() {
                   <th>Judul</th>
                   <th>Dibuat Oleh</th>
                   <th>Tanggal diunggah</th>
+                  <th>Aksi</th>
                 </tr>
               </thead>
               <tbody>

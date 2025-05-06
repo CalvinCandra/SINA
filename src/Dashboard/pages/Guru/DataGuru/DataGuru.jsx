@@ -47,6 +47,7 @@ export default function DataGuru() {
                   <th>Name</th>
                   <th>Email</th>
                   <th>Bergabung</th>
+                  <th>Aksi</th>
                 </tr>
               </thead>
               <tbody>

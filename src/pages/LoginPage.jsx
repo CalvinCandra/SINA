@@ -52,6 +52,13 @@ export default function LoginPage() {
       localStorage.setItem("login", "success");
 
       setTimeout(() => {
+        // buat token
+        const token =
+          Math.random().toString(15).substring(2) + Date.now().toString(10);
+
+        // lempar session
+        sessionStorage.setItem("session", token);
+
         setIsLoading(false);
         // Redirect ke halaman dashboard
         window.location.href = "/dashboard";
