@@ -1,10 +1,20 @@
 export default function InputFile(props) {
-  const { text, fungsi } = props;
+  const { text, fungsi, variant = "standar", optional = "img" } = props;
+  const variants = {
+    w_full:
+      "border border-gray-300 rounded text-sm text-gray-600 px-4 flex items-center h-[40px] w-full",
+    standar:
+      "border border-gray-300 rounded text-sm text-gray-600 px-4 flex items-center h-[40px] min-w-[200px]",
+  };
+  const optionals = {
+    img: "PNG, JPG, JPEG | Max size 5MB",
+    excel: "XLXS, XLS",
+  };
   return (
     <fieldset>
       <legend className="text-sm font-semibold text-gray-700">{text}</legend>
-      <div className="flex items-center">
-        <label className="relative inline-block">
+      <div className="flex items-center w-full">
+        <label className="relative inline-block shrink-0">
           <input
             type="file"
             accept="image/jpg, image/png, image/jpeg"
@@ -15,15 +25,12 @@ export default function InputFile(props) {
             Pilih File
           </span>
         </label>
-        <div
-          id="file-name"
-          className="border border-gray-300 rounded text-sm text-gray-600 px-4 flex items-center h-[40px] min-w-[200px]"
-        >
+        <div id="file-name" className={`${variants[variant]} truncate`}>
           No file chosen
         </div>
       </div>
       <label className="text-xs text-gray-500 mt-2 block">
-        PNG, JPG, JPEG | Max size 5MB
+        {optionals[optional]}
       </label>
     </fieldset>
   );

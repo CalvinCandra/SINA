@@ -24,11 +24,6 @@ const DataPelajaran = [
     mata_pelajar: "Bahasa India",
     kkm: 75,
   },
-  {
-    id: 6,
-    mata_pelajar: "Bahasa Rusia",
-    kkm: 75,
-  },
 ];
 
 export default DataPelajaran;

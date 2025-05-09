@@ -7,8 +7,20 @@ import DinamisSelect from "../../../component/Input/DinamisSelect";
 import Toast from "../../../component/Toast/Toast";
 import Loading from "../../../component/Loading/Loading";
 import { useNavigate } from "react-router-dom";
+import DataGuruu from "../../../data/Guru/DataGuruu";
+import DataTahun from "../../../data/Akademik/Tahun Akademik/DataTahun";
 
 export default function TambahKelas() {
+  const WaliKelas = DataGuruu.map((item) => ({
+    value: item.nama,
+    label: item.nama,
+  }));
+
+  const TahunAkademik = DataTahun.map((item) => ({
+    value: `${item.tgl_mulai} - ${item.tgl_akhir}`,
+    label: `${item.tgl_mulai} - ${item.tgl_akhir}`,
+  }));
+
   const navigate = useNavigate();
   const [jenjang, setJenjang] = useState("");
   const [tingkat, setTingkat] = useState("");
@@ -54,44 +66,6 @@ export default function TambahKelas() {
   const handleTingkatChange = (e) => {
     setTingkat(e.target.value);
   };
-
-  const WaliKelas = [
-    {
-      value: "Guru Draviin",
-      label: "Guru Draviin",
-    },
-    {
-      value: "Guru Oka",
-      label: "Guru Oka",
-    },
-    {
-      value: "Guru Willy",
-      label: "Guru Willy",
-    },
-    {
-      value: "Guru IGLOW",
-      label: "Guru IGLOW",
-    },
-  ];
-
-  const TahunAkademik = [
-    {
-      value: "15 Januari 2022 - 20 Januari 2023",
-      label: "15 Januari 2022 - 20 Januari 2023",
-    },
-    {
-      value: "15 Januari 2023 - 20 Januari 2024",
-      label: "15 Januari 2023 - 20 Januari 2024",
-    },
-    {
-      value: "15 Januari 2024 - 20 Januari 2025",
-      label: "15 Januari 2024 - 20 Januari 2025",
-    },
-    {
-      value: "15 Januari 2025 - 20 Januari 2026",
-      label: "15 Januari 2025 - 20 Januari 2026",
-    },
-  ];
 
   const handleSubmit = (e) => {
     e.preventDefault();
