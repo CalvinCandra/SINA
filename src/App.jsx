@@ -27,6 +27,10 @@ import DetailPengumuman from "./Dashboard/pages/Pengumuman/DetailPengumuman";
 import UpdatePengumuman from "./Dashboard/pages/Pengumuman/UpdatePengumuman";
 import Profile from "./Dashboard/pages/Profile";
 import MiddlewareLogin from "./utils/middlewareLogin";
+import Jadwal from "./Dashboard/pages/Akademik/Jadwal/Jadwal";
+import JadwalKelas from "./Dashboard/pages/Akademik/Jadwal/JadwalKelas";
+import TambahJadwalKelas from "./Dashboard/pages/Akademik/Jadwal/TambahJadwalKelas";
+import EditJadwalKelas from "./Dashboard/pages/Akademik/Jadwal/EditJadwalKelas";
 
 function App() {
   return (
@@ -88,6 +92,21 @@ function App() {
         <Route
           path="akademik/mata-pelajaran/update"
           element={<UpdateMataPelajaran />}
+        />
+
+        {/* Jadwal Pelajaran */}
+        <Route path="akademik/jadwal" element={<Jadwal />} />
+        <Route
+          path="akademik/jadwal-kelas/:idKelas"
+          element={<JadwalKelas />}
+        />
+        <Route
+          path="akademik/jadwal-kelas/:id/tambah"
+          element={<TambahJadwalKelas />}
+        />
+        <Route
+          path="akademik/jadwal-kelas/:id/edit/:jadwalId"
+          element={<EditJadwalKelas />}
         />
 
         {/* Guru */}
