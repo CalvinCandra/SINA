@@ -5,30 +5,17 @@ import InputFile from "../../../../component/Input/InputFile";
 import ButtonHref from "../../../../component/Button/ButtonHref";
 import SelectField from "../../../../component/Input/SelectField";
 import Textarea from "../../../../component/Input/Textarea";
+import { useNavigate } from "react-router-dom";
+import Toast from "../../../../component/Toast/Toast";
+import Loading from "../../../../component/Loading/Loading";
 
 export default function TambahDataGuru() {
+  const navigate = useNavigate();
   const [preview, setPreview] = useState(
     "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
   );
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result);
-        document.getElementById("file-name").textContent = file.name;
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setPreview(
-        "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
-      );
-      document.getElementById("file-name").textContent = "No file chosen";
-    }
-  };
-
-  const agama = [
+  const agamaOption = [
     {
       value: "Hindu",
       label: "Hindu",
@@ -51,7 +38,7 @@ export default function TambahDataGuru() {
     },
   ];
 
-  const kelamin = [
+  const kelaminOption = [
     {
       value: "Laki - Laki",
       label: "Laki - Laki",
@@ -62,8 +49,141 @@ export default function TambahDataGuru() {
     },
   ];
 
+  const [namaGuru, setNamaGuru] = useState("");
+  const [nipGuru, setNipGuru] = useState("");
+  const [emailGuru, setEmailGuru] = useState("");
+  const [telp, setTelp] = useState("");
+  const [agamaGuru, setAgama] = useState("");
+  const [tempat_lahir, setTempatLahir] = useState("");
+  const [tgl_lahir, setTglLahir] = useState("");
+  const [kelaminGuru, setKelamin] = useState("");
+  const [alamat, setAlamat] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastVariant, setToastVariant] = useState("");
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+      const fileSizeLimit = 5 * 1024 * 1024; // 5MB limit
+
+      if (!allowedTypes.includes(file.type)) {
+        setToastMessage("File harus berformat PNG, JPG, atau JPEG");
+        setToastVariant("error");
+        setPreview(
+          "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
+        );
+        document.getElementById("file-name").textContent = "No file chosen";
+        return;
+      }
+
+      if (file.size > fileSizeLimit) {
+        setToastMessage("Ukuran file terlalu besar. Maksimum 5MB.");
+        setToastVariant("error");
+        setPreview(
+          "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
+        );
+        document.getElementById("file-name").textContent = "No file chosen";
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result);
+        document.getElementById("file-name").textContent = file.name;
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // reset pesan toast terlebih dahulu
+    setToastMessage("");
+    setToastVariant("");
+
+    // Validasi input
+    if (
+      preview ===
+      "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
+    ) {
+      setTimeout(() => {
+        setToastMessage("Gambar wajib diisi");
+        setToastVariant("error");
+      }, 10);
+      return;
+    }
+
+    if (
+      namaGuru.trim() === "" ||
+      emailGuru.trim() === "" ||
+      telp.trim() === "" ||
+      agamaGuru.trim() === "" ||
+      tempat_lahir.trim() === "" ||
+      tgl_lahir.trim() === "" ||
+      kelaminGuru.trim() === "" ||
+      alamat.trim() === ""
+    ) {
+      setTimeout(() => {
+        setToastMessage("Kolom Input tidak boleh kosong");
+        setToastVariant("error");
+      }, 10);
+      return;
+    }
+
+    setIsLoading(true);
+
+    // Ambil data yang sudah ada di localStorage
+    const storedGuru = JSON.parse(localStorage.getItem("guruList")) || [];
+
+    const lastId =
+      storedGuru.length > 0
+        ? Math.max(...storedGuru.map((item) => item.id))
+        : 0;
+
+    // Membuat data baru
+    const newGuru = {
+      id: lastId + 1, // id auto increment
+      image: preview,
+      nama: namaGuru,
+      nip: nipGuru,
+      email: emailGuru,
+      telp: telp,
+      agama: agamaGuru,
+      tempat_lahir: tempat_lahir,
+      tgl_lahir: new Date(tgl_lahir).toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }),
+      kelamin: kelaminGuru,
+      alamat: alamat,
+      tgl: new Date().toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }),
+    };
+
+    // Tambahkan baru ke data
+    const tambah = [...storedGuru, newGuru];
+
+    // Simpan data ke localStorage
+    localStorage.setItem("guruList", JSON.stringify(tambah));
+
+    // Simpan status berhasil tambah
+    localStorage.setItem("guruAdded", "success");
+
+    setTimeout(() => {
+      setIsLoading(false);
+      navigate("/dashboard/guru");
+    }, 2000);
+  };
   return (
     <div className="lg:py-5">
+      {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
       <div className="w-full p-5 rounded-md bg-white mt-5">
         {/* Header Table */}
         <div className="w-full flex flex-col lg:flex-row justify-between items-center mb-5">
@@ -73,7 +193,7 @@ export default function TambahDataGuru() {
         <hr className="border-border-grey border"></hr>
 
         {/* Form */}
-        <form>
+        <form onSubmit={handleSubmit}>
           {/* Gambar */}
           <div className="flex flex-col justify-center items-center">
             <div className="p-1 w-60 h-64 my-3 overflow-hidden">
@@ -95,7 +215,8 @@ export default function TambahDataGuru() {
                   Nama Lengkap <span className="text-red-500">*</span>
                 </span>
                 type="text"
-                name="nama_guru"
+                value={namaGuru}
+                onChange={(e) => setNamaGuru(e.target.value)}
                 variant="biasa_text_sm"
               ></FieldInput>
             </div>
@@ -103,23 +224,50 @@ export default function TambahDataGuru() {
             <div className="w-full lg:w-1/2 lg:ms-1">
               <FieldInput
                 text=<span>
-                  Email Guru <span className="text-red-500">*</span>
+                  NIP Guru <span className="text-red-500">*</span>
                 </span>
-                type="email"
-                name="email"
+                type="number"
+                value={nipGuru}
+                onChange={(e) => setNipGuru(e.target.value)}
                 variant="biasa_text_sm"
               ></FieldInput>
             </div>
           </div>
 
-          <div className="w-full flex flex-col lg:flex-row justify-between mt-5">
+          <div className="w-full flex flex-col lg:flex-row justify-between">
+            <div className="w-full lg:w-1/2 lg:me-1">
+              <FieldInput
+                text=<span>
+                  Email Guru <span className="text-red-500">*</span>
+                </span>
+                type="email"
+                value={emailGuru}
+                onChange={(e) => setEmailGuru(e.target.value)}
+                variant="biasa_text_sm"
+              ></FieldInput>
+            </div>
+            <div className="w-full lg:w-1/2 lg:ms-1">
+              <FieldInput
+                text=<span>
+                  No telepon <span className="text-red-500">*</span>
+                </span>
+                type="text"
+                value={telp}
+                onChange={(e) => setTelp(e.target.value)}
+                variant="biasa_text_sm"
+              ></FieldInput>
+            </div>
+          </div>
+
+          <div className="w-full flex flex-col lg:flex-row justify-between">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>
                   Tempat Lahir <span className="text-red-500">*</span>
                 </span>
                 type="text"
-                name="tempat_lahir"
+                value={tempat_lahir}
+                onChange={(e) => setTempatLahir(e.target.value)}
                 variant="biasa_text_sm"
               ></FieldInput>
             </div>
@@ -130,36 +278,39 @@ export default function TambahDataGuru() {
                   Tanggal Lahir <span className="text-red-500">*</span>
                 </span>
                 type="date"
-                name="tgl_lahir"
+                value={tgl_lahir}
+                onChange={(e) => setTglLahir(e.target.value)}
                 variant="biasa_text_sm"
               ></FieldInput>
             </div>
           </div>
 
-          <div className="w-full flex flex-col lg:flex-row justify-between mt-5">
+          <div className="w-full flex flex-col lg:flex-row justify-between">
             <div className="w-full lg:w-1/2 lg:me-1">
-              <FieldInput
-                text=<span>
-                  No telepon <span className="text-red-500">*</span>
-                </span>
-                type="text"
-                name="telp"
-                variant="biasa_text_sm"
-              ></FieldInput>
+              <SelectField
+                text="Agama"
+                option={agamaOption}
+                value={agamaGuru}
+                onChange={(e) => setAgama(e.target.value)}
+              ></SelectField>
             </div>
-
-            <div className="w-full lg:w-1/2 lg:me-1">
-              <SelectField text="Agama" option={agama}></SelectField>
-            </div>
-            <div className="w-full lg:w-1/2 lg:me-1">
-              <SelectField text="Jenis Kelamin" option={kelamin}></SelectField>
+            <div className="w-full lg:w-1/2 lg:ms-1">
+              <SelectField
+                text="Jenis Kelamin"
+                option={kelaminOption}
+                value={kelaminGuru}
+                onChange={(e) => setKelamin(e.target.value)}
+              ></SelectField>
             </div>
           </div>
-          <div className="w-full mt-5">
+
+          <div className="w-full">
             <Textarea
               text=<span>
                 Alamat <span className="text-red-500">*</span>
               </span>
+              value={alamat}
+              onChange={(e) => setAlamat(e.target.value)}
             ></Textarea>
           </div>
 
@@ -173,7 +324,11 @@ export default function TambahDataGuru() {
               ></ButtonHref>
             </div>
             <div className="w-40">
-              <Button text="Tambah Guru" variant="button_submit_dash"></Button>
+              <Button
+                text={isLoading ? <Loading /> : "Tambah Guru"}
+                variant="button_submit_dash"
+                disabled={isLoading}
+              ></Button>
             </div>
           </div>
         </form>

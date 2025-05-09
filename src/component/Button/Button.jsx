@@ -1,5 +1,5 @@
 export default function Button(props) {
-  const { text, variant } = props;
+  const { text, variant, disabled } = props;
   const variants = {
     button_submit_dash:
       "w-full bg-biru-primary text-sm hover:bg-biru-hover py-2 font-semibold text-white rounded cursor-pointer",
@@ -9,7 +9,7 @@ export default function Button(props) {
       "w-full bg-red-500 text-sm hover:bg-red-600 py-2 font-semibold text-white rounded cursor-pointer",
   };
   return (
-    <button type="submit" className={variants[variant]}>
+    <button type="submit" className={variants[variant]} disabled={disabled}>
       {text}
     </button>
   );
