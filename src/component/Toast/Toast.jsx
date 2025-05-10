@@ -12,20 +12,20 @@ export default function Toast(props) {
 
   const variants = {
     error: (
-      <div className="w-[500px] bg-red-500 flex justify-between p-3 rounded-md">
+      <div className="lg:w-[500px] w-[350px] bg-red-500 flex justify-between p-3 rounded-md">
         <div className="flex w-full">
           <ExclamationTriangleIcon className="w-6 h-6 me-2" />
-          <span className="w-[90%]">
+          <span className="w-[90%] text-sm md:text-lg">
             <b>Error !</b> {text}.
           </span>
         </div>
       </div>
     ),
     success: (
-      <div className="w-[500px] bg-hijau-success flex justify-between p-3 rounded-md">
+      <div className="lg:w-[500px] w-[350px] bg-hijau-success flex justify-between p-3 rounded-md">
         <div className="flex w-full">
           <CheckCircleIcon className="w-6 h-6 me-2" />
-          <span className="w-[90%]">
+          <span className="w-[90%] text-sm md:text-lg">
             <b>Success !</b> {text}.
           </span>
         </div>
@@ -50,7 +50,7 @@ export default function Toast(props) {
 
   return (
     <div
-      className={`toast toast-top toast-end z-[999] transition-all duration-300 transform ${
+      className={`toast toast-top toast-right z-[999] transition-all duration-300 transform ${
         animating ? "scale-50 opacity-0" : "scale-100 opacity-100"
       }`}
     >

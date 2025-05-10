@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
 import FieldInput from "../../component/Input/FieldInput";
 import Button from "../../component/Button/Button";
 import InputFile from "../../component/Input/InputFile";
@@ -8,12 +9,35 @@ import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 export default function Profile() {
   const [namaAdmin, setNamaAdmin] = useState("");
   const [emailAdmin, setEmailAdmin] = useState("");
+  const [passSekarang, setpassSekarang] = useState("");
+  const [passBaru, setpassBaru] = useState("");
+  const [passKonfirm, setpassKonfrim] = useState("");
+  const [Gambar, setGambar] = useState(
+    "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
+  );
 
-  const [Password, setPassword] = useState(true);
-  // Fungsi untuk toggle tipe input
-  const togglePasswordVisibility = () => {
-    setPassword((prevPassword) => !prevPassword);
-  };
+  const [showPassLama, setShowPassLama] = useState(true);
+  const [showPassBaru, setShowPassBaru] = useState(true);
+  const [ShowPassKonfirm, setShowPassKonfirm] = useState(true);
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("session");
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+
+        console.log(decoded);
+
+        setNamaAdmin(decoded.userId);
+        setEmailAdmin(decoded.email);
+        if (decoded.Image) {
+          setGambar(decoded.Image);
+        }
+      } catch (error) {
+        console.error("Token tidak valid:", error);
+      }
+    }
+  }, []);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -64,7 +88,7 @@ export default function Profile() {
           <div className="flex flex-col justify-center items-center">
             <div className="p-1 w-60 h-64 my-3 overflow-hidden">
               <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                src={Gambar}
                 alt="Preview"
                 id="ImagePreview"
                 className="w-full h-full object-object rounded"
@@ -106,42 +130,64 @@ export default function Profile() {
           </div>
 
           <div className="w-full flex flex-col lg:flex-row justify-between">
-            <div className="w-full lg:w-1/2 lg:me-1">
+            <div className="w-full lg:w-1/2">
               <div className="w-full relative">
                 <FieldInput
-                  text="Password Baru"
-                  type={`${Password ? "password" : "text"}`}
+                  text="Password Lama"
+                  type={`${showPassLama ? "password" : "text"}`}
                   variant="biasa_text_base"
-                  name="password"
+                  value={passSekarang}
+                  onChange={(e) => setpassSekarang(e.target.value)}
                 ></FieldInput>
 
-                <span onClick={togglePasswordVisibility}>
-                  {Password ? (
-                    <EyeIcon className="absolute w-10 h-5 bottom-3.5 right-2 cursor-pointer"></EyeIcon>
+                <span onClick={() => setShowPassLama(!showPassLama)}>
+                  {showPassLama ? (
+                    <EyeIcon className="absolute w-10 h-5 bottom-3.5 right-1 cursor-pointer"></EyeIcon>
                   ) : (
-                    <EyeSlashIcon className="absolute w-10 h-5 bottom-3.5 right-2 cursor-pointer"></EyeSlashIcon>
+                    <EyeSlashIcon className="absolute w-10 h-5 bottom-3.5 right-1 cursor-pointer"></EyeSlashIcon>
                   )}
                 </span>
               </div>
             </div>
 
-            <div className="w-full lg:w-1/2 lg:ms-1">
+            <div className="w-full lg:w-1/2 lg:mx-2">
               <div className="w-full relative">
                 <FieldInput
                   text="Password Baru"
-                  type={`${Password ? "password" : "text"}`}
+                  type={`${showPassBaru ? "password" : "text"}`}
                   variant="biasa_text_base"
-                  name="password"
+                  value={passBaru}
+                  onChange={(e) => setpassBaru(e.target.value)}
                 ></FieldInput>
 
-                <span onClick={togglePasswordVisibility}>
-                  {Password ? (
-                    <EyeIcon className="absolute w-10 h-5 bottom-3.5 right-2 cursor-pointer"></EyeIcon>
+                <span onClick={() => setShowPassBaru(!showPassBaru)}>
+                  {showPassBaru ? (
+                    <EyeIcon className="absolute w-10 h-5 bottom-3.5 right-1 cursor-pointer"></EyeIcon>
                   ) : (
-                    <EyeSlashIcon className="absolute w-10 h-5 bottom-3.5 right-2 cursor-pointer"></EyeSlashIcon>
+                    <EyeSlashIcon className="absolute w-10 h-5 bottom-3.5 right-1 cursor-pointer"></EyeSlashIcon>
                   )}
                 </span>
               </div>
+            </div>
+
+            <div className="w-full lg:w-1/2">
+              <div className="w-full relative">
+                <FieldInput
+                  text="Password Baru"
+                  type={`${ShowPassKonfirm ? "password" : "text"}`}
+                  variant="biasa_text_base"
+                  value={passKonfirm}
+                  onChange={(e) => setpassKonfrim(e.target.value)}
+                ></FieldInput>
+
+                <span onClick={() => setShowPassKonfirm(!ShowPassKonfirm)}>
+                  {ShowPassKonfirm ? (
+                    <EyeIcon className="absolute w-10 h-5 bottom-3.5 right-1 cursor-pointer"></EyeIcon>
+                  ) : (
+                    <EyeSlashIcon className="absolute w-10 h-5 bottom-3.5 right-1 cursor-pointer"></EyeSlashIcon>
+                  )}
+                </span>
+              </div>  
             </div>
           </div>
 

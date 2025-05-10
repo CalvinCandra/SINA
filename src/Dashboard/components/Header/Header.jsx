@@ -1,13 +1,19 @@
 import Bars3Icon from "@heroicons/react/24/outline/Bars3Icon";
+import { jwtDecode } from "jwt-decode";
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import {
   ArrowLeftStartOnRectangleIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
+import { useEffect, useState } from "react";
 
 function Header() {
   const navigate = useNavigate(); // Hook untuk navigasi
+  const [Nama, setNama] = useState("");
+  const [Gambar, setGambar] = useState(
+    "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
+  );
 
   const handleLogout = (e) => {
     e.preventDefault();
@@ -16,6 +22,23 @@ function Header() {
     navigate("/");
     window.location.reload();
   };
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("session");
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+
+        setNama(decoded.userId);
+        if (decoded.Image) {
+          setGambar(decoded.Image);
+        }
+      } catch (error) {
+        console.error("Token tidak valid:", error);
+      }
+    }
+  }, []);
+
   return (
     <div className="navbar sticky top-0 z-10 bg-white">
       {/* Sidebar toggle for mobile */}
@@ -39,15 +62,12 @@ function Header() {
             <div className="w-10 h-10 overflow-hidden rounded-full">
               {/* Avatar */}
               <div className="w-full object-cover">
-                <img
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                  alt="profile"
-                />
+                <img src={Gambar} alt="profile" />
               </div>
             </div>
 
             {/* Nama Pengguna */}
-            <h1 className="text-sm font-semibold ms-2">Super Admin</h1>
+            <h1 className="text-sm font-semibold ms-2">{Nama}</h1>
 
             {/* Ikon panah dropdown */}
             <ChevronDownIcon className="w-5 h-5 ml-2" />

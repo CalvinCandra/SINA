@@ -5,37 +5,61 @@ import { useNavigate, useParams } from "react-router-dom";
 import Loading from "../../../../component/Loading/Loading";
 import Toast from "../../../../component/Toast/Toast";
 import { useState, useEffect } from "react";
+import axios from "axios";
+import baseUrl from "../../../../utils/config/baseUrl";
 
 export default function UpdateMataPelajaran() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [namaPelajaran, setNamaPelajaran] = useState("");
+  const [nama_mapel, setNamaMapel] = useState("");
   const [kkm, setKkm] = useState("");
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  // get token
+  const token = sessionStorage.getItem("session");
+
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("pelajaranList")) || [];
-    const foundData = stored.find((item) => item.id === parseInt(id));
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.get(
+          `${baseUrl.apiUrl}/admin/mapel/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-    if (!foundData) {
-      localStorage.setItem("pelajaranInvalid", "error");
-      navigate("/dasboard/akademik/mata-pelajaran");
-    }
+        setNamaMapel(response.data.nama_mapel);
+        setKkm(response.data.kkm);
+      } catch (error) {
+        console.error("Gagal mengambil data:", error);
+        setToastMessage("Data tidak ditemukan");
+        setToastVariant("error");
 
-    setNamaPelajaran(foundData.mata_pelajar);
-    setKkm(foundData.kkm);
+        // Redirect jika tidak ditemukan
+        // setTimeout(() => {
+        //   navigate("/dashboard/akademik/mata-pelajaran");
+        // }, 2000);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
   }, [id]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // reset pesan toast
     setToastMessage("");
     setToastVariant("");
 
-    if (namaPelajaran.trim() === "" || kkm.trim() === "") {
+    if (nama_mapel.trim() === "" || String(kkm).trim() === "") {
       setTimeout(() => {
         setToastMessage("Nama Mata Pelajaran atau KKM tidak boleh kosong");
         setToastVariant("error");
@@ -45,25 +69,50 @@ export default function UpdateMataPelajaran() {
 
     setIsLoading(true);
 
-    const storedPelajaran = JSON.parse(localStorage.getItem("pelajaranList"));
+    try {
+      const response = await axios.put(
+        `${baseUrl.apiUrl}/admin/mapel/${id}`,
+        {
+          nama_mapel: nama_mapel,
+          kkm: kkm,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    const updated = storedPelajaran.map((item) =>
-      item.id === parseInt(id)
-        ? {
-            ...item,
-            mata_pelajar: namaPelajaran,
-            kkm: kkm,
-          }
-        : item
-    );
+      if (response.status === 200) {
+        localStorage.setItem("pelajaranUpdate", "success");
 
-    localStorage.setItem("pelajaranList", JSON.stringify(updated));
-    localStorage.setItem("pelajaranUpdate", "success");
+        setTimeout(() => {
+          setIsLoading(false);
+          navigate("/dashboard/akademik/mata-pelajaran");
+        }, 2000);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      // Menangani error yang dikirimkan oleh server
+      let errorMessage = "Gagal Tambah";
 
-    setTimeout(() => {
-      setIsLoading(false);
-      navigate("/dashboard/akademik/mata-pelajaran");
-    }, 2000);
+      if (error.response && error.response.data.message) {
+        // Jika error dari server ada di response.data
+        if (error.response.data.message) {
+          errorMessage = error.response.data.message; // Tampilkan pesan dari server jika ada
+        }
+      } else {
+        // Jika error tidak ada response dari server
+        errorMessage = error.message;
+      }
+
+      setIsLoading(false); // jangan lupa set false
+      setTimeout(() => {
+        setToastMessage(`${errorMessage}`);
+        setToastVariant("error");
+      }, 10);
+      return;
+    }
   };
   return (
     <div className="lg:py-5 min-h-screen lg:min-h-0">
@@ -86,8 +135,8 @@ export default function UpdateMataPelajaran() {
               </span>
               type="text"
               variant="biasa_text_sm"
-              value={namaPelajaran}
-              onChange={(e) => setNamaPelajaran(e.target.value)}
+              value={nama_mapel}
+              onChange={(e) => setNamaMapel(e.target.value)}
             ></FieldInput>
           </div>
 
