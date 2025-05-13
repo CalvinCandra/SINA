@@ -8,15 +8,123 @@ import {
   DocumentMagnifyingGlassIcon,
 } from "@heroicons/react/16/solid";
 import Button from "../../../../component/Button/Button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DataGuruu from "../../../../data/Guru/DataGuruu";
+import Toast from "../../../../component/Toast/Toast";
+import Loading from "../../../../component/Loading/Loading";
 
 export default function DataGuru() {
   // simpan data
+  const [isLoading, setIsLoading] = useState(false);
+  const [dataGuru, setdataGuru] = useState([]);
   const [selectedGuru, setSelectedGuru] = useState(null);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastVariant, setToastVariant] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const dataPerPage = 5;
+
+  useEffect(() => {
+    const fetchData = () => {
+      const storedData = localStorage.getItem("guruList");
+      if (!storedData || storedData === "undefined") {
+        localStorage.setItem("guruList", JSON.stringify(DataGuruu));
+        setdataGuru(DataGuruu);
+      } else {
+        try {
+          const parsedData = JSON.parse(storedData);
+          setdataGuru(parsedData);
+        } catch (e) {
+          console.error("Data di localStorage rusak:", e);
+          setdataGuru(DataGuruu); // fallback
+        }
+      }
+    };
+
+    // Tampilkan toast bila tambah atau update berhasil
+    const invalidStatus = localStorage.getItem("guruInvalid");
+    const addedStatus = localStorage.getItem("guruAdded");
+    const updateStatus = localStorage.getItem("guruUpdate");
+    const deleteStatus = localStorage.getItem("guruDelete");
+
+    if (invalidStatus === "error") {
+      setToastMessage("Guru Tidak ditemukan");
+      setToastVariant("error");
+      localStorage.removeItem("guruInvalid");
+    }
+
+    if (addedStatus === "success") {
+      setToastMessage("Guru berhasil ditambahkan");
+      setToastVariant("success");
+      localStorage.removeItem("guruAdded");
+    }
+
+    if (updateStatus === "success") {
+      setToastMessage("Guru berhasil diupdate");
+      setToastVariant("success");
+      localStorage.removeItem("guruUpdate");
+    }
+
+    if (deleteStatus === "success") {
+      setToastMessage("Guru berhasil dihapus");
+      setToastVariant("success");
+      localStorage.removeItem("guruDelete");
+    }
+
+    fetchData();
+
+    // Tambah event listener untuk menangani perubahan localStorage
+    const handleStorageChange = () => {
+      fetchData();
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
+  // Pagination
+  const indexOfLastData = currentPage * dataPerPage;
+  const indexOfFirstData = indexOfLastData - dataPerPage;
+  const currentData = dataGuru
+    .sort((a, b) => b.id - a.id)
+    .slice(indexOfFirstData, indexOfLastData);
+  const totalPages = Math.ceil(dataGuru.length / dataPerPage);
+
+  // Hapus (method kosong, Anda bisa implementasikan)
+  const handleDeleteGuru = (e) => {
+    e.preventDefault();
+
+    if (!selectedGuru) return;
+
+    setIsLoading(true); // Set loading state
+
+    // Hapus admin dari data
+    const filteredData = dataGuru.filter((item) => item.id !== selectedGuru.id);
+
+    // Simpan data yang sudah dihapus ke localStorage
+    localStorage.setItem("guruList", JSON.stringify(filteredData));
+
+    // reset
+    setToastMessage("");
+    setToastVariant("");
+
+    // Simulasi delay untuk loading
+    setTimeout(() => {
+      setIsLoading(false); // Reset loading state
+      setdataGuru(filteredData); // Update state dataAdmin
+      setSelectedGuru(null); // Reset selectedAdmin
+      // Set toast message setelah berhasil hapus
+      setToastMessage("Guru berhasil dihapus");
+      setToastVariant("success");
+      document.getElementById("my_modal_3").close(); // Tutup modal
+    }, 1000); // Delay 2 detik
+  };
 
   return (
     <div className="lg:py-5">
+      {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
       <div className="flex flex-col lg:flex-row w-full justify-between items-center">
         <h2 className="text-2xl font-semibold">Guru</h2>
         <Calender className="w-40 lg:w-full"></Calender>
@@ -39,7 +147,7 @@ export default function DataGuru() {
 
         {/* Table */}
         <div className="overflow-x-auto w-full">
-          {DataGuruu && DataGuruu.length > 0 ? (
+          {currentData && currentData.length > 0 ? (
             <table className="table w-full">
               <thead>
                 <tr className="border-b border-t border-border-grey">
@@ -51,7 +159,7 @@ export default function DataGuru() {
                 </tr>
               </thead>
               <tbody>
-                {DataGuruu.map((data, index) => (
+                {currentData.map((data, index) => (
                   <tr
                     className="border-b border-t border-border-grey"
                     key={data.id}
@@ -91,7 +199,7 @@ export default function DataGuru() {
                         </button>
                         |
                         <ButtonHref
-                          href="/dashboard/guru/update"
+                          href={`/dashboard/guru/update/${data.id}`}
                           variant="update"
                           text=<PencilSquareIcon className="w-5 h-5 text-amber-300"></PencilSquareIcon>
                         ></ButtonHref>
@@ -113,7 +221,7 @@ export default function DataGuru() {
             </table>
           ) : (
             <div className="italic text-gray-400 mt-5 text-center">
-              Data Tahun Kurikulum Belum Ada
+              Data Guru Belum Ada
             </div>
           )}
         </div>
@@ -122,24 +230,26 @@ export default function DataGuru() {
       {/* Pagination */}
       <div className="flex flex-col lg:flex-row justify-between items-center w-full my-4">
         <p className="text-sm mb-3 lg:mb-0">
-          Menampilkan Data 5 Dari 100 Data Guru
+          Menampilkan Data {indexOfFirstData + 1} -{" "}
+          {indexOfLastData > dataGuru.length
+            ? dataGuru.length
+            : indexOfLastData}{" "}
+          dari {dataGuru.length} Data Guru
         </p>
         <div className="join">
-          <button className="join-item btn border-0 rounded-ss rounded-es bg-biru-primary text-white">
-            1
-          </button>
-          <button className="join-item btn border-0 bg-biru-primary text-white">
-            2
-          </button>
-          <button className="join-item btn border-0 bg-gray-400 text-white">
-            ...
-          </button>
-          <button className="join-item btn border-0 bg-biru-primary text-white">
-            99
-          </button>
-          <button className="join-item btn border-0 rounded-se rounded-ee bg-biru-primary text-white">
-            100
-          </button>
+          {[...Array(totalPages)].map((_, index) => (
+            <button
+              key={index}
+              className={`join-item btn border-0 ${
+                currentPage === index + 1
+                  ? "bg-biru-primary text-white"
+                  : "bg-gray-200 text-black"
+              }`}
+              onClick={() => setCurrentPage(index + 1)}
+            >
+              {index + 1}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -164,6 +274,10 @@ export default function DataGuru() {
                     <tr className="border-y border-border-grey">
                       <td className="text-lg font-bold">Nama :</td>
                       <td className="text-lg">{selectedGuru.nama}</td>
+                    </tr>
+                    <tr className="border-y border-border-grey">
+                      <td className="text-lg font-bold">NIP :</td>
+                      <td className="text-lg">{selectedGuru.nip}</td>
                     </tr>
                     <tr className="border-y border-border-grey">
                       <td className="text-lg font-bold">Email :</td>
@@ -223,9 +337,12 @@ export default function DataGuru() {
               <form method="dialog" className="w-full me-1">
                 <Button variant="button_submit_cancel" text="Cancel"></Button>
               </form>
-              <form className="w-full ms-1">
+              <form className="w-full ms-1" onSubmit={handleDeleteGuru}>
                 <div className="w-full">
-                  <Button variant="button_submit_dash" text="Hapus"></Button>
+                  <Button
+                    variant="button_submit_dash"
+                    text={isLoading ? <Loading /> : "Hapus"}
+                  ></Button>
                 </div>
               </form>
             </div>

@@ -5,7 +5,6 @@ import {
   UserIcon,
   BookOpenIcon,
   UserGroupIcon,
-  ArrowLeftStartOnRectangleIcon,
   InformationCircleIcon,
 } from "@heroicons/react/24/outline";
 import ImageImport from "../../../data/ImageImport";
@@ -68,6 +67,30 @@ function Sidebar() {
       localStorage.removeItem("tahunList");
     }
   }, [isTahunAkademikActive]); // Memantau perubahan path
+
+  // useEffect untuk menghapus localStorage saat berpindah dari halaman
+  useEffect(() => {
+    // Jika berpindah dari halaman
+    if (!isMataPelajaranActive) {
+      localStorage.removeItem("pelajaranList");
+    }
+  }, [isMataPelajaranActive]); // Memantau perubahan path
+
+  // useEffect untuk menghapus localStorage saat berpindah dari halaman
+  useEffect(() => {
+    // Jika berpindah dari halaman
+    if (!isGuruActive) {
+      localStorage.removeItem("guruList");
+    }
+  }, [isGuruActive]); // Memantau perubahan path
+
+  // useEffect untuk menghapus localStorage saat berpindah dari halaman
+  useEffect(() => {
+    // Jika berpindah dari halaman
+    if (!isSiswaActive) {
+      localStorage.removeItem("siswaList");
+    }
+  }, [isSiswaActive]); // Memantau perubahan path
 
   return (
     <div className="drawer-side z-30 shadow-black shadow-md font-semibold">
@@ -275,13 +298,13 @@ function Sidebar() {
         </li>
 
         {/* Siswa Dropdown */}
-        <li
-          className={`mb-3 ${
-            isSiswaActive ? "bg-biru-active text-white  rounded-sm" : ""
-          }`}
-        >
+        <li className="mb-3">
           <details open={isSiswaActive}>
-            <summary className="flex items-center cursor-pointer py-2">
+            <summary
+              className={`flex items-center cursor-pointer py-2 ${
+                isSiswaActive ? "bg-biru-active text-white  rounded-sm" : ""
+              }`}
+            >
               <UserGroupIcon className="w-6 h-6 me-1" />
               <span>Siswa</span>
             </summary>
@@ -289,11 +312,9 @@ function Sidebar() {
               {/* sub menu */}
               <li className="mb-2">
                 <Link
-                  to="/dashboard/siswa/data"
+                  to="/dashboard/siswa"
                   className={`block py-1 ${
-                    path === "/dashboard/siswa/data"
-                      ? "text-black font-semibold"
-                      : "text-gray-500"
+                    isSiswaActive ? "text-black font-semibold" : "text-gray-500"
                   }`}
                 >
                   Data Siswa

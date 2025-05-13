@@ -27,6 +27,12 @@ import DetailPengumuman from "./Dashboard/pages/Pengumuman/DetailPengumuman";
 import UpdatePengumuman from "./Dashboard/pages/Pengumuman/UpdatePengumuman";
 import Profile from "./Dashboard/pages/Profile";
 import MiddlewareLogin from "./utils/middlewareLogin";
+import Siswa from "./Dashboard/pages/Siswa/Siswa";
+import DataSiswaPage from "./Dashboard/pages/Siswa/DataSiswaPage";
+import DetailSiswa from "./Dashboard/pages/Siswa/DetailSiswa";
+import TambahSiswaExcel from "./Dashboard/pages/Siswa/TambahSiswaExcel";
+import TambahSiswa from "./Dashboard/pages/Siswa/TambahSiswa";
+import UpdateSiswa from "./Dashboard/pages/Siswa/UpdateSiswa";
 import Jadwal from "./Dashboard/pages/Akademik/Jadwal/Jadwal";
 import JadwalKelas from "./Dashboard/pages/Akademik/Jadwal/JadwalKelas";
 import TambahJadwalKelas from "./Dashboard/pages/Akademik/Jadwal/TambahJadwalKelas";
@@ -90,14 +96,14 @@ function App() {
           element={<TambahMataPelajaran />}
         />
         <Route
-          path="akademik/mata-pelajaran/update"
+          path="akademik/mata-pelajaran/update/:id"
           element={<UpdateMataPelajaran />}
         />
 
         {/* Jadwal Pelajaran */}
         <Route path="akademik/jadwal" element={<Jadwal />} />
         <Route
-          path="akademik/jadwal-kelas/:idKelas"
+          path="akademik/jadwal-kelas/:nama_kelas/:tingkat"
           element={<JadwalKelas />}
         />
         <Route
@@ -105,7 +111,7 @@ function App() {
           element={<TambahJadwalKelas />}
         />
         <Route
-          path="akademik/jadwal-kelas/:id/edit/:jadwalId"
+          path="akademik/jadwal-kelas/:nama_kelas/:tingkat/update/:id"
           element={<EditJadwalKelas />}
         />
 
@@ -113,13 +119,28 @@ function App() {
         {/* Data Guru */}
         <Route path="guru" element={<DataGuru />} />
         <Route path="guru/tambah" element={<TambahDataGuru />} />
-        <Route path="guru/update" element={<UpdateDataGuru />} />
+        <Route path="guru/update/:id" element={<UpdateDataGuru />} />
         {/* Absen Guru */}
 
         {/* Siswa */}
-        <Route path="guru" element={<DataGuru />} />
-        <Route path="guru/tambah" element={<TambahDataGuru />} />
-        <Route path="guru/update" element={<UpdateDataGuru />} />
+        <Route path="siswa" element={<Siswa />} />
+        <Route path="siswa/:nama_kelas/:tingkat" element={<DataSiswaPage />} />
+        <Route
+          path="siswa/:nama_kelas/:tingkat/:id"
+          element={<DetailSiswa />}
+        />
+        <Route
+          path="siswa/:nama_kelas/:tingkat/tambahExcel"
+          element={<TambahSiswaExcel />}
+        />
+        <Route
+          path="siswa/:nama_kelas/:tingkat/tambah"
+          element={<TambahSiswa />}
+        />
+        <Route
+          path="siswa/:nama_kelas/:tingkat/update/:id"
+          element={<UpdateSiswa />}
+        />
 
         {/* Pengumuman */}
         <Route path="pengumuman" element={<Pengumuman />} />
