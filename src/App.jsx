@@ -107,7 +107,7 @@ function App() {
           element={<JadwalKelas />}
         />
         <Route
-          path="akademik/jadwal-kelas/:id/tambah"
+          path="akademik/jadwal-kelas/:nama_kelas/:tingkat/tambah"
           element={<TambahJadwalKelas />}
         />
         <Route

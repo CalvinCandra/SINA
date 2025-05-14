@@ -5,9 +5,10 @@ import Search from "../../../../component/Input/Search";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
 import Button from "../../../../component/Button/Button";
 import { useState, useEffect } from "react";
-import DataPelajaran from "../../../../data/Akademik/Mata Pelajaran/DataPelajaran";
 import Toast from "../../../../component/Toast/Toast";
 import Loading from "../../../../component/Loading/Loading";
+import axios from "axios";
+import baseUrl from "../../../../utils/config/baseUrl";
 
 export default function MataPelajaran() {
   // simpan data
@@ -19,20 +20,29 @@ export default function MataPelajaran() {
   const [currentPage, setCurrentPage] = useState(1);
   const dataPerPage = 5;
 
+  // get token
+  const token = sessionStorage.getItem("session");
+
   useEffect(() => {
-    const fetchData = () => {
-      const storedData = localStorage.getItem("pelajaranList");
-      if (!storedData || storedData === "undefined") {
-        localStorage.setItem("pelajaranList", JSON.stringify(DataPelajaran));
-        setdataPelajaran(DataPelajaran);
-      } else {
-        try {
-          const parsedData = JSON.parse(storedData);
-          setdataPelajaran(parsedData);
-        } catch (e) {
-          console.error("Data di localStorage rusak:", e);
-          setdataPelajaran(DataKurikulum); // fallback
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.get(`${baseUrl.apiUrl}/admin/mapel`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 200) {
+          setdataPelajaran(response.data);
+          console.log(response);
         }
+      } catch (error) {
+        console.error("Gagal mengambil data pelajaran:", error);
+        setToastMessage("Gagal mengambil data pelajaran");
+        setToastVariant("error");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -43,7 +53,7 @@ export default function MataPelajaran() {
     const deleteStatus = localStorage.getItem("pelajaranDelete");
 
     if (invalidStatus === "error") {
-      setToastMessage("Mata Pelajaran Tidak ditemukan");
+      setToastMessage("Data Mata Pelajaran Tidak ditemukan");
       setToastVariant("error");
       localStorage.removeItem("pelajaranInvalid");
     }
@@ -60,24 +70,7 @@ export default function MataPelajaran() {
       localStorage.removeItem("pelajaranUpdate");
     }
 
-    if (deleteStatus === "success") {
-      setToastMessage("Mata Pelajaran berhasil dihapus");
-      setToastVariant("success");
-      localStorage.removeItem("pelajaranDelete");
-    }
-
     fetchData();
-
-    // Tambah event listener untuk menangani perubahan localStorage
-    const handleStorageChange = () => {
-      fetchData();
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
   }, []);
 
   // Pagination
@@ -89,35 +82,39 @@ export default function MataPelajaran() {
   const totalPages = Math.ceil(dataPelajaran.length / dataPerPage);
 
   // Hapus
-  const handleDeletePelajaran = (e) => {
+  const handleDeletePelajaran = async (e) => {
     e.preventDefault();
-
     if (!selectedPelajaran) return;
 
-    setIsLoading(true); // Set loading state
+    setIsLoading(true);
 
-    // Hapus dari data
-    const filteredData = dataPelajaran.filter(
-      (item) => item.id !== selectedPelajaran.id
-    );
+    try {
+      await axios.delete(
+        `${baseUrl.apiUrl}/admin/mapel/${selectedPelajaran.mapel_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    // Simpan data yang sudah dihapus ke localStorage
-    localStorage.setItem("pelajaranList", JSON.stringify(filteredData));
+      // reset
+      setToastMessage("");
+      setToastVariant("");
 
-    // reset
-    setToastMessage("");
-    setToastVariant("");
-
-    // Simulasi delay untuk loading
-    setTimeout(() => {
-      setIsLoading(false); // Reset loading state
-      setdataPelajaran(filteredData); // Update state
-      setSelectedPelajaran(null); // Reset
-      // Set toast message setelah berhasil hapus
-      setToastMessage("Mata Pelajaran berhasil dihapus");
-      setToastVariant("success");
-      document.getElementById("my_modal_3").close(); // Tutup modal
-    }, 1000); // Delay 2 detik
+      // Simulasi delay untuk loading
+      setTimeout(() => {
+        setIsLoading(false); // Reset loading state
+        setToastMessage("Mata Pelajaran berhasil dihapus");
+        setToastVariant("success");
+        setSelectedPelajaran(null);
+        document.getElementById("my_modal_3").close();
+      }, 1000);
+    } catch (error) {
+      console.error("Gagal menghapus data pelajaran:", error);
+      setToastMessage("Gagal menghapus data pelajaran");
+      setToastVariant("error");
+    }
   };
 
   return (
@@ -159,15 +156,15 @@ export default function MataPelajaran() {
                 {currentData.map((data, index) => (
                   <tr
                     className="border-b border-t border-border-grey"
-                    key={data.id}
+                    key={data.mapel_id}
                   >
                     <td>{index + 1}</td>
-                    <td className="whitespace-nowrap">{data.mata_pelajar}</td>
+                    <td className="whitespace-nowrap">{data.nama_mapel}</td>
                     <td className="text-justify">{data.kkm}</td>
                     <td>
                       <div className="flex items-center justify-evenly w-20">
                         <ButtonHref
-                          href={`/dashboard/akademik/mata-pelajaran/update/${data.id}`}
+                          href={`/dashboard/akademik/mata-pelajaran/update/${data.mapel_id}`}
                           variant="update"
                           text=<PencilSquareIcon className="w-5 h-5 text-amber-300"></PencilSquareIcon>
                         ></ButtonHref>
@@ -235,7 +232,7 @@ export default function MataPelajaran() {
             {selectedPelajaran && (
               <p className="text-center my-2">
                 Anda yakin ingin menghapus data{" "}
-                <b>{selectedPelajaran.mata_pelajar}</b>?
+                <b>{selectedPelajaran.nama_mapel}</b>?
               </p>
             )}
             <div className="w-56 mx-auto p-1 flex justify-between items-center mt-4">

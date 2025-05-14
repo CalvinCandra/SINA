@@ -92,6 +92,14 @@ function Sidebar() {
     }
   }, [isSiswaActive]); // Memantau perubahan path
 
+  // useEffect untuk menghapus localStorage saat berpindah dari halaman
+  useEffect(() => {
+    // Jika berpindah dari halaman
+    if (!isJadwalActive) {
+      localStorage.removeItem("jadwalList");
+    }
+  }, [isJadwalActive]); // Memantau perubahan path
+
   return (
     <div className="drawer-side z-30 shadow-black shadow-md font-semibold">
       <label htmlFor="left-sidebar-drawer" className="drawer-overlay"></label>

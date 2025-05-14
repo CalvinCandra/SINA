@@ -5,16 +5,18 @@ import Loading from "../../../../component/Loading/Loading";
 import Toast from "../../../../component/Toast/Toast";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import axios from "axios";
+import baseUrl from "../../../../utils/config/baseUrl";
 
 export default function TambahMataPelajaran() {
   const navigate = useNavigate();
-  const [namaPelajaran, setNamaPelajaran] = useState("");
+  const [nama_mapel, setNamaMapel] = useState("");
   const [kkm, setKkm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // reset pesan toast terlebih dahulu
@@ -22,7 +24,7 @@ export default function TambahMataPelajaran() {
     setToastVariant("");
 
     // Validasi input
-    if (namaPelajaran.trim() === "") {
+    if (nama_mapel.trim() === "") {
       setTimeout(() => {
         setToastMessage("Nama mata pelajaran tidak boleh kosong");
         setToastVariant("error");
@@ -40,38 +42,56 @@ export default function TambahMataPelajaran() {
 
     setIsLoading(true);
 
-    // Ambil data admin yang sudah ada di localStorage
-    const storedPelajaran =
-      JSON.parse(localStorage.getItem("pelajaranList")) || [];
+    // get token
+    const token = sessionStorage.getItem("session");
 
-    const lastId =
-      storedPelajaran.length > 0
-        ? Math.max(...storedPelajaran.map((item) => item.id))
-        : 0;
+    try {
+      const response = await axios.post(
+        `${baseUrl.apiUrl}/admin/mapel`,
+        {
+          nama_mapel,
+          kkm,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    // Membuat data baru
-    const newPelajaran = {
-      id: lastId + 1, // id auto increment
-      mata_pelajar: namaPelajaran,
-      kkm: kkm,
-    };
+      if (response.status === 200) {
+        localStorage.setItem("pelajaranAdded", "success");
 
-    // Tambahkan data baru
-    const tambah = [...storedPelajaran, newPelajaran];
+        setTimeout(() => {
+          setIsLoading(false);
+          navigate("/dashboard/akademik/mata-pelajaran");
+        }, 2000);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      // Menangani error yang dikirimkan oleh server
+      let errorMessage = "Gagal Tambah";
 
-    // Simpan data ke localStorage
-    localStorage.setItem("pelajaranList", JSON.stringify(tambah));
+      if (error.response && error.response.data.message) {
+        // Jika error dari server ada di response.data
+        if (error.response.data.message) {
+          errorMessage = error.response.data.message; // Tampilkan pesan dari server jika ada
+        }
+      } else {
+        // Jika error tidak ada response dari server
+        errorMessage = error.message;
+      }
 
-    // Simpan status berhasil tambah
-    localStorage.setItem("pelajaranAdded", "success");
-
-    setTimeout(() => {
-      setIsLoading(false);
-      navigate("/dashboard/akademik/mata-pelajaran");
-    }, 2000);
+      setIsLoading(false); // jangan lupa set false
+      setTimeout(() => {
+        setToastMessage(`${errorMessage}`);
+        setToastVariant("error");
+      }, 10);
+      return;
+    }
   };
   return (
-    <div className="lg:py-5">
+    <div className="lg:py-5 min-h-screen lg:min-h-0">
       {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
       <div className="w-full p-5 rounded-md bg-white mt-5">
         {/* Header Table */}
@@ -91,8 +111,8 @@ export default function TambahMataPelajaran() {
               </span>
               type="text"
               variant="biasa_text_sm"
-              value={namaPelajaran}
-              onChange={(e) => setNamaPelajaran(e.target.value)}
+              value={nama_mapel}
+              onChange={(e) => setNamaMapel(e.target.value)}
             ></FieldInput>
           </div>
 

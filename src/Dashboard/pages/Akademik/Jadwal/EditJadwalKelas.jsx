@@ -12,7 +12,6 @@ import { useParams, useNavigate } from "react-router-dom";
 
 export default function EditJadwalKelas() {
   const data = useParams();
-  console.log(localStorage.getItem("jadwalList"));
   const navigate = useNavigate();
 
   const [jadwalList, setJadwalList] = useState([
@@ -45,66 +44,12 @@ export default function EditJadwalKelas() {
   ];
 
   const jamOptions = [
-    {
-      sesi: 1,
-      jamMulai: "07.15",
-      jamSelesai: "08.00",
-      label: "1 (07.15 – 08.00)",
-    },
-    {
-      sesi: 2,
-      jamMulai: "08.00",
-      jamSelesai: "08.45",
-      label: "2 (08.00 – 08.45)",
-    },
-    {
-      sesi: 3,
-      jamMulai: "08.45",
-      jamSelesai: "09.30",
-      label: "3 (08.45 – 09.30)",
-    },
-    {
-      sesi: 4,
-      jamMulai: "09.30",
-      jamSelesai: "10.15",
-      label: "4 (09.30 – 10.15)",
-    },
-    {
-      sesi: 5,
-      jamMulai: "10.15",
-      jamSelesai: "11.00",
-      label: "5 (10.15 – 11.00)",
-    },
-    {
-      sesi: 6,
-      jamMulai: "11.00",
-      jamSelesai: "11.45",
-      label: "6 (11.00 – 11.45)",
-    },
-    {
-      sesi: 7,
-      jamMulai: "11.45",
-      jamSelesai: "12.30",
-      label: "7 (11.45 – 12.30)",
-    },
-    {
-      sesi: 8,
-      jamMulai: "12.30",
-      jamSelesai: "13.15",
-      label: "8 (12.30 – 13.15)",
-    },
-    {
-      sesi: 9,
-      jamMulai: "13.15",
-      jamSelesai: "14.00",
-      label: "9 (13.15 – 14.00)",
-    },
-    {
-      sesi: 10,
-      jamMulai: "14.00",
-      jamSelesai: "14.45",
-      label: "10 (14.00 – 14.45)",
-    },
+    { value: "1 (07.15 - 08.45)", label: "1 (07.15 - 08.45)" },
+    { value: "2 (08.45 - 09.30)", label: "2 (08.45 - 09.30)" },
+    { value: "3 (09.45 - 10.30)", label: "3 (09.45 - 10.30)" },
+    { value: "4 (10.30 - 11.15)", label: "4 (10.30 - 11.15)" },
+    { value: "5 (11.30 - 12.15)", label: "5 (11.30 - 12.15)" },
+    { value: "6 (12.45 - 13.30)", label: "6 (12.45 - 13.30)" },
   ];
 
   // Variabel untuk menyimpan data jadwal
@@ -139,30 +84,37 @@ export default function EditJadwalKelas() {
         const jadwalData = detail.jadwal || {};
         const jadwalArray = [];
 
-        // Ubah object jadwal per hari menjadi array form-friendly
         Object.entries(jadwalData).forEach(([hari, sesiList]) => {
           if (!sesiList || !sesiList.length) return;
 
-          // Sort sesi dari terkecil ke terbesar
+          // Sorting sesi berdasarkan nomor sesi
           const sesiSorted = [...sesiList].sort((a, b) => a.sesi - b.sesi);
+          console.log(`Hari: ${hari}`);
+          console.log("Sesi yang sudah diurutkan:", sesiSorted);
 
-          // Ambil jam dari sesi pertama dan terakhir
-          const jamAwal = sesiSorted[0].jam.split("–")[0].trim();
+          // Ambil jam awal dan jam akhir dengan memeriksa tanda pemisah
+          const jamAwal = sesiSorted[0].jam.split(/\s*-\s*/)[0]?.trim();
           const jamAkhir = sesiSorted[sesiSorted.length - 1].jam
-            .split("–")[1]
-            .trim();
+            .split(" - ")[1]
+            ?.trim();
 
+          // Cari value yang cocok dengan jamAwal dan jamAkhir
+          const jamMulaiValue =
+            jamOptions.find((j) => j.value.includes(jamAwal))?.value || "";
+
+          const jamSelesaiValue =
+            jamOptions.find((j) => j.value.includes(jamAkhir))?.value || "";
+
+          // Push ke array
           jadwalArray.push({
             hari,
-            jamMulai: jamAwal,
-            jamSelesai: jamAkhir,
+            jamMulai: jamMulaiValue,
+            jamSelesai: jamSelesaiValue,
             ruangan: sesiSorted[0].ruangan,
           });
         });
 
         setJadwalList(jadwalArray);
-        console.log("Jadwal detail ditemukan:", detail);
-        console.log("JadwalList hasil parsing:", jadwalArray);
       }
     }
   }, [data, keyKelas]);
@@ -175,17 +127,14 @@ export default function EditJadwalKelas() {
     setToastVariant("");
 
     // kumpulan field yang harus diisi
-    const requiredFields = [
-      namaMapel,
-      pengajar,
-      ruangan,
-      jamMulai,
-      jamSelesai,
-      hari,
-    ];
+    const requiredFields = [namaMapel, pengajar];
 
     const isAnyEmpty = requiredFields.some((field) => {
-      return !String(field).trim();
+      const isEmpty = !String(field).trim();
+      if (isEmpty) {
+        console.log(`Field kosong atau null: ${field}`);
+      }
+      return isEmpty;
     });
 
     if (isAnyEmpty) {
@@ -204,16 +153,50 @@ export default function EditJadwalKelas() {
     const stored = JSON.parse(localStorage.getItem("jadwalList") || "{}");
     const existing = stored[key] || [];
 
+    const generateJadwalObj = () => {
+      const jadwal = {};
+
+      jadwalList.forEach((item) => {
+        if (!item.hari || !item.jamMulai || !item.jamSelesai || !item.ruangan)
+          return;
+
+        const sesiList = [];
+        const jamOptionsFiltered = jamOptions.filter((opt) => {
+          const currentIndex = jamOptions.findIndex(
+            (o) => o.value === opt.value
+          );
+          const startIndex = jamOptions.findIndex(
+            (o) => o.value === item.jamMulai
+          );
+          const endIndex = jamOptions.findIndex(
+            (o) => o.value === item.jamSelesai
+          );
+          return currentIndex >= startIndex && currentIndex <= endIndex;
+        });
+
+        jamOptionsFiltered.forEach((opt, i) => {
+          const sesi = parseInt(opt.value.split(" ")[0]); // sesi dari "1 (07.15 - 08.45)"
+          sesiList.push({
+            sesi,
+            jam: opt.value.match(/\(([^)]+)\)/)?.[1], // ambil isi dalam kurung: "07.15 - 08.45"
+            ruangan: item.ruangan,
+          });
+        });
+
+        jadwal[item.hari] = sesiList;
+      });
+
+      return jadwal;
+    };
+
     const updateJadwal = existing.map((item) =>
       item.id === parseInt(data.id)
         ? {
             ...item,
             nama_mapel: namaMapel,
             pengajar: pengajar,
-            ruangan: ruangan,
-            jam_mulai: jamMulai,
-            jam_selesai: jamSelesai,
-            hari: hari,
+            kelas: key,
+            jadwal: generateJadwalObj(), // <-- ini penting!
           }
         : item
     );
@@ -270,8 +253,6 @@ export default function EditJadwalKelas() {
           <hr className="border-border-black border my-8"></hr>
           {jadwalList.map((item, index) => (
             <div key={index} className="w-full space-y-4 mb-6">
-              <div>Jam Mulai: {item.jamMulai}</div>
-              <div>Jam Selesai: {item.jamSelesai}</div>
               <SelectField
                 text={`Hari ke-${index + 1}`}
                 option={hariOptions}
@@ -282,7 +263,6 @@ export default function EditJadwalKelas() {
                   setJadwalList(newList);
                 }}
               />
-              {console.log(item)}
               <div className="flex flex-col md:flex-row gap-10 mb-0 ">
                 <div className="w-full md:w-1/2">
                   <SelectField

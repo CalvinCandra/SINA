@@ -9,14 +9,12 @@ const DataJadwal = {
       kelas: "Kelas A Tingkat I",
       jadwal: {
         Senin: [
-          { jam: "07.15 – 08.00", ruangan: "AKIII.5", sesi: 1 },
-          { jam: "08.00 – 10.45", ruangan: "AKIII.5", sesi: 2 },
-          { jam: "09.45 – 10.45", ruangan: "AKIII.5", sesi: 4 },
+          { jam: "07.15 - 08.45", ruangan: "AKIII.5", sesi: 1 },
+          { jam: "08.45 - 09.30", ruangan: "AKIII.5", sesi: 2 },
         ],
         Kamis: [
-          { jam: "07.15 – 09.45", ruangan: "AKIII.5", sesi: 1 },
-          { jam: "09.45 – 10.45", ruangan: "AKIII.5", sesi: 2 },
-          { jam: "09.45 – 10.45", ruangan: "AKIII.5", sesi: 4 },
+          { jam: "07.15 - 08.45", ruangan: "AKIII.5", sesi: 1 },
+          { jam: "08.45 - 09.30", ruangan: "AKIII.5", sesi: 2 },
         ],
       },
     },
@@ -33,12 +31,10 @@ const DataJadwal = {
         Minggu: [
           { jam: "07.15 – 09.45", ruangan: "AKIII.5", sesi: 1 },
           { jam: "09.45 – 10.45", ruangan: "AKIII.5", sesi: 2 },
-          { jam: "09.45 – 10.45", ruangan: "AKIII.5", sesi: 4 },
         ],
         Kamis: [
           { jam: "07.15 – 09.45", ruangan: "AKIII.5", sesi: 1 },
           { jam: "09.45 – 10.45", ruangan: "AKIII.5", sesi: 2 },
-          { jam: "09.45 – 10.45", ruangan: "AKIII.5", sesi: 4 },
         ],
       },
     },

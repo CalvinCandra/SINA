@@ -26,11 +26,10 @@ export default function JadwalKelas() {
   useEffect(() => {
     const fetchData = () => {
       const storedData = localStorage.getItem("jadwalList");
+      console.log(storedData);
       const key = `${decodeURIComponent(kelas.nama_kelas)} ${decodeURIComponent(
         kelas.tingkat
       )}`;
-
-      console.log("Key yang digunakan:", key);
 
       let finalData = [];
 
@@ -58,7 +57,48 @@ export default function JadwalKelas() {
     };
 
     fetchData();
-  }, [kelas.nama_kelas, kelas.tingkat]);
+
+    // Tampilkan toast bila tambah atau update berhasil
+    const invalidStatus = localStorage.getItem("jadwalInvalid");
+    const addedStatus = localStorage.getItem("jadwalAdded");
+    const updateStatus = localStorage.getItem("jadwalUpdate");
+    const deleteStatus = localStorage.getItem("jadwalDelete");
+
+    if (invalidStatus === "error") {
+      setToastMessage("Jadwal Tidak ditemukan");
+      setToastVariant("error");
+      localStorage.removeItem("jadwalInvalid");
+    }
+
+    if (addedStatus === "success") {
+      setToastMessage("Jadwal berhasil ditambahkan");
+      setToastVariant("success");
+      localStorage.removeItem("jadwalAdded");
+    }
+
+    if (updateStatus === "success") {
+      setToastMessage("Jadwal berhasil diupdate");
+      setToastVariant("success");
+      localStorage.removeItem("jadwalUpdate");
+    }
+
+    if (deleteStatus === "success") {
+      setToastMessage("Jadwal berhasil dihapus");
+      setToastVariant("success");
+      localStorage.removeItem("jadwalDelete");
+    }
+
+    // Tambah event listener untuk menangani perubahan localStorage
+    const handleStorageChange = () => {
+      fetchData();
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, [kelas]);
 
   // Pagination
   const indexOfLastData = currentPage * dataPerPage;
@@ -128,7 +168,7 @@ export default function JadwalKelas() {
           <div className="flex items-center">
             <div className="me-3">
               <ButtonHref
-                text=<ArrowLeftCircleIcon className="w-6 h-6 "></ArrowLeftCircleIcon>
+                text=<ArrowLeftCircleIcon className="w-6 h-6"></ArrowLeftCircleIcon>
                 href="/dashboard/akademik/jadwal"
               />
             </div>
@@ -147,7 +187,9 @@ export default function JadwalKelas() {
             <div className="mb-6 lg:mb-0">
               <ButtonHref
                 text="Tambah Jadwal Pelajaran"
-                href={`/dashboard/akademik/jadwal-kelas//tambah`}
+                href={`/dashboard/akademik/jadwal-kelas/${decodeURIComponent(
+                  kelas.nama_kelas
+                )}/${decodeURIComponent(kelas.tingkat)}/tambah`}
                 variant="tambah"
               ></ButtonHref>
             </div>
@@ -166,19 +208,19 @@ export default function JadwalKelas() {
                     <th>Mata Pelajaran</th>
                     <th>Guru Pengampu</th>
                     <th>Hari - Jam ke (Waktu)</th>
-                    <th>Aksi</th> {/* Tetap rata kiri */}
+                    <th>Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
                   {currentData.map((data, index) => (
                     <tr
                       key={data.id}
-                      className="border-b border-t border-border-grey align-top"
+                      className="border-b border-t border-border-grey align-middle"
                     >
-                      <td className="align-top">{index + 1}</td>
-                      <td className="align-top">{data.nama_mapel}</td>
-                      <td className="align-top">{data.pengajar}</td>
-                      <td className="align-top">
+                      <td className="align-middle">{index + 1}</td>
+                      <td className="align-middle">{data.nama_mapel}</td>
+                      <td className="align-middle">{data.pengajar}</td>
+                      <td className="align-middle">
                         <div className="space-y-4 ">
                           {data.jadwal &&
                             Object.entries(data.jadwal).map(
@@ -200,7 +242,7 @@ export default function JadwalKelas() {
                             )}
                         </div>
                       </td>
-                      <td className="align-top">
+                      <td className="align-middle">
                         <div className="flex items-center gap-2 pr-2">
                           <ButtonHref
                             href={`/dashboard/akademik/jadwal-kelas/${encodeURIComponent(

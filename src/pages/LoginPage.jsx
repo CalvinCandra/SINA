@@ -5,8 +5,12 @@ import ImageImport from "../data/ImageImport";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import Toast from "../component/Toast/Toast";
 import Loading from "../component/Loading/Loading";
+import axios from "axios";
+import baseUrl from "../utils/config/baseUrl";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
   const [Password, setPassword] = useState(true);
   // Fungsi untuk toggle tipe input
   const togglePasswordVisibility = () => {
@@ -20,7 +24,7 @@ export default function LoginPage() {
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Reset
@@ -45,36 +49,49 @@ export default function LoginPage() {
 
     setIsLoading(true);
 
-    if (
-      email.trim() === "superadmin@gmail.com" &&
-      password.trim() === "123456"
-    ) {
-      localStorage.setItem("login", "success");
+    // api logic login
+    try {
+      const response = await axios.post(`${baseUrl.apiUrl}/admin/login`, {
+        email,
+        password,
+      });
+
+      if (response.status === 200) {
+        sessionStorage.setItem("session", response.data.token);
+      }
 
       setTimeout(() => {
-        // buat token
-        const token =
-          Math.random().toString(15).substring(2) + Date.now().toString(10);
-
-        // lempar session
-        sessionStorage.setItem("session", token);
-
         setIsLoading(false);
+        localStorage.setItem("login", "success");
         // Redirect ke halaman dashboard
-        window.location.href = "/dashboard";
+        navigate("/dashboard");
       }, 2000);
-    } else {
-      setIsLoading(false); // jangan lupa set false
-      setTimeout(() => {
-        setToastMessage("Email atau Password Salah, Coba Lagi");
-        setToastVariant("error");
-      }, 10);
-      return;
+    } catch (error) {
+        console.error("Error:", error);
+        // Menangani error yang dikirimkan oleh server
+        let errorMessage = "Login Gagal";
+
+        if (error.response && error.response.data.message) {
+          // Jika error dari server ada di response.data
+          if (error.response.data.message) {
+            errorMessage = error.response.data.message; // Tampilkan pesan dari server jika ada
+          }
+        } else {
+          // Jika error tidak ada response dari server
+          errorMessage = error.message;
+        }
+
+        setIsLoading(false); // jangan lupa set false
+        setTimeout(() => {
+          setToastMessage(`${errorMessage}`);
+          setToastVariant("error");
+        }, 10);
+        return;
     }
   };
 
   return (
-    <section className="flex justify-center items-center h-screen bg-biru-disabled">
+    <section className="flex justify-center items-center h-screen bg-biru-disabled relative">
       {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
       {/*Card*/}
       <div className="mx-2 lg:mx-auto w-full lg:w-[30%] bg-white rounded-2xl py-12 ">
