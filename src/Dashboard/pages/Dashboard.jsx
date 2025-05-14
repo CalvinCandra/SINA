@@ -13,11 +13,18 @@ export default function Dashboard() {
   const [toastVariant, setToastVariant] = useState("");
 
   const statusLogin = localStorage.getItem("login");
+  const statusUdpdate = localStorage.getItem("profile");
 
   if (statusLogin == "success") {
     setToastMessage("Berhasil Login");
     setToastVariant("success");
     localStorage.removeItem("login");
+  }
+
+  if (statusUdpdate == "success") {
+    setToastMessage("Berhasil Update Profile");
+    setToastVariant("success");
+    localStorage.removeItem("profile");
   }
   return (
     <div className="lg:py-5">

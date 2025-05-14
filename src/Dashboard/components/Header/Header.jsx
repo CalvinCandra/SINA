@@ -23,21 +23,22 @@ function Header() {
     window.location.reload();
   };
 
+  const token = sessionStorage.getItem("session");
+
   useEffect(() => {
-    const token = sessionStorage.getItem("session");
     if (token) {
       try {
         const decoded = jwtDecode(token);
 
-        setNama(decoded.userId);
-        if (decoded.Image) {
-          setGambar(decoded.Image);
+        setNama(decoded.username);
+        if (decoded.foto_profil) {
+          setGambar(decoded.foto_profil);
         }
       } catch (error) {
         console.error("Token tidak valid:", error);
       }
     }
-  }, []);
+  }, [token]);
 
   return (
     <div className="navbar sticky top-0 z-10 bg-white">

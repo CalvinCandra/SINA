@@ -33,6 +33,10 @@ import DetailSiswa from "./Dashboard/pages/Siswa/DetailSiswa";
 import TambahSiswaExcel from "./Dashboard/pages/Siswa/TambahSiswaExcel";
 import TambahSiswa from "./Dashboard/pages/Siswa/TambahSiswa";
 import UpdateSiswa from "./Dashboard/pages/Siswa/UpdateSiswa";
+import Jadwal from "./Dashboard/pages/Akademik/Jadwal/Jadwal";
+import JadwalKelas from "./Dashboard/pages/Akademik/Jadwal/JadwalKelas";
+import TambahJadwalKelas from "./Dashboard/pages/Akademik/Jadwal/TambahJadwalKelas";
+import EditJadwalKelas from "./Dashboard/pages/Akademik/Jadwal/EditJadwalKelas";
 
 function App() {
   return (
@@ -94,6 +98,21 @@ function App() {
         <Route
           path="akademik/mata-pelajaran/update/:id"
           element={<UpdateMataPelajaran />}
+        />
+
+        {/* Jadwal Pelajaran */}
+        <Route path="akademik/jadwal" element={<Jadwal />} />
+        <Route
+          path="akademik/jadwal-kelas/:nama_kelas/:tingkat"
+          element={<JadwalKelas />}
+        />
+        <Route
+          path="akademik/jadwal-kelas/:nama_kelas/:tingkat/tambah"
+          element={<TambahJadwalKelas />}
+        />
+        <Route
+          path="akademik/jadwal-kelas/:nama_kelas/:tingkat/update/:id"
+          element={<EditJadwalKelas />}
         />
 
         {/* Guru */}
