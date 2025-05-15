@@ -16,6 +16,9 @@ export default function TambahMataPelajaran() {
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
 
+  // get token
+  const token = sessionStorage.getItem("session");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -42,9 +45,6 @@ export default function TambahMataPelajaran() {
 
     setIsLoading(true);
 
-    // get token
-    const token = sessionStorage.getItem("session");
-
     try {
       const response = await axios.post(
         `${baseUrl.apiUrl}/admin/mapel`,
@@ -59,7 +59,7 @@ export default function TambahMataPelajaran() {
         }
       );
 
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         localStorage.setItem("pelajaranAdded", "success");
 
         setTimeout(() => {

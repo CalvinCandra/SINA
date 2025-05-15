@@ -107,13 +107,19 @@ export default function MataPelajaran() {
         setIsLoading(false); // Reset loading state
         setToastMessage("Mata Pelajaran berhasil dihapus");
         setToastVariant("success");
-        setSelectedPelajaran(null);
+        // Hapus data dari state tanpa perlu fetch ulang
+        setdataPelajaran((prevData) =>
+          prevData.filter(
+            (item) => item.mapel_id !== selectedPelajaran.mapel_id
+          )
+        );
         document.getElementById("my_modal_3").close();
       }, 1000);
     } catch (error) {
       console.error("Gagal menghapus data pelajaran:", error);
       setToastMessage("Gagal menghapus data pelajaran");
       setToastVariant("error");
+      document.getElementById("my_modal_3").close();
     }
   };
 
