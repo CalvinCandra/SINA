@@ -15,7 +15,9 @@ export default function DetailPengumuman() {
       <div className="w-full p-5 rounded-md bg-white mt-5">
         {/* Header Table */}
         <div className="w-full flex flex-col lg:flex-row justify-between items-center mb-5">
-          <p className="font-semibold text-lg">Detail Pengumuman</p>
+          <p className="font-semibold text-lg">
+            Detail Informasi {dataPengumuman.kategori}
+          </p>
         </div>
 
         <hr className="border-border-grey border"></hr>

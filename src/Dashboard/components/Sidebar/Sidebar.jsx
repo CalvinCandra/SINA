@@ -356,7 +356,7 @@ function Sidebar() {
             className="flex items-center w-full rounded-sm"
           >
             <InformationCircleIcon className="w-6 h-6 me-1" />
-            <span>Pengumuman</span>
+            <span>Kelola Informasi</span>
           </Link>
         </li>
       </ul>

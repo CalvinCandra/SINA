@@ -120,7 +120,7 @@ export default function Kelas() {
     <div className="lg:py-5">
       {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
       <div className="flex flex-col lg:flex-row w-full justify-between items-center">
-        <h2 className="text-2xl font-semibold">Kelas</h2>
+        <h2 className="text-2xl font-semibold">Data Kelas</h2>
         <Calender className="w-40 lg:w-full"></Calender>
       </div>
 

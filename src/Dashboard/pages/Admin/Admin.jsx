@@ -124,7 +124,7 @@ export default function Admin() {
 
       <div className="lg:py-5">
         <div className="flex flex-col lg:flex-row w-full justify-between items-center">
-          <h2 className="text-2xl font-semibold">Admin / Staf</h2>
+          <h2 className="text-2xl font-semibold">Data Admin / Staf</h2>
           <Calender className="w-40 lg:w-full"></Calender>
         </div>
 
@@ -148,7 +148,7 @@ export default function Admin() {
                 <thead>
                   <tr className="border-b border-t border-border-grey">
                     <th>No</th>
-                    <th>Name</th>
+                    <th>Nama</th>
                     <th>Email</th>
                     <th>Bergabung</th>
                     <th>Aksi</th>
@@ -217,7 +217,7 @@ export default function Admin() {
         {/* Pagination */}
         <div className="flex flex-col lg:flex-row justify-between items-center w-full my-4">
           <p className="text-sm mb-3 lg:mb-0">
-            Menampilkan Data {indexOfFirstData + 1} -{" "}
+            Menampilkan {indexOfFirstData + 1} -{" "}
             {indexOfLastData > dataAdmin.length
               ? dataAdmin.length
               : indexOfLastData}{" "}

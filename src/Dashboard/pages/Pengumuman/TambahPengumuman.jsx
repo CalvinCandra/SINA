@@ -5,9 +5,16 @@ import Button from "../../../component/Button/Button";
 import ButtonHref from "../../../component/Button/ButtonHref";
 import Textarea from "../../../component/Input/Textarea";
 import InputFile from "../../../component/Input/InputFile";
+import SelectField from "../../../component/Input/SelectField";
 
 export default function TambahPengumuman() {
   const [preview, setPreview] = useState(null);
+
+  const kategoriOptions = [
+    { value: "Berita", label: "Berita" },
+    { value: "Pengumuman", label: "Pengumuman" },
+  ];
+  const [kategori, setKategori] = useState("");
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -28,7 +35,7 @@ export default function TambahPengumuman() {
       <div className="w-full p-5 rounded-md bg-white mt-5">
         {/* Header Table */}
         <div className="w-full flex flex-col lg:flex-row justify-between items-center mb-5">
-          <p className="font-semibold text-lg">Tambah Data Pengumuman</p>
+          <p className="font-semibold text-lg">Tambah Data Informasi</p>
         </div>
 
         <hr className="border-border-grey border"></hr>
@@ -54,8 +61,22 @@ export default function TambahPengumuman() {
               </span>
             ></Textarea>
           </div>
-          <div className="w-full mt-5">
-            <InputFile text="Gambar" fungsi={handleImageChange}></InputFile>
+          <div className="w-full mt-5 flex flex-col md:flex-row gap-4">
+            <div className="w-full md:w-1/2">
+              <SelectField
+                text="Kategori Informasi"
+                option={kategoriOptions}
+                value={kategori}
+                onChange={(e) => setKategori(e.target.value)}
+              />
+            </div>
+            <div className="w-full md:w-1/2 flex flex-col justify-end mt-4 md:mt-0">
+              <InputFile
+                text="Gambar"
+                fungsi={handleImageChange}
+                variant="w_full"
+              />
+            </div>
           </div>
 
           {/* Button */}
