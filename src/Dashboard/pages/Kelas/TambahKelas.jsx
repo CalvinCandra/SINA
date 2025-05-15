@@ -224,7 +224,7 @@ export default function TambahKelas() {
           <div className="flex justify-end items-center mt-5">
             <div className="me-2">
               <ButtonHref
-                text="Cancel"
+                text="Batal"
                 variant="cancel"
                 href="/dashboard/kelas"
               ></ButtonHref>

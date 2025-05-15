@@ -153,6 +153,7 @@ export default function DataGuru() {
                 <tr className="border-b border-t border-border-grey">
                   <th>No</th>
                   <th>Name</th>
+                  <th>NIP</th>
                   <th>Email</th>
                   <th>Bergabung</th>
                   <th>Aksi</th>
@@ -184,6 +185,7 @@ export default function DataGuru() {
                         </div>
                       </div>
                     </td>
+                    <td className="whitespace-nowrap">{data.nip}</td>
                     <td className="whitespace-nowrap">{data.email}</td>
                     <td className="whitespace-nowrap">{data.tgl}</td>
                     <td>

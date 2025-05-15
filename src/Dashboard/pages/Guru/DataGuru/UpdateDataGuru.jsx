@@ -217,7 +217,7 @@ export default function UpdateDataGuru() {
       <div className="w-full p-5 rounded-md bg-white mt-5">
         {/* Header Table */}
         <div className="w-full flex flex-col lg:flex-row justify-between items-center mb-5">
-          <p className="font-semibold text-lg">Tambah Data Guru</p>
+          <p className="font-semibold text-lg">Perbaharui Data Guru</p>
         </div>
 
         <hr className="border-border-grey border"></hr>
@@ -348,14 +348,14 @@ export default function UpdateDataGuru() {
           <div className="flex justify-end items-center mt-5">
             <div className="me-2">
               <ButtonHref
-                text="Cancel"
+                text="Batal"
                 variant="cancel"
                 href="/dashboard/guru"
               ></ButtonHref>
             </div>
             <div className="w-40">
               <Button
-                text={isLoading ? <Loading /> : "Update Guru"}
+                text={isLoading ? <Loading /> : "Perbaharui"}
                 variant="button_submit_dash"
                 disabled={isLoading}
               ></Button>

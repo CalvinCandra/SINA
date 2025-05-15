@@ -6,7 +6,7 @@ import DataPengumuman from "../../../data/Pengumuman/DataPengumuman";
 import {
   PencilSquareIcon,
   TrashIcon,
-  MagnifyingGlassIcon,
+  DocumentMagnifyingGlassIcon,
 } from "@heroicons/react/16/solid";
 import Button from "../../../component/Button/Button";
 import { useState } from "react";
@@ -18,7 +18,7 @@ export default function Pengumuman() {
   return (
     <div className="lg:py-5">
       <div className="flex flex-col lg:flex-row w-full justify-between items-center">
-        <h2 className="text-2xl font-bold">Data Pengumuman</h2>
+        <h2 className="text-2xl font-bold">Data Pengumuman & Berita</h2>
         <Calender className="w-40 lg:w-full"></Calender>
       </div>
 
@@ -27,7 +27,7 @@ export default function Pengumuman() {
         <div className="w-full flex flex-col lg:flex-row justify-between items-center mb-5">
           <div className="lg:w-50 mb-6 lg:mb-0">
             <ButtonHref
-              text="Tambah Pengumuman"
+              text="Tambah Informasi"
               href="/dashboard/pengumuman/tambah"
               variant="tambah"
             ></ButtonHref>
@@ -45,6 +45,7 @@ export default function Pengumuman() {
                 <tr className="border-b border-t border-border-grey font-semibold">
                   <th>No</th>
                   <th>Judul</th>
+                  <th>Kategori</th>
                   <th>Dibuat Oleh</th>
                   <th>Tanggal diunggah</th>
                   <th>Aksi</th>
@@ -58,6 +59,7 @@ export default function Pengumuman() {
                   >
                     <td>{index + 1}</td>
                     <td className="whitespace-nowrap">{data.judul}</td>
+                    <td className="whitespace-nowrap">{data.kategori}</td>
                     <td className="whitespace-nowrap">{data.dibuat}</td>
                     <td className="whitespace-nowrap">{data.tgl}</td>
                     <td>
@@ -65,7 +67,7 @@ export default function Pengumuman() {
                         <ButtonHref
                           href={`/dashboard/pengumuman/detail/${data.id}`}
                           variant="update"
-                          text=<MagnifyingGlassIcon className="w-5 h-5 text-blue-300"></MagnifyingGlassIcon>
+                          text=<DocumentMagnifyingGlassIcon className="w-5 h-5 text-sky-400"></DocumentMagnifyingGlassIcon>
                         ></ButtonHref>
                         |
                         <ButtonHref
@@ -91,7 +93,9 @@ export default function Pengumuman() {
             </table>
           ) : (
             <div className="w-full flex justify-center items-center py-10">
-              <p className="text-lg font-semibold">Tidak ada data pengumuman</p>
+              <p className="text-lg font-semibold">
+                Belum ada data pengumuman & berita
+              </p>
             </div>
           )}
         </div>
@@ -100,7 +104,7 @@ export default function Pengumuman() {
       {/* Pagination */}
       <div className="flex flex-col lg:flex-row justify-between items-center w-full my-4">
         <p className="text-sm mb-3 lg:mb-0">
-          Menampilkan Data 4 Dari 100 Data Pengumuman
+          Menampilkan Data 4 Dari 100 Data Pengumuman & Berita
         </p>
         <div className="join">
           <button className="join-item btn border-0 rounded-ss rounded-es bg-biru-primary text-white">

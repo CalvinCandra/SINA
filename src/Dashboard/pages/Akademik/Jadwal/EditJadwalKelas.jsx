@@ -226,7 +226,7 @@ export default function EditJadwalKelas() {
       <div className="w-full p-5 rounded-md bg-white mt-5">
         {/* Header Table */}
         <div className="w-full flex flex-col lg:flex-row justify-between items-center mb-5">
-          <p className="font-semibold text-lg">Edit Jadwal Pelajaran</p>
+          <p className="font-semibold text-lg">Perbaharui Jadwal Pelajaran</p>
         </div>
 
         <hr className="border-border-grey border"></hr>
@@ -332,7 +332,7 @@ export default function EditJadwalKelas() {
             </div>
             <div className="w-40">
               <Button
-                text={isLoading ? <Loading /> : "Perbaharui Jadwal"}
+                text={isLoading ? <Loading /> : "Perbaharui"}
                 variant="button_submit_dash"
                 disabled={isLoading}
               />
