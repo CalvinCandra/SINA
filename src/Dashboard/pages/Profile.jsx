@@ -20,7 +20,8 @@ export default function Profile() {
   const [passKonfirm, setpassKonfrim] = useState("");
   const defaultImage =
     "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg";
-  const [Gambar, setGambar] = useState(defaultImage);
+  const [Gambar, setGambar] = useState("");
+  const [GambarPreview, setGambarPreview] = useState("");
   const [GambarBaru, setGambarBaru] = useState("");
 
   const [showPassLama, setShowPassLama] = useState(true);
@@ -34,54 +35,62 @@ export default function Profile() {
   const token = sessionStorage.getItem("session");
 
   useEffect(() => {
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
+    const fetchData = async () => {
+      if (token) {
+        try {
+          try {
+            const response = await axios.get(
+              `${baseUrl.apiUrl}/admin/profile`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
 
-        console.log(decoded);
-
-        setNamaAdmin(decoded.username);
-        setEmailAdmin(decoded.email);
-        if (decoded.foto_profil) {
-          setGambar(decoded.foto_profil);
+            if (response.status === 200 || response.status === 201) {
+              setNamaAdmin(response.data.data.username);
+              setEmailAdmin(response.data.data.email);
+              if (response.data.data.foto_profil) {
+                setGambar(response.data.data.foto_profil);
+              } else {
+                setGambar(""); // kosongkan jika tidak ada
+              }
+            }
+          } catch (error) {}
+        } catch (error) {
+          console.error("Token tidak valid:", error);
         }
-      } catch (error) {
-        console.error("Token tidak valid:", error);
       }
-    }
+    };
+
+    fetchData();
   }, [token]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
-      const fileSizeLimit = 5 * 1024 * 1024; // 5MB limit
+      const fileSizeLimit = 5 * 1024 * 1024; // 5MB
 
       if (!allowedTypes.includes(file.type)) {
         setToastMessage("File harus berformat PNG, JPG, atau JPEG");
         setToastVariant("error");
-        setGambar(
-          "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
-        );
-        document.getElementById("file-name").textContent = "No file chosen";
         return;
       }
 
       if (file.size > fileSizeLimit) {
         setToastMessage("Ukuran file terlalu besar. Maksimum 5MB.");
         setToastVariant("error");
-        setGambar(
-          "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
-        );
-        document.getElementById("file-name").textContent = "No file chosen";
         return;
       }
 
       const reader = new FileReader();
       reader.onloadend = () => {
-        setGambar(reader.result);
+        setGambarPreview(reader.result); // Simpan base64 untuk preview
+        setGambarBaru(file); // Simpan file asli untuk submit
         document.getElementById("file-name").textContent = file.name;
-        setGambarBaru(file.name);
+        setGambar("");
       };
       reader.readAsDataURL(file);
     }
@@ -151,14 +160,18 @@ export default function Profile() {
     setIsLoading(true);
 
     try {
+      const formData = new FormData();
+      formData.append("username", namaAdmin);
+      formData.append("oldpassword", passSekarang);
+      formData.append("password", passBaru);
+      if (GambarBaru) {
+        formData.append("file", GambarBaru); // file yang benar
+      } else {
+        formData.append("file", Gambar);
+      }
       const response = await axios.put(
         `${baseUrl.apiUrl}/admin/profile`,
-        {
-          username: namaAdmin,
-          oldpassword: passSekarang,
-          password: passBaru,
-          file: GambarBaru ? GambarBaru : Gambar,
-        },
+        formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -171,6 +184,7 @@ export default function Profile() {
         setTimeout(() => {
           setIsLoading(false);
           localStorage.setItem("profile", "success");
+          localStorage.setItem("updateProfile", "true");
           // Redirect ke halaman dashboard
           navigate("/dashboard");
         }, 2000);
@@ -209,12 +223,18 @@ export default function Profile() {
 
         <hr className="border-border-grey border"></hr>
 
-        <form onSubmit={handleSubmit} mul>
+        <form onSubmit={handleSubmit}>
           {/* Gambar */}
           <div className="flex flex-col justify-center items-center">
             <div className="p-1 w-60 h-64 my-3 overflow-hidden">
               <img
-                src={Gambar}
+                src={
+                  GambarPreview
+                    ? GambarPreview
+                    : Gambar // jika ada gambar dari database
+                    ? `${baseUrl.apiUrlImage}/Upload/profile_image/${Gambar}`
+                    : defaultImage // jika tidak ada di database
+                }
                 alt="Preview"
                 id="ImagePreview"
                 className="w-full h-full object-object rounded"

@@ -1,19 +1,21 @@
 import Bars3Icon from "@heroicons/react/24/outline/Bars3Icon";
-import { jwtDecode } from "jwt-decode";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import {
   ArrowLeftStartOnRectangleIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
+import baseUrl from "../../../utils/config/baseUrl";
+import axios from "axios";
 
 function Header() {
+  const location = useLocation();
   const navigate = useNavigate(); // Hook untuk navigasi
   const [Nama, setNama] = useState("");
-  const [Gambar, setGambar] = useState(
-    "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
-  );
+  const defaultImage =
+    "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg";
+  const [Gambar, setGambar] = useState(defaultImage);
 
   const handleLogout = (e) => {
     e.preventDefault();
@@ -26,19 +28,41 @@ function Header() {
   const token = sessionStorage.getItem("session");
 
   useEffect(() => {
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
+    const fetchData = async () => {
+      if (token) {
+        try {
+          try {
+            const response = await axios.get(
+              `${baseUrl.apiUrl}/admin/profile`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
 
-        setNama(decoded.username);
-        if (decoded.foto_profil) {
-          setGambar(decoded.foto_profil);
+            if (response.status === 200 || response.status === 201) {
+              setNama(response.data.data.username);
+              if (response.data.data.foto_profil) {
+                setGambar(response.data.data.foto_profil);
+              }
+            }
+          } catch (error) {
+            console.error("Errro:", error);
+          }
+        } catch (error) {
+          console.error("Token tidak valid:", error);
         }
-      } catch (error) {
-        console.error("Token tidak valid:", error);
       }
+    };
+
+    if (localStorage.getItem("updateProfile") == "true") {
+      localStorage.removeItem("updateProfile");
+      fetchData();
+    } else {
+      fetchData();
     }
-  }, [token]);
+  }, [token, location]);
 
   return (
     <div className="navbar sticky top-0 z-10 bg-white">
@@ -62,9 +86,11 @@ function Header() {
           >
             <div className="w-10 h-10 overflow-hidden rounded-full">
               {/* Avatar */}
-              <div className="w-full object-cover">
-                <img src={Gambar} alt="profile" />
-              </div>
+              <img
+                src={`${baseUrl.apiUrlImage}/Upload/profile_image/${Gambar}`}
+                alt="profile"
+                className="w-full h-full object-contain"
+              />
             </div>
 
             {/* Nama Pengguna */}
