@@ -9,9 +9,10 @@ import {
 } from "@heroicons/react/16/solid";
 import Button from "../../../../component/Button/Button";
 import { useState, useEffect } from "react";
-import DataKurikulum from "../../../../data/Akademik/Kurikulum/DataKurikulum";
 import Toast from "../../../../component/Toast/Toast";
 import Loading from "../../../../component/Loading/Loading";
+import baseUrl from "../../../../utils/config/baseUrl";
+import axios from "axios";
 
 export default function Kurikulum() {
   // simpan data
@@ -23,20 +24,29 @@ export default function Kurikulum() {
   const [currentPage, setCurrentPage] = useState(1);
   const dataPerPage = 5;
 
+  // get token
+  const token = sessionStorage.getItem("session");
+
   useEffect(() => {
-    const fetchData = () => {
-      const storedData = localStorage.getItem("kurikulumList");
-      if (!storedData || storedData === "undefined") {
-        localStorage.setItem("kurikulumList", JSON.stringify(DataKurikulum));
-        setdataKurikulum(DataKurikulum);
-      } else {
-        try {
-          const parsedData = JSON.parse(storedData);
-          setdataKurikulum(parsedData);
-        } catch (e) {
-          console.error("Data di localStorage rusak:", e);
-          setdataKurikulum(DataKurikulum); // fallback
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.get(`${baseUrl.apiUrl}/admin/kurikulum`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 200) {
+          setdataKurikulum(response.data);
+          // console.log(response);
         }
+      } catch (error) {
+        console.error("Gagal mengambil data:", error);
+        setToastMessage("Gagal mengambil data");
+        setToastVariant("error");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -71,18 +81,33 @@ export default function Kurikulum() {
     }
 
     fetchData();
-
-    // Tambah event listener untuk menangani perubahan localStorage
-    const handleStorageChange = () => {
-      fetchData();
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
   }, []);
+
+  // fomat datetime
+  const formatTanggalLengkap = (tanggalISO) => {
+    const tanggal = new Date(tanggalISO);
+
+    const bulanMap = [
+      "Januari",
+      "Februari",
+      "Maret",
+      "April",
+      "Mei",
+      "Juni",
+      "Juli",
+      "Agustus",
+      "September",
+      "Oktober",
+      "November",
+      "Desember",
+    ];
+
+    const hari = tanggal.getDate();
+    const bulan = bulanMap[tanggal.getMonth()];
+    const tahun = tanggal.getFullYear();
+
+    return `${hari} ${bulan} ${tahun}`;
+  };
 
   // Pagination
   const indexOfLastData = currentPage * dataPerPage;
@@ -93,35 +118,45 @@ export default function Kurikulum() {
   const totalPages = Math.ceil(dataKurikulum.length / dataPerPage);
 
   // Hapus
-  const handleDeleteKurikulum = (e) => {
+  const handleDeleteKurikulum = async (e) => {
     e.preventDefault();
-
     if (!selectedKurikulum) return;
 
     setIsLoading(true); // Set loading state
 
-    // Hapus dari data
-    const filteredData = dataKurikulum.filter(
-      (item) => item.id !== selectedKurikulum.id
-    );
+    try {
+      await axios.delete(
+        `${baseUrl.apiUrl}/admin/kurikulum/${selectedKurikulum.kurikulum_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    // Simpan data yang sudah dihapus ke localStorage
-    localStorage.setItem("kurikulumList", JSON.stringify(filteredData));
+      // reset
+      setToastMessage("");
+      setToastVariant("");
 
-    // reset
-    setToastMessage("");
-    setToastVariant("");
-
-    // Simulasi delay untuk loading
-    setTimeout(() => {
-      setIsLoading(false); // Reset loading state
-      setdataKurikulum(filteredData); // Update state
-      setSelectedKurikulum(null); // Reset
-      // Set toast message setelah berhasil hapus
-      setToastMessage("Data Kurikulum berhasil dihapus");
-      setToastVariant("success");
-      document.getElementById("my_modal_3").close(); // Tutup modal
-    }, 1000); // Delay 2 detik
+      // Simulasi delay untuk loading
+      setTimeout(() => {
+        setIsLoading(false); // Reset loading state
+        setToastMessage("Kurikulum berhasil dihapus");
+        setToastVariant("success");
+        // Hapus data dari state tanpa perlu fetch ulang
+        setdataKurikulum((prevData) =>
+          prevData.filter(
+            (item) => item.kurikulum_id !== selectedKurikulum.kurikulum_id
+          )
+        );
+        document.getElementById("my_modal_3").close();
+      }, 1000);
+    } catch (error) {
+      console.error("Gagal menghapus data:", error);
+      setToastMessage("Gagal menghapus data");
+      setToastVariant("error");
+      document.getElementById("my_modal_3").close();
+    }
   };
 
   return (
@@ -155,7 +190,7 @@ export default function Kurikulum() {
                 <tr className="border-b border-t border-border-grey">
                   <th>No</th>
                   <th>Nama Kurikulum</th>
-                  <th className="pe-[200px]">Deskripsi</th>
+                  <th>Deskripsi</th>
                   <th>Dibuat</th>
                   <th>Aksi</th>
                 </tr>
@@ -164,14 +199,16 @@ export default function Kurikulum() {
                 {currentData.map((data, index) => (
                   <tr
                     className="border-b border-t border-border-grey"
-                    key={data.id}
+                    key={data.kurikulum_id}
                   >
                     <td>{index + 1}</td>
-                    <td className="whitespace-nowrap">{data.nama_kurikulum}</td>
-                    <td className="text-justify line-clamp-3">
+                    <td className="align-middle">{data.nama_kurikulum}</td>
+                    <td className="align-middle text-justify line-clamp-3 w-[600px]">
                       <p className="h-[50px]">{data.deskripsi}</p>
                     </td>
-                    <td className="whitespace-nowrap">{data.tgl}</td>
+                    <td className="align-middle whitespace-nowrap">
+                      {formatTanggalLengkap(data.created_at)}
+                    </td>
                     <td>
                       <div className="flex items-center justify-evenly w-20">
                         <button
@@ -185,7 +222,7 @@ export default function Kurikulum() {
                         </button>
                         |
                         <ButtonHref
-                          href={`/dashboard/akademik/kurikulum/update/${data.id}`}
+                          href={`/dashboard/akademik/kurikulum/update/${data.kurikulum_id}`}
                           variant="update"
                           text=<PencilSquareIcon className="w-5 h-5 text-amber-300"></PencilSquareIcon>
                         ></ButtonHref>
@@ -251,7 +288,7 @@ export default function Kurikulum() {
           <div className="mt-5">
             {selectedKurikulum && (
               <>
-                <h1 className="text-3xl text-center">Informasi Akademik</h1>
+                <h1 className="text-3xl text-center">Informasi Kurikulum</h1>
                 <table className="table w-full mt-10 mx-auto">
                   <tbody className="">
                     <tr className="border-y border-border-grey">
@@ -268,7 +305,9 @@ export default function Kurikulum() {
                     </tr>
                     <tr className="border-y border-border-grey">
                       <td className="text-lg font-bold">Tanggal dibuat:</td>
-                      <td className="text-lg">{selectedKurikulum.tgl}</td>
+                      <td className="text-lg">
+                        {formatTanggalLengkap(selectedKurikulum.created_at)}
+                      </td>
                     </tr>
                   </tbody>
                 </table>

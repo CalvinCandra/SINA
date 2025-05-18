@@ -6,6 +6,8 @@ import Textarea from "../../../../component/Input/Textarea";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../../../component/Loading/Loading";
 import Toast from "../../../../component/Toast/Toast";
+import axios from "axios";
+import baseUrl from "../../../../utils/config/baseUrl";
 
 export default function TambahKurikulum() {
   const navigate = useNavigate();
@@ -15,7 +17,9 @@ export default function TambahKurikulum() {
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
 
-  const handleSubmit = (e) => {
+  const token = sessionStorage.getItem("session");
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // reset pesan toast terlebih dahulu
@@ -41,40 +45,49 @@ export default function TambahKurikulum() {
 
     setIsLoading(true);
 
-    // Ambil data admin yang sudah ada di localStorage
-    const storedKurikulum =
-      JSON.parse(localStorage.getItem("kurikulumList")) || [];
+    try {
+      const response = await axios.post(
+        `${baseUrl.apiUrl}/admin/kurikulum`,
+        {
+          nama_kurikulum: namaKurikulum,
+          deskripsi: deskripsi,
+        },
+        {
+          headers: {
+            Authorization: `Beazer ${token}`,
+          },
+        }
+      );
 
-    const lastId =
-      storedKurikulum.length > 0
-        ? Math.max(...storedKurikulum.map((item) => item.id))
-        : 0;
+      if (response.status == 200 || response.status == 201) {
+        localStorage.setItem("kurikulumAdded", "success");
+        setTimeout(() => {
+          setIsLoading(false);
+          navigate("/dashboard/akademik/kurikulum");
+        }, 2000);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      // Menangani error yang dikirimkan oleh server
+      let errorMessage = "Gagal Tambah";
 
-    // Membuat data baru
-    const newKurikulum = {
-      id: lastId + 1, // id auto increment
-      nama_kurikulum: namaKurikulum,
-      deskripsi: deskripsi,
-      tgl: new Date().toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }),
-    };
+      if (error.response && error.response.data.message) {
+        // Jika error dari server ada di response.data
+        if (error.response.data.message) {
+          errorMessage = error.response.data.message; // Tampilkan pesan dari server jika ada
+        }
+      } else {
+        // Jika error tidak ada response dari server
+        errorMessage = error.message;
+      }
 
-    // Tambahkan data baru
-    const tambah = [...storedKurikulum, newKurikulum];
-
-    // Simpan data ke localStorage
-    localStorage.setItem("kurikulumList", JSON.stringify(tambah));
-
-    // Simpan status berhasil tambah
-    localStorage.setItem("kurikulumAdded", "success");
-
-    setTimeout(() => {
-      setIsLoading(false);
-      navigate("/dashboard/akademik/kurikulum");
-    }, 2000);
+      setIsLoading(false); // jangan lupa set false
+      setTimeout(() => {
+        setToastMessage(`${errorMessage}`);
+        setToastVariant("error");
+      }, 10);
+      return;
+    }
   };
   return (
     <div className="lg:py-5 min-h-screen lg:min-h-0">

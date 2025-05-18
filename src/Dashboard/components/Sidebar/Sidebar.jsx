@@ -9,10 +9,13 @@ import {
 } from "@heroicons/react/24/outline";
 import ImageImport from "../../../data/ImageImport";
 import { useEffect } from "react";
+import GetRole from "../../../utils/GetRole";
 
 function Sidebar() {
   const location = useLocation();
   const path = location.pathname;
+
+  const role = GetRole(); // Ambil role user dari JWT
 
   const close = () => {
     document.getElementById("left-sidebar-drawer").click();
@@ -31,18 +34,10 @@ function Sidebar() {
   const isMataPelajaranActive = path.startsWith(
     "/dashboard/akademik/mata-pelajaran"
   );
-  const isKhsActive = path.startsWith("/dashboard/akademik/khs");
+  const isKrsActive = path.startsWith("/dashboard/akademik/krs");
   const isGuruActive = path.startsWith("/dashboard/guru"); //untuk dropdown
   const isSiswaActive = path.startsWith("/dashboard/siswa"); //untuk dropdown
   const isPengumumanActive = path.startsWith("/dashboard/pengumuman");
-
-  // useEffect untuk menghapus localStorage saat berpindah dari halaman
-  useEffect(() => {
-    // Jika berpindah dari halaman
-    if (!isAdminActive) {
-      localStorage.removeItem("adminList");
-    }
-  }, [isAdminActive]); // Memantau perubahan path
 
   // useEffect untuk menghapus localStorage saat berpindah dari halaman
   useEffect(() => {
@@ -67,14 +62,6 @@ function Sidebar() {
       localStorage.removeItem("tahunList");
     }
   }, [isTahunAkademikActive]); // Memantau perubahan path
-
-  // useEffect untuk menghapus localStorage saat berpindah dari halaman
-  useEffect(() => {
-    // Jika berpindah dari halaman
-    if (!isMataPelajaranActive) {
-      localStorage.removeItem("pelajaranList");
-    }
-  }, [isMataPelajaranActive]); // Memantau perubahan path
 
   // useEffect untuk menghapus localStorage saat berpindah dari halaman
   useEffect(() => {
@@ -142,19 +129,21 @@ function Sidebar() {
         </li>
 
         {/* Admin */}
-        <li
-          className={`mb-3 ${
-            isAdminActive ? "bg-biru-active text-white  rounded-sm" : ""
-          }`}
-        >
-          <Link
-            to="/dashboard/admin"
-            className="flex items-center w-full rounded-sm"
+        {role === "admin" && (
+          <li
+            className={`mb-3 ${
+              isAdminActive ? "bg-biru-active text-white  rounded-sm" : ""
+            }`}
           >
-            <UserIcon className="w-6 h-6 me-1" />
-            <span>Admin</span>
-          </Link>
-        </li>
+            <Link
+              to="/dashboard/admin"
+              className="flex items-center w-full rounded-sm"
+            >
+              <UserIcon className="w-6 h-6 me-1" />
+              <span>Admin</span>
+            </Link>
+          </li>
+        )}
 
         {/* Kelas */}
         <li
@@ -253,12 +242,12 @@ function Sidebar() {
               {/* sub menu */}
               <li className="mb-2">
                 <Link
-                  to="/dashboard/akademik/khs"
+                  to="/dashboard/akademik/krs"
                   className={`block py-1 ${
-                    isKhsActive ? "text-black font-semibold" : "text-gray-500"
+                    isKrsActive ? "text-black font-semibold" : "text-gray-500"
                   }`}
                 >
-                  KHS
+                  Krs
                 </Link>
               </li>
             </ul>

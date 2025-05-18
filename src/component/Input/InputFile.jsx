@@ -1,5 +1,11 @@
 export default function InputFile(props) {
-  const { text, fungsi, variant = "standar", optional = "img" } = props;
+  const {
+    text,
+    fungsi,
+    variant = "standar",
+    optional = "img",
+    filename = "No file chosen",
+  } = props;
   const variants = {
     w_full:
       "border border-gray-300 rounded text-sm text-gray-600 px-4 flex items-center h-[40px] w-full",
@@ -26,7 +32,7 @@ export default function InputFile(props) {
           </span>
         </label>
         <div id="file-name" className={`${variants[variant]} truncate`}>
-          No file chosen
+          {filename}
         </div>
       </div>
       <label className="text-xs text-gray-500 mt-2 block">

@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Calender from "../../components/Calender/Calender";
 import ButtonHref from "../../../component/Button/ButtonHref";
 import Search from "../../../component/Input/Search";
-import DataAdmin from "../../../data/Admin/DataAdmin";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
 import Button from "../../../component/Button/Button";
 import Toast from "../../../component/Toast/Toast";
 import Loading from "../../../component/Loading/Loading";
+import axios from "axios";
+import baseUrl from "../../../utils/config/baseUrl";
 
 export default function Admin() {
   const [isLoading, setIsLoading] = useState(false);
@@ -15,22 +16,30 @@ export default function Admin() {
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const dataPerPage = 5;
+  const dataPerPage = 10;
+
+  // get token
+  const token = sessionStorage.getItem("session");
 
   useEffect(() => {
-    const fetchData = () => {
-      const storedData = localStorage.getItem("adminList");
-      if (!storedData || storedData === "undefined") {
-        localStorage.setItem("adminList", JSON.stringify(DataAdmin));
-        setdataAdmin(DataAdmin);
-      } else {
-        try {
-          const parsedData = JSON.parse(storedData);
-          setdataAdmin(parsedData);
-        } catch (e) {
-          console.error("Data di localStorage rusak:", e);
-          setdataAdmin(DataAdmin); // fallback
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.get(`${baseUrl.apiUrl}/admin/admin2`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 200) {
+          setdataAdmin(response.data);
         }
+      } catch (error) {
+        console.error("Gagal mengambil data:", error);
+        setToastMessage("Gagal mengambil data");
+        setToastVariant("error");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -65,17 +74,6 @@ export default function Admin() {
     }
 
     fetchData();
-
-    // Tambah event listener untuk menangani perubahan localStorage
-    const handleStorageChange = () => {
-      fetchData();
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
   }, []);
 
   // Pagination
@@ -86,36 +84,72 @@ export default function Admin() {
     .slice(indexOfFirstData, indexOfLastData);
   const totalPages = Math.ceil(dataAdmin.length / dataPerPage);
 
+  // fomat datetime
+  const formatTanggalLengkap = (tanggalISO) => {
+    const tanggal = new Date(tanggalISO);
+
+    const bulanMap = [
+      "Januari",
+      "Februari",
+      "Maret",
+      "April",
+      "Mei",
+      "Juni",
+      "Juli",
+      "Agustus",
+      "September",
+      "Oktober",
+      "November",
+      "Desember",
+    ];
+
+    const hari = tanggal.getDate();
+    const bulan = bulanMap[tanggal.getMonth()];
+    const tahun = tanggal.getFullYear();
+
+    return `${hari} ${bulan} ${tahun}`;
+  };
+
   // Hapus admin (method kosong, Anda bisa implementasikan)
-  const handleDeleteAdmin = (e) => {
+  const handleDeleteAdmin = async (e) => {
     e.preventDefault();
 
     if (!selectedAdmin) return;
 
     setIsLoading(true); // Set loading state
 
-    // Hapus admin dari data
-    const filteredData = dataAdmin.filter(
-      (item) => item.id !== selectedAdmin.id
-    );
+    try {
+      await axios.delete(
+        `${baseUrl.apiUrl}/admin/admin2/${selectedAdmin.admin_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    // Simpan data yang sudah dihapus ke localStorage
-    localStorage.setItem("adminList", JSON.stringify(filteredData));
+      // reset
+      setToastMessage("");
+      setToastVariant("");
 
-    // reset
-    setToastMessage("");
-    setToastVariant("");
-
-    // Simulasi delay untuk loading
-    setTimeout(() => {
+      // Simulasi delay untuk loading
+      setTimeout(() => {
+        setIsLoading(false); // Reset loading state
+        setToastMessage("Data Admin berhasil dihapus");
+        setToastVariant("success");
+        // Hapus data dari state tanpa perlu fetch ulang
+        setdataAdmin((prevData) =>
+          prevData.filter((item) => item.admin_id !== selectedAdmin.admin_id)
+        );
+        document.getElementById("my_modal_3").close();
+      }, 1000);
+    } catch (error) {
+      console.error("Gagal menghapus data:", error);
       setIsLoading(false); // Reset loading state
-      setdataAdmin(filteredData); // Update state dataAdmin
-      setSelectedAdmin(null); // Reset selectedAdmin
-      // Set toast message setelah berhasil hapus
-      setToastMessage("Admin berhasil dihapus");
-      setToastVariant("success");
-      document.getElementById("my_modal_3").close(); // Tutup modal
-    }, 1000); // Delay 2 detik
+      setToastMessage("Gagal menghapus data");
+      setToastVariant("error");
+      document.getElementById("my_modal_3").close();
+    }
   };
 
   return (
@@ -158,33 +192,33 @@ export default function Admin() {
                   {currentData.map((data, index) => (
                     <tr
                       className="border-b border-t border-border-grey"
-                      key={data.id}
+                      key={data.admin_id}
                     >
-                      <td>{indexOfFirstData + index + 1}</td>
+                      {console.log(data.foto_profil)}
+                      <td>{index + 1}</td>
                       <td className="whitespace-nowrap">
                         <div className="flex items-center space-x-3">
                           <div className="avatar">
                             <div className="mask mask-circle w-12 h-12">
                               <img
-                                src={
-                                  data.image ||
-                                  "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
-                                }
+                                src={`${baseUrl.apiUrlImage}/Upload/profile_image/${data.foto_profil}`}
                                 alt="Avatar"
                               />
                             </div>
                           </div>
                           <div>
-                            <div className="font-bold">{data.nama}</div>
+                            <div className="font-bold">{data.username}</div>
                           </div>
                         </div>
                       </td>
                       <td className="whitespace-nowrap">{data.email}</td>
-                      <td className="whitespace-nowrap">{data.tgl}</td>
+                      <td className="whitespace-nowrap">
+                        {formatTanggalLengkap(data.created_at)}
+                      </td>
                       <td>
                         <div className="flex items-center justify-between w-14">
                           <ButtonHref
-                            href={`/dashboard/admin/update/${data.id}`}
+                            href={`/dashboard/admin/update/${data.admin_id}`}
                             variant="update"
                             text={
                               <PencilSquareIcon className="w-5 h-5 text-amber-300" />
@@ -252,7 +286,8 @@ export default function Admin() {
               <h1 className="font-bold text-3xl text-center">Konfirmasi!</h1>
               {selectedAdmin && (
                 <p className="text-center my-2">
-                  Anda yakin ingin menghapus data <b>{selectedAdmin.nama}</b>?
+                  Anda yakin ingin menghapus data{" "}
+                  <b>{selectedAdmin.username}</b>?
                 </p>
               )}
               <div className="w-56 mx-auto p-1 flex justify-between items-center mt-4">
