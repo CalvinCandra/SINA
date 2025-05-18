@@ -18,11 +18,8 @@ export default function Profile() {
   const [passSekarang, setpassSekarang] = useState("");
   const [passBaru, setpassBaru] = useState("");
   const [passKonfirm, setpassKonfrim] = useState("");
-  const defaultImage =
-    "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg";
-  const [Gambar, setGambar] = useState("");
+  const [Gambar, setGambar] = useState(null);
   const [GambarPreview, setGambarPreview] = useState("");
-  const [GambarBaru, setGambarBaru] = useState("");
 
   const [showPassLama, setShowPassLama] = useState(true);
   const [showPassBaru, setShowPassBaru] = useState(true);
@@ -51,11 +48,7 @@ export default function Profile() {
             if (response.status === 200 || response.status === 201) {
               setNamaAdmin(response.data.data.username);
               setEmailAdmin(response.data.data.email);
-              if (response.data.data.foto_profil) {
-                setGambar(response.data.data.foto_profil);
-              } else {
-                setGambar(""); // kosongkan jika tidak ada
-              }
+              setGambar(response.data.data.foto_profil);
             }
           } catch (error) {}
         } catch (error) {
@@ -76,21 +69,22 @@ export default function Profile() {
       if (!allowedTypes.includes(file.type)) {
         setToastMessage("File harus berformat PNG, JPG, atau JPEG");
         setToastVariant("error");
+        document.getElementById("file-name").textContent = "No file chosen";
         return;
       }
 
       if (file.size > fileSizeLimit) {
         setToastMessage("Ukuran file terlalu besar. Maksimum 5MB.");
         setToastVariant("error");
+        document.getElementById("file-name").textContent = "No file chosen";
         return;
       }
 
       const reader = new FileReader();
       reader.onloadend = () => {
-        setGambarPreview(reader.result); // Simpan base64 untuk preview
-        setGambarBaru(file); // Simpan file asli untuk submit
+        setGambarPreview(reader.result);
+        setGambar(file);
         document.getElementById("file-name").textContent = file.name;
-        setGambar("");
       };
       reader.readAsDataURL(file);
     }
@@ -102,18 +96,6 @@ export default function Profile() {
     // reset pesan toast terlebih dahulu
     setToastMessage("");
     setToastVariant("");
-
-    // Validasi input
-    if (
-      Gambar ===
-      "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
-    ) {
-      setTimeout(() => {
-        setToastMessage("Gambar wajib diisi");
-        setToastVariant("error");
-      }, 10);
-      return;
-    }
 
     if (namaAdmin.trim() === "") {
       setTimeout(() => {
@@ -164,11 +146,7 @@ export default function Profile() {
       formData.append("username", namaAdmin);
       formData.append("oldpassword", passSekarang);
       formData.append("password", passBaru);
-      if (GambarBaru) {
-        formData.append("file", GambarBaru); // file yang benar
-      } else {
-        formData.append("file", Gambar);
-      }
+      formData.append("file", Gambar);
       const response = await axios.put(
         `${baseUrl.apiUrl}/admin/profile`,
         formData,
@@ -231,9 +209,9 @@ export default function Profile() {
                 src={
                   GambarPreview
                     ? GambarPreview
-                    : Gambar // jika ada gambar dari database
+                    : Gambar
                     ? `${baseUrl.apiUrlImage}/Upload/profile_image/${Gambar}`
-                    : defaultImage // jika tidak ada di database
+                    : ""
                 }
                 alt="Preview"
                 id="ImagePreview"

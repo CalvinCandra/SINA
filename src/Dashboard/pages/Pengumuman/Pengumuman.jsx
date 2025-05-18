@@ -1,22 +1,161 @@
-import React from "react";
 import Calender from "../../components/Calender/Calender";
 import ButtonHref from "../../../component/Button/ButtonHref";
 import Search from "../../../component/Input/Search";
-import DataPengumuman from "../../../data/Pengumuman/DataPengumuman";
 import {
   PencilSquareIcon,
   TrashIcon,
   DocumentMagnifyingGlassIcon,
 } from "@heroicons/react/16/solid";
 import Button from "../../../component/Button/Button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import baseUrl from "../../../utils/config/baseUrl";
+import axios from "axios";
+import Loading from "../../../component/Loading/Loading";
+import Toast from "../../../component/Toast/Toast";
+import { useNavigate } from "react-router-dom";
 
 export default function Pengumuman() {
   // simpan data pengumuman
-  const [selectedInfo, setSelectedInfo] = useState(null);
+  const [selectedBerita, setSelectedBerita] = useState(null);
+  const [dataBerita, setdataBerita] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastVariant, setToastVariant] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const dataPerPage = 10;
+  const navigate = useNavigate();
+
+  // get token
+  const token = sessionStorage.getItem("session");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.get(`${baseUrl.apiUrl}/admin/berita`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        console.log(response);
+
+        if (response.status === 200) {
+          setdataBerita(response.data);
+          // console.log(response);
+        }
+      } catch (error) {
+        console.error("Gagal mengambil data:", error);
+        setToastMessage("Gagal mengambil data");
+        setToastVariant("error");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    // Tampilkan toast bila tambah atau update berhasil
+    const invalidStatus = localStorage.getItem("informasiInvalid");
+    const addedStatus = localStorage.getItem("informasiAdded");
+    const updateStatus = localStorage.getItem("informasiUpdate");
+
+    if (invalidStatus === "error") {
+      setToastMessage("Informasi Tidak ditemukan");
+      setToastVariant("error");
+      localStorage.removeItem("informasiInvalid");
+    }
+
+    if (addedStatus === "success") {
+      setToastMessage("Informasi berhasil ditambahkan");
+      setToastVariant("success");
+      localStorage.removeItem("informasiAdded");
+    }
+
+    if (updateStatus === "success") {
+      setToastMessage("Informasi berhasil diupdate");
+      setToastVariant("success");
+      localStorage.removeItem("informasiUpdate");
+    }
+
+    fetchData();
+  }, []);
+
+  // fomat datetime
+  const formatTanggalLengkap = (tanggalISO) => {
+    const tanggal = new Date(tanggalISO);
+
+    const bulanMap = [
+      "Januari",
+      "Februari",
+      "Maret",
+      "April",
+      "Mei",
+      "Juni",
+      "Juli",
+      "Agustus",
+      "September",
+      "Oktober",
+      "November",
+      "Desember",
+    ];
+
+    const hari = tanggal.getDate();
+    const bulan = bulanMap[tanggal.getMonth()];
+    const tahun = tanggal.getFullYear();
+
+    return `${hari} ${bulan} ${tahun}`;
+  };
+
+  // Pagination
+  const indexOfLastData = currentPage * dataPerPage;
+  const indexOfFirstData = indexOfLastData - dataPerPage;
+  const currentData = dataBerita
+    .sort((a, b) => b.id - a.id)
+    .slice(indexOfFirstData, indexOfLastData);
+  const totalPages = Math.ceil(dataBerita.length / dataPerPage);
+
+  // Hapus
+  const handleDeleteBerita = async (e) => {
+    e.preventDefault();
+    if (!selectedBerita) return;
+
+    setIsLoading(true); // Set loading state
+
+    try {
+      await axios.delete(
+        `${baseUrl.apiUrl}/admin/berita/${selectedBerita.berita_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // reset
+      setToastMessage("");
+      setToastVariant("");
+
+      // Simulasi delay untuk loading
+      setTimeout(() => {
+        setIsLoading(false); // Reset loading state
+        setToastMessage("Informasi berhasil dihapus");
+        setToastVariant("success");
+        // Hapus data dari state tanpa perlu fetch ulang
+        setdataBerita((prevData) =>
+          prevData.filter((item) => item.berita_id !== selectedBerita.berita_id)
+        );
+        document.getElementById("my_modal_3").close();
+      }, 1000);
+    } catch (error) {
+      console.error("Gagal menghapus data:", error);
+      setToastMessage("Gagal menghapus data");
+      setToastVariant("error");
+      document.getElementById("my_modal_3").close();
+    }
+  };
 
   return (
     <div className="lg:py-5">
+      {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
       <div className="flex flex-col lg:flex-row w-full justify-between items-center">
         <h2 className="text-2xl font-bold">Data Pengumuman & Berita</h2>
         <Calender className="w-40 lg:w-full"></Calender>
@@ -39,39 +178,39 @@ export default function Pengumuman() {
 
         {/* Table */}
         <div className="overflow-x-auto w-full">
-          {DataPengumuman && DataPengumuman.length > 0 ? (
+          {currentData && currentData.length > 0 ? (
             <table className="table w-full">
               <thead>
                 <tr className="border-b border-t border-border-grey font-semibold">
                   <th>No</th>
                   <th>Judul</th>
-                  <th>Kategori</th>
                   <th>Dibuat Oleh</th>
                   <th>Tanggal diunggah</th>
                   <th>Aksi</th>
                 </tr>
               </thead>
               <tbody>
-                {DataPengumuman.map((data, index) => (
+                {currentData.map((data, index) => (
                   <tr
                     className="border-b border-t border-border-grey"
-                    key={data.id}
+                    key={data.berita_id}
                   >
                     <td>{index + 1}</td>
                     <td className="whitespace-nowrap">{data.judul}</td>
-                    <td className="whitespace-nowrap">{data.kategori}</td>
-                    <td className="whitespace-nowrap">{data.dibuat}</td>
-                    <td className="whitespace-nowrap">{data.tgl}</td>
+                    <td className="whitespace-nowrap">{data.username}</td>
+                    <td className="whitespace-nowrap">
+                      {formatTanggalLengkap(data.created_at)}
+                    </td>
                     <td>
                       <div className="flex items-center justify-evenly w-20">
                         <ButtonHref
-                          href={`/dashboard/pengumuman/detail/${data.id}`}
+                          href={`/dashboard/pengumuman/detail/${data.berita_id}`}
                           variant="update"
                           text=<DocumentMagnifyingGlassIcon className="w-5 h-5 text-sky-400"></DocumentMagnifyingGlassIcon>
                         ></ButtonHref>
                         |
                         <ButtonHref
-                          href={`/dashboard/pengumuman/update/${data.id}`}
+                          href={`/dashboard/pengumuman/update/${data.berita_id}`}
                           variant="update"
                           text=<PencilSquareIcon className="w-5 h-5 text-amber-300"></PencilSquareIcon>
                         ></ButtonHref>
@@ -79,7 +218,7 @@ export default function Pengumuman() {
                         <button
                           className="border-0 cursor-pointer"
                           onClick={() => {
-                            setSelectedInfo(data); // simpan data ke state
+                            setSelectedBerita(data); // simpan data ke state
                             document.getElementById("my_modal_3").showModal();
                           }}
                         >
@@ -92,10 +231,8 @@ export default function Pengumuman() {
               </tbody>
             </table>
           ) : (
-            <div className="w-full flex justify-center items-center py-10">
-              <p className="text-lg font-semibold">
-                Belum ada data pengumuman & berita
-              </p>
+            <div className="italic text-gray-400 mt-5 text-center">
+              Data Berita Belum Ada
             </div>
           )}
         </div>
@@ -104,24 +241,26 @@ export default function Pengumuman() {
       {/* Pagination */}
       <div className="flex flex-col lg:flex-row justify-between items-center w-full my-4">
         <p className="text-sm mb-3 lg:mb-0">
-          Menampilkan Data 4 Dari 100 Data Pengumuman & Berita
+          Menampilkan Data {indexOfFirstData + 1} -{" "}
+          {indexOfLastData > dataBerita.length
+            ? dataBerita.length
+            : indexOfLastData}{" "}
+          dari {dataBerita.length} Data Berita
         </p>
         <div className="join">
-          <button className="join-item btn border-0 rounded-ss rounded-es bg-biru-primary text-white">
-            1
-          </button>
-          <button className="join-item btn border-0 bg-biru-primary text-white">
-            2
-          </button>
-          <button className="join-item btn border-0 bg-gray-400 text-white">
-            ...
-          </button>
-          <button className="join-item btn border-0 bg-biru-primary text-white">
-            99
-          </button>
-          <button className="join-item btn border-0 rounded-se rounded-ee bg-biru-primary text-white">
-            100
-          </button>
+          {[...Array(totalPages)].map((_, index) => (
+            <button
+              key={index}
+              className={`join-item btn border-0 ${
+                currentPage === index + 1
+                  ? "bg-biru-primary text-white"
+                  : "bg-gray-200 text-black"
+              }`}
+              onClick={() => setCurrentPage(index + 1)}
+            >
+              {index + 1}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -136,18 +275,22 @@ export default function Pengumuman() {
           </form>
           <div className="mt-5">
             <h1 className="font-bold text-3xl text-center">Konfirmasi!</h1>
-            {selectedInfo && (
+            {selectedBerita && (
               <p className="text-center my-2">
-                Anda yakin ingin menghapus data <b>{selectedInfo.judul}</b> ?
+                Anda yakin ingin menghapus data <b>{selectedBerita.judul}</b> ?
               </p>
             )}
             <div className="w-56 mx-auto p-1 flex justify-between items-center mt-4">
               <form method="dialog" className="w-full me-1">
                 <Button variant="button_submit_cancel" text="Batal"></Button>
               </form>
-              <form className="w-full ms-1">
+              <form className="w-full ms-1" onSubmit={handleDeleteBerita}>
                 <div className="w-full">
-                  <Button variant="button_submit_dash" text="Hapus"></Button>
+                  <Button
+                    variant="button_submit_dash"
+                    text={isLoading ? <Loading /> : "Hapus"}
+                    disabled={isLoading}
+                  ></Button>
                 </div>
               </form>
             </div>

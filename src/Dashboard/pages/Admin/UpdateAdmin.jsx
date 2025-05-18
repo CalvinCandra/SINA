@@ -6,34 +6,50 @@ import ButtonHref from "../../../component/Button/ButtonHref";
 import { useNavigate, useParams } from "react-router-dom";
 import Toast from "../../../component/Toast/Toast";
 import Loading from "../../../component/Loading/Loading";
+import baseUrl from "../../../utils/config/baseUrl";
+import axios from "axios";
 
 export default function UpdateAdmin() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [preview, setPreview] = useState("");
+  const [Gambar, setGambar] = useState(null);
   const [namaAdmin, setNamaAdmin] = useState("");
   const [emailAdmin, setEmailAdmin] = useState("");
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  // get token
+  const token = sessionStorage.getItem("session");
+
   useEffect(() => {
-    const storedAdmins = JSON.parse(localStorage.getItem("adminList")) || [];
-    const foundData = storedAdmins.find((item) => item.id === parseInt(id));
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${baseUrl.apiUrl}/admin/admin2/${id}`,
+          {
+            headers: {
+              Authorization: `Beazer ${token}`,
+            },
+          }
+        );
 
-    if (!foundData) {
-      localStorage.setItem("adminInvalid", "error");
-      setTimeout(() => {
-        window.location.href = "/dashboard/admin";
-      }, 10);
-    }
+        console.log(response);
 
-    setNamaAdmin(foundData.nama);
-    setEmailAdmin(foundData.email);
-    setPreview(
-      foundData.image ||
-        "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
-    );
+        if (response.status == 200 || response.status == 201) {
+          setNamaAdmin(response.data.username);
+          setEmailAdmin(response.data.email);
+          setGambar(response.data.foto_profil);
+        }
+      } catch (error) {
+        console.error("Gagal mengambil data:", error);
+        setToastMessage("Gagal mengambil data");
+        setToastVariant("error");
+      }
+    };
+
+    fetchData();
   }, [id]);
 
   const handleImageChange = (e) => {
@@ -57,12 +73,14 @@ export default function UpdateAdmin() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
+        setGambar(file);
+        document.getElementById("file-name").textContent = file.name;
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // reset pesan toast
@@ -79,26 +97,52 @@ export default function UpdateAdmin() {
 
     setIsLoading(true);
 
-    const storedAdmins = JSON.parse(localStorage.getItem("adminList"));
+    try {
+      const formData = new FormData();
+      formData.append("username", namaAdmin);
+      formData.append("email", emailAdmin);
+      formData.append("foto_profile", Gambar);
 
-    const updatedAdmins = storedAdmins.map((admin) =>
-      admin.id === parseInt(id)
-        ? {
-            ...admin,
-            nama: namaAdmin,
-            email: emailAdmin,
-            image: preview,
-          }
-        : admin
-    );
+      const response = await axios.put(
+        `${baseUrl.apiUrl}/admin/admin2/${id}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Beazer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-    localStorage.setItem("adminList", JSON.stringify(updatedAdmins));
-    localStorage.setItem("adminUpdate", "success");
+      if (response.status == 200 || response.status == 201) {
+        localStorage.setItem("adminUpdate", "success");
+        setTimeout(() => {
+          setIsLoading(false);
+          navigate("/dashboard/admin");
+        }, 1000);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      // Menangani error yang dikirimkan oleh server
+      let errorMessage = "Login Gagal";
 
-    setTimeout(() => {
-      setIsLoading(false);
-      navigate("/dashboard/admin");
-    }, 2000);
+      if (error.response && error.response.data.message) {
+        // Jika error dari server ada di response.data
+        if (error.response.data.message) {
+          errorMessage = error.response.data.message; // Tampilkan pesan dari server jika ada
+        }
+      } else {
+        // Jika error tidak ada response dari server
+        errorMessage = error.message;
+      }
+
+      setIsLoading(false); // jangan lupa set false
+      setTimeout(() => {
+        setToastMessage(`${errorMessage}`);
+        setToastVariant("error");
+      }, 10);
+      return;
+    }
   };
 
   return (
@@ -115,7 +159,13 @@ export default function UpdateAdmin() {
           <div className="flex flex-col justify-center items-center">
             <div className="p-1 w-full lg:w-60 h-64 my-3 overflow-hidden">
               <img
-                src={preview}
+                src={
+                  preview
+                    ? preview
+                    : Gambar
+                    ? `${baseUrl.apiUrlImage}/Upload/profile_image/${Gambar}`
+                    : ""
+                }
                 id="ImagePreview"
                 className="w-full h-full object-cover rounded"
               />

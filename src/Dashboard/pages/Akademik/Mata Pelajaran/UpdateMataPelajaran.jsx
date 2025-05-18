@@ -36,14 +36,10 @@ export default function UpdateMataPelajaran() {
         setNamaMapel(response.data.nama_mapel);
         setKkm(response.data.kkm);
       } catch (error) {
+        setIsLoading(false);
         console.error("Gagal mengambil data:", error);
         setToastMessage("Data tidak ditemukan");
         setToastVariant("error");
-
-        // Redirect jika tidak ditemukan
-        // setTimeout(() => {
-        //   navigate("/dashboard/akademik/mata-pelajaran");
-        // }, 2000);
       } finally {
         setIsLoading(false);
       }

@@ -50,7 +50,6 @@ export default function MataPelajaran() {
     const invalidStatus = localStorage.getItem("pelajaranInvalid");
     const addedStatus = localStorage.getItem("pelajaranAdded");
     const updateStatus = localStorage.getItem("pelajaranUpdate");
-    const deleteStatus = localStorage.getItem("pelajaranDelete");
 
     if (invalidStatus === "error") {
       setToastMessage("Data Mata Pelajaran Tidak ditemukan");
