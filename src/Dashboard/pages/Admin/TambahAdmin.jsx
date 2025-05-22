@@ -122,7 +122,7 @@ export default function TambahAdmin() {
     } catch (error) {
       console.error("Error:", error);
       // Menangani error yang dikirimkan oleh server
-      let errorMessage = "Login Gagal";
+      let errorMessage = "Gagal";
 
       if (error.response && error.response.data.message) {
         // Jika error dari server ada di response.data

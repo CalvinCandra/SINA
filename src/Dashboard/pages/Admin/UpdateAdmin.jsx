@@ -124,7 +124,7 @@ export default function UpdateAdmin() {
     } catch (error) {
       console.error("Error:", error);
       // Menangani error yang dikirimkan oleh server
-      let errorMessage = "Login Gagal";
+      let errorMessage = "Gagal";
 
       if (error.response && error.response.data.message) {
         // Jika error dari server ada di response.data
@@ -136,7 +136,7 @@ export default function UpdateAdmin() {
         errorMessage = error.message;
       }
 
-      setIsLoading(false); // jangan lupa set false
+      setIsLoading(false);
       setTimeout(() => {
         setToastMessage(`${errorMessage}`);
         setToastVariant("error");

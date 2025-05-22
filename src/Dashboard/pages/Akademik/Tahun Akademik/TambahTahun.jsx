@@ -1,28 +1,64 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FieldInput from "../../../../component/Input/FieldInput";
 import Button from "../../../../component/Button/Button";
 import ButtonHref from "../../../../component/Button/ButtonHref";
 import SelectField from "../../../../component/Input/SelectField";
-import DataKurikulum from "../../../../data/Akademik/Kurikulum/DataKurikulum";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../../../component/Loading/Loading";
 import Toast from "../../../../component/Toast/Toast";
+import axios from "axios";
+import baseUrl from "../../../../utils/config/baseUrl";
 
 export default function TambahTahun() {
-  const Kurikulum = DataKurikulum.map((item) => ({
-    value: item.nama_kurikulum,
-    label: item.nama_kurikulum,
-  }));
-
   const navigate = useNavigate();
   const [namaKurikulum, setNamaKurikulum] = useState("");
   const [TglMulai, setTglMulai] = useState("");
   const [TglAkhir, setTglAkhir] = useState("");
+  const [status, setStatus] = useState("");
+  const [dataKurikulum, setdataKurikulum] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
 
-  const handleSubmit = (e) => {
+  // token
+  const token = sessionStorage.getItem("session");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${baseUrl.apiUrl}/admin/kurikulum`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.status == 200 || response.data == 201) {
+          setdataKurikulum(response.data);
+        }
+      } catch (error) {}
+    };
+
+    fetchData();
+  });
+
+  // option
+  const KurikulumOption = dataKurikulum.map((item) => ({
+    value: item.kurikulum_id,
+    label: item.nama_kurikulum,
+  }));
+
+  const statusOption = [
+    {
+      value: "aktif",
+      label: "Aktif",
+    },
+    {
+      value: "tidak aktif",
+      label: "Tidak Aktif",
+    },
+  ];
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // reset pesan toast terlebih dahulu
@@ -54,46 +90,63 @@ export default function TambahTahun() {
       return;
     }
 
+    if (status.trim() === "") {
+      setTimeout(() => {
+        setToastMessage("Status tidak boleh kosong");
+        setToastVariant("error");
+      }, 10);
+      return;
+    }
+
     setIsLoading(true);
 
-    // Ambil data yang sudah ada di localStorage
-    const storedTahun = JSON.parse(localStorage.getItem("tahunList")) || [];
+    try {
+      const response = await axios.post(
+        `${baseUrl.apiUrl}/admin/tahunakademik`,
+        {
+          kurikulum_id: namaKurikulum,
+          tahun_mulai: TglMulai,
+          tahun_berakhir: TglAkhir,
+          status: status,
+        },
+        {
+          headers: {
+            Authorization: `Beazer ${token}`,
+          },
+        }
+      );
 
-    const lastId =
-      storedTahun.length > 0
-        ? Math.max(...storedTahun.map((item) => item.id))
-        : 0;
+      if (response.status == 200 || response.status == 201) {
+        localStorage.setItem("tahunAdded", "success");
+        setTimeout(() => {
+          setIsLoading(false);
+          navigate("/dashboard/akademik/tahun-akademik");
+        }, 2000);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      // Menangani error yang dikirimkan oleh server
+      let errorMessage = "Gagal Tambah";
 
-    // Membuat data baru
-    const newTahun = {
-      id: lastId + 1, // id auto increment
-      kurikulum: namaKurikulum,
-      tgl_mulai: new Date(TglMulai).toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }),
-      tgl_akhir: new Date(TglAkhir).toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }),
-    };
+      if (error.response && error.response.data.message) {
+        // Jika error dari server ada di response.data
+        if (error.response.data.message) {
+          errorMessage = error.response.data.message; // Tampilkan pesan dari server jika ada
+        }
+      } else {
+        // Jika error tidak ada response dari server
+        errorMessage = error.message;
+      }
 
-    // Tambahkan data baru
-    const tambah = [...storedTahun, newTahun];
-
-    // Simpan data ke localStorage
-    localStorage.setItem("tahunList", JSON.stringify(tambah));
-
-    // Simpan status berhasil tambah
-    localStorage.setItem("tahunAdded", "success");
-
-    setTimeout(() => {
-      setIsLoading(false);
-      navigate("/dashboard/akademik/tahun-akademik");
-    }, 2000);
+      setIsLoading(false); // jangan lupa set false
+      setTimeout(() => {
+        setToastMessage(`${errorMessage}`);
+        setToastVariant("error");
+      }, 10);
+      return;
+    }
   };
+
   return (
     <div className="lg:py-5 min-h-screen lg:min-h-0">
       {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
@@ -112,7 +165,7 @@ export default function TambahTahun() {
           <div className="w-full me-1 mt-5">
             <SelectField
               text="Nama Kurikulum"
-              option={Kurikulum}
+              option={KurikulumOption}
               value={namaKurikulum}
               onChange={(e) => setNamaKurikulum(e.target.value)}
             ></SelectField>
@@ -142,6 +195,15 @@ export default function TambahTahun() {
                 onChange={(e) => setTglAkhir(e.target.value)}
               ></FieldInput>
             </div>
+          </div>
+
+          <div className="w-full me-1">
+            <SelectField
+              text="Status"
+              option={statusOption}
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+            ></SelectField>
           </div>
 
           {/* Button */}
