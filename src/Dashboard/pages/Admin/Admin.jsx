@@ -24,7 +24,6 @@ export default function Admin() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setIsLoading(true);
         const response = await axios.get(`${baseUrl.apiUrl}/admin/admin2`, {
           headers: {
             Authorization: `Bearer ${token}`,

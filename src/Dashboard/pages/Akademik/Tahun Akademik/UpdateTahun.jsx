@@ -3,77 +3,126 @@ import FieldInput from "../../../../component/Input/FieldInput";
 import Button from "../../../../component/Button/Button";
 import ButtonHref from "../../../../component/Button/ButtonHref";
 import SelectField from "../../../../component/Input/SelectField";
-import DataKurikulum from "../../../../data/Akademik/Kurikulum/DataKurikulum";
 import { useNavigate, useParams } from "react-router-dom";
 import Loading from "../../../../component/Loading/Loading";
 import Toast from "../../../../component/Toast/Toast";
+import baseUrl from "../../../../utils/config/baseUrl";
+import axios from "axios";
 
 export default function UpdateTahun() {
-  const Kurikulum = DataKurikulum.map((item) => ({
-    value: item.nama_kurikulum,
-    label: item.nama_kurikulum,
-  }));
-
   const navigate = useNavigate();
   const { id } = useParams();
   const [namaKurikulum, setNamaKurikulum] = useState("");
   const [TglMulai, setTglMulai] = useState("");
   const [TglAkhir, setTglAkhir] = useState("");
+  const [status, setStatus] = useState("");
+  const [DataKurikulum, setdataKurikulum] = useState([]);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const token = sessionStorage.getItem("session");
+
+  const formatDateToInput = (isoString) => {
+    if (!isoString) return "";
+    const date = new Date(isoString);
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, "0");
+    const day = `${date.getDate()}`.padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("tahunList")) || [];
-    const foundData = stored.find((item) => item.id === parseInt(id));
+    const fetchData = async () => {
+      try {
+        const responseTahun = await axios.get(
+          `${baseUrl.apiUrl}/admin/tahunakademik/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-    if (!foundData) {
-      localStorage.setItem("tahunInvalid", "error");
-      navigate("/dasboard/akademik/tahun-akademik");
-    }
+        const responseKurikulum = await axios.get(
+          `${baseUrl.apiUrl}/admin/kurikulum`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-    //konver tgl dari misalnya 20 September 2025 ke 20-9-2025
-    const formatDateToInput = (tanggalString) => {
-      const [day, monthName, year] = tanggalString.split(" ");
-      const monthMap = {
-        Januari: "01",
-        Februari: "02",
-        Maret: "03",
-        April: "04",
-        Mei: "05",
-        Juni: "06",
-        Juli: "07",
-        Agustus: "08",
-        September: "09",
-        Oktober: "10",
-        November: "11",
-        Desember: "12",
-      };
-      const month = monthMap[monthName];
-      return `${year}-${month}-${day.padStart(2, "0")}`;
+        if (responseTahun.status == 200 || responseTahun.status == 201) {
+          setNamaKurikulum(responseTahun.data.kurikulum_id);
+          setTglMulai(formatDateToInput(responseTahun.data.tahun_mulai));
+          setTglAkhir(formatDateToInput(responseTahun.data.tahun_berakhir));
+          setStatus(responseTahun.data.status);
+        }
+
+        if (
+          responseKurikulum.status == 200 ||
+          responseKurikulum.status == 201
+        ) {
+          setdataKurikulum(responseKurikulum.data);
+        }
+      } catch (error) {}
     };
 
-    setNamaKurikulum(foundData.kurikulum);
-    setTglMulai(formatDateToInput(foundData.tgl_mulai));
-    setTglAkhir(formatDateToInput(foundData.tgl_akhir));
+    fetchData();
   }, [id]);
 
-  const handleSubmit = (e) => {
+  const KurikulumOption = DataKurikulum.map((item) => ({
+    value: item.kurikulum_id,
+    label: item.nama_kurikulum,
+  }));
+
+  const statusOption = [
+    {
+      value: "aktif",
+      label: "Aktif",
+    },
+    {
+      value: "tidak aktif",
+      label: "Tidak Aktif",
+    },
+  ];
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // reset pesan toast
+    // reset pesan toast terlebih dahulu
     setToastMessage("");
     setToastVariant("");
 
-    if (
-      namaKurikulum.trim() === "" ||
-      TglMulai.trim() === "" ||
-      TglAkhir.trim() === ""
-    ) {
+    // Validasi input
+    if (String(namaKurikulum).trim() === "") {
       setTimeout(() => {
-        setToastMessage(
-          "Nama Kurikulum, Tanggal Mulai atau Tanggal Akhir tidak boleh kosong"
-        );
+        setToastMessage("Nama Kurikulum tidak boleh kosong");
+        setToastVariant("error");
+      }, 10);
+      return;
+    }
+
+    if (TglMulai.trim() === "") {
+      setTimeout(() => {
+        setToastMessage("Tanggal Mulai tidak boleh kosong");
+        setToastVariant("error");
+      }, 10);
+      return;
+    }
+
+    if (TglAkhir.trim() === "") {
+      setTimeout(() => {
+        setToastMessage("Tanggal Akhir tidak boleh kosong");
+        setToastVariant("error");
+      }, 10);
+      return;
+    }
+
+    if (status.trim() === "") {
+      setTimeout(() => {
+        setToastMessage("Status tidak boleh kosong");
         setToastVariant("error");
       }, 10);
       return;
@@ -81,34 +130,51 @@ export default function UpdateTahun() {
 
     setIsLoading(true);
 
-    const storedTahun = JSON.parse(localStorage.getItem("tahunList"));
+    try {
+      const response = await axios.put(
+        `${baseUrl.apiUrl}/admin/tahunakademik/${id}`,
+        {
+          kurikulum_id: namaKurikulum,
+          tahun_mulai: TglMulai,
+          tahun_berakhir: TglAkhir,
+          status: status,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    const updated = storedTahun.map((item) =>
-      item.id === parseInt(id)
-        ? {
-            ...item,
-            kurikulum: namaKurikulum,
-            tgl_mulai: new Date(TglMulai).toLocaleDateString("id-ID", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            }),
-            tgl_akhir: new Date(TglAkhir).toLocaleDateString("id-ID", {
-              day: "numeric",
-              month: "long",
-              year: "numeric",
-            }),
-          }
-        : item
-    );
+      if (response.status == 200 || response.status == 201) {
+        localStorage.setItem("tahunUpdate", "success");
+        setTimeout(() => {
+          setIsLoading(false);
+          navigate("/dashboard/akademik/tahun-akademik");
+        }, 2000);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      // Menangani error yang dikirimkan oleh server
+      let errorMessage = "Gagal";
 
-    localStorage.setItem("tahunList", JSON.stringify(updated));
-    localStorage.setItem("tahunUpdate", "success");
+      if (error.response && error.response.data.message) {
+        // Jika error dari server ada di response.data
+        if (error.response.data.message) {
+          errorMessage = error.response.data.message; // Tampilkan pesan dari server jika ada
+        }
+      } else {
+        // Jika error tidak ada response dari server
+        errorMessage = error.message;
+      }
 
-    setTimeout(() => {
-      setIsLoading(false);
-      navigate("/dashboard/akademik/tahun-akademik");
-    }, 2000);
+      setIsLoading(false); // jangan lupa set false
+      setTimeout(() => {
+        setToastMessage(`${errorMessage}`);
+        setToastVariant("error");
+      }, 10);
+      return;
+    }
   };
 
   return (
@@ -128,7 +194,7 @@ export default function UpdateTahun() {
           <div className="w-full me-1 mt-5">
             <SelectField
               text="Nama Kurikulum"
-              option={Kurikulum}
+              option={KurikulumOption}
               value={namaKurikulum}
               onChange={(e) => setNamaKurikulum(e.target.value)}
             ></SelectField>
@@ -158,6 +224,15 @@ export default function UpdateTahun() {
                 onChange={(e) => setTglAkhir(e.target.value)}
               ></FieldInput>
             </div>
+          </div>
+
+          <div className="w-full me-1">
+            <SelectField
+              text="Status"
+              option={statusOption}
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+            ></SelectField>
           </div>
 
           {/* Button */}

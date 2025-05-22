@@ -8,43 +8,49 @@ import Textarea from "../../../../component/Input/Textarea";
 import { useNavigate } from "react-router-dom";
 import Toast from "../../../../component/Toast/Toast";
 import Loading from "../../../../component/Loading/Loading";
+import ImageImport from "../../../../data/ImageImport";
+import axios from "axios";
+import baseUrl from "../../../../utils/config/baseUrl";
 
 export default function TambahDataGuru() {
   const navigate = useNavigate();
-  const [preview, setPreview] = useState(
-    "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
-  );
+  const defaultImage = ImageImport.defaultGambar;
+  const [preview, setPreview] = useState("");
 
   const agamaOption = [
     {
-      value: "Hindu",
+      value: "hindu",
       label: "Hindu",
     },
     {
-      value: "Buddha",
+      value: "buddha",
       label: "Buddha",
     },
     {
-      value: "Kristen Katolik",
-      label: "Kristen Katolik",
+      value: "katolik",
+      label: "Katolik",
     },
     {
-      value: "Kristen Protestan",
-      label: "Kristen Protestan",
+      value: "protestan",
+      label: "Protestan",
     },
     {
-      value: "Islam",
+      value: "islam",
       label: "Islam",
+    },
+    {
+      value: "konghuchu",
+      label: "Konghuchu",
     },
   ];
 
   const kelaminOption = [
     {
-      value: "Laki - Laki",
+      value: "laki-laki",
       label: "Laki - Laki",
     },
     {
-      value: "Perempuan",
+      value: "perempuan",
       label: "Perempuan",
     },
   ];
@@ -57,10 +63,21 @@ export default function TambahDataGuru() {
   const [tempat_lahir, setTempatLahir] = useState("");
   const [tgl_lahir, setTglLahir] = useState("");
   const [kelaminGuru, setKelamin] = useState("");
+  const [Gambar, setGambar] = useState(null);
   const [alamat, setAlamat] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
+
+  // token
+  const token = sessionStorage.getItem("session");
+
+  // jika tidak ada gambar
+  const getDefaultImageAsFile = async () => {
+    const response = await fetch(defaultImage);
+    const blob = await response.blob();
+    return new File([blob], "default.jpg", { type: blob.type });
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -71,9 +88,7 @@ export default function TambahDataGuru() {
       if (!allowedTypes.includes(file.type)) {
         setToastMessage("File harus berformat PNG, JPG, atau JPEG");
         setToastVariant("error");
-        setPreview(
-          "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
-        );
+        setPreview(defaultImage);
         document.getElementById("file-name").textContent = "No file chosen";
         return;
       }
@@ -81,9 +96,7 @@ export default function TambahDataGuru() {
       if (file.size > fileSizeLimit) {
         setToastMessage("Ukuran file terlalu besar. Maksimum 5MB.");
         setToastVariant("error");
-        setPreview(
-          "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
-        );
+        setPreview(defaultImage);
         document.getElementById("file-name").textContent = "No file chosen";
         return;
       }
@@ -91,31 +104,21 @@ export default function TambahDataGuru() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
+        setGambar(file);
         document.getElementById("file-name").textContent = file.name;
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // reset pesan toast terlebih dahulu
     setToastMessage("");
     setToastVariant("");
 
-    // Validasi input
-    if (
-      preview ===
-      "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
-    ) {
-      setTimeout(() => {
-        setToastMessage("Gambar wajib diisi");
-        setToastVariant("error");
-      }, 10);
-      return;
-    }
-
+    // validasi
     if (
       namaGuru.trim() === "" ||
       emailGuru.trim() === "" ||
@@ -135,51 +138,61 @@ export default function TambahDataGuru() {
 
     setIsLoading(true);
 
-    // Ambil data yang sudah ada di localStorage
-    const storedGuru = JSON.parse(localStorage.getItem("guruList")) || [];
+    try {
+      const formData = new FormData();
+      formData.append("nip", nipGuru);
+      formData.append("nama_guru", namaGuru);
+      formData.append("alamat", alamat);
+      formData.append("no_telepon", telp);
+      formData.append("agama_guru", agamaGuru);
+      formData.append("jenis_kelamin_guru", kelaminGuru);
+      formData.append("tanggal_lahir_guru", tgl_lahir);
+      formData.append("tempat_lahir_guru", tempat_lahir);
+      formData.append("email", emailGuru);
 
-    const lastId =
-      storedGuru.length > 0
-        ? Math.max(...storedGuru.map((item) => item.id))
-        : 0;
+      let finalGambar = Gambar;
+      if (!finalGambar) {
+        finalGambar = await getDefaultImageAsFile();
+      }
+      formData.append("foto_profile", finalGambar);
 
-    // Membuat data baru
-    const newGuru = {
-      id: lastId + 1, // id auto increment
-      image: preview,
-      nama: namaGuru,
-      nip: nipGuru,
-      email: emailGuru,
-      telp: telp,
-      agama: agamaGuru,
-      tempat_lahir: tempat_lahir,
-      tgl_lahir: new Date(tgl_lahir).toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }),
-      kelamin: kelaminGuru,
-      alamat: alamat,
-      tgl: new Date().toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }),
-    };
+      const response = await axios.post(
+        `${baseUrl.apiUrl}/admin/guru`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-    // Tambahkan baru ke data
-    const tambah = [...storedGuru, newGuru];
+      if (response.status === 201 || response.status === 200) {
+        localStorage.setItem("guruAdded", "success");
+        setTimeout(() => {
+          setIsLoading(false);
+          navigate("/dashboard/guru");
+        }, 2000);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      // Menangani error yang dikirimkan oleh server
+      let errorMessage = "Gagal";
 
-    // Simpan data ke localStorage
-    localStorage.setItem("guruList", JSON.stringify(tambah));
+      if (error.response && error.response.data.message) {
+        // Jika error dari server ada di response.data
+        if (error.response.data.message) {
+          errorMessage = error.response.data.message; // Tampilkan pesan dari server jika ada
+        }
+      } else {
+        // Jika error tidak ada response dari server
+        errorMessage = error.message;
+      }
 
-    // Simpan status berhasil tambah
-    localStorage.setItem("guruAdded", "success");
-
-    setTimeout(() => {
       setIsLoading(false);
-      navigate("/dashboard/guru");
-    }, 2000);
+      setToastMessage(errorMessage);
+      setToastVariant("error");
+    }
   };
   return (
     <div className="lg:py-5">
@@ -198,10 +211,11 @@ export default function TambahDataGuru() {
           <div className="flex flex-col justify-center items-center">
             <div className="p-1 w-60 h-64 my-3 overflow-hidden">
               <img
-                src={preview}
+                src={preview || defaultImage}
+                alt="Preview"
                 id="ImagePreview"
-                className="w-full h-full object-object rounded"
-              ></img>
+                className="w-full h-full object-cover rounded"
+              />
             </div>
 
             <InputFile fungsi={handleImageChange}></InputFile>

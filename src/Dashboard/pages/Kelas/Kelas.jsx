@@ -1,4 +1,3 @@
-import React from "react";
 import Calender from "../../components/Calender/Calender";
 import ButtonHref from "../../../component/Button/ButtonHref";
 import Search from "../../../component/Input/Search";
@@ -18,6 +17,12 @@ export default function Kelas() {
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const dataPerPage = 5;
+
+  const tahunoptions = [
+    { value: "2023/2024 Genap", label: "2023/2024 Genap" },
+    { value: "2023/2024 Ganjil", label: "2023/2024 Ganjil" },
+    { value: "2024/2025 Genap", label: "2024/2025 Ganjil" },
+  ];
 
   useEffect(() => {
     const fetchData = () => {
@@ -120,7 +125,21 @@ export default function Kelas() {
     <div className="lg:py-5">
       {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
       <div className="flex flex-col lg:flex-row w-full justify-between items-center">
-        <h2 className="text-2xl font-semibold">Data Kelas</h2>
+        <div className="flex items-center">
+          <h2 className="text-2xl font-semibold me-2">
+            Data Kelas Tahun Akademik
+          </h2>
+          <select className="select bg-white border border-border-grey w-30 rounded-lg">
+            <option disabled={true} selected>
+              -- Pilih --
+            </option>
+            {tahunoptions.map((item, index) => (
+              <option key={index} value={item.value}>
+                {item.label}
+              </option>
+            ))}
+          </select>
+        </div>
         <Calender className="w-40 lg:w-full"></Calender>
       </div>
 

@@ -9,9 +9,10 @@ import {
 } from "@heroicons/react/16/solid";
 import Button from "../../../../component/Button/Button";
 import { useState, useEffect } from "react";
-import DataGuruu from "../../../../data/Guru/DataGuruu";
 import Toast from "../../../../component/Toast/Toast";
 import Loading from "../../../../component/Loading/Loading";
+import axios from "axios";
+import baseUrl from "../../../../utils/config/baseUrl";
 
 export default function DataGuru() {
   // simpan data
@@ -21,22 +22,26 @@ export default function DataGuru() {
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const dataPerPage = 5;
+  const dataPerPage = 10;
+
+  const token = sessionStorage.getItem("session");
 
   useEffect(() => {
-    const fetchData = () => {
-      const storedData = localStorage.getItem("guruList");
-      if (!storedData || storedData === "undefined") {
-        localStorage.setItem("guruList", JSON.stringify(DataGuruu));
-        setdataGuru(DataGuruu);
-      } else {
-        try {
-          const parsedData = JSON.parse(storedData);
-          setdataGuru(parsedData);
-        } catch (e) {
-          console.error("Data di localStorage rusak:", e);
-          setdataGuru(DataGuruu); // fallback
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${baseUrl.apiUrl}/admin/guru`, {
+          headers: {
+            Authorization: `Beazer ${token}`,
+          },
+        });
+
+        if (response.status == 200 || response.status == 201) {
+          setdataGuru(response.data);
         }
+      } catch (error) {
+        console.error("Gagal mengambil data:", error);
+        setToastMessage("Gagal mengambil data");
+        setToastVariant("error");
       }
     };
 
@@ -44,7 +49,6 @@ export default function DataGuru() {
     const invalidStatus = localStorage.getItem("guruInvalid");
     const addedStatus = localStorage.getItem("guruAdded");
     const updateStatus = localStorage.getItem("guruUpdate");
-    const deleteStatus = localStorage.getItem("guruDelete");
 
     if (invalidStatus === "error") {
       setToastMessage("Guru Tidak ditemukan");
@@ -64,62 +68,79 @@ export default function DataGuru() {
       localStorage.removeItem("guruUpdate");
     }
 
-    if (deleteStatus === "success") {
-      setToastMessage("Guru berhasil dihapus");
-      setToastVariant("success");
-      localStorage.removeItem("guruDelete");
-    }
-
     fetchData();
-
-    // Tambah event listener untuk menangani perubahan localStorage
-    const handleStorageChange = () => {
-      fetchData();
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
   }, []);
 
   // Pagination
   const indexOfLastData = currentPage * dataPerPage;
   const indexOfFirstData = indexOfLastData - dataPerPage;
   const currentData = dataGuru
-    .sort((a, b) => b.id - a.id)
+    .sort((a, b) => b.nip - a.nip)
     .slice(indexOfFirstData, indexOfLastData);
   const totalPages = Math.ceil(dataGuru.length / dataPerPage);
 
-  // Hapus (method kosong, Anda bisa implementasikan)
-  const handleDeleteGuru = (e) => {
+  // fomat datetime
+  const formatTanggalLengkap = (tanggalISO) => {
+    const tanggal = new Date(tanggalISO);
+
+    const bulanMap = [
+      "Januari",
+      "Februari",
+      "Maret",
+      "April",
+      "Mei",
+      "Juni",
+      "Juli",
+      "Agustus",
+      "September",
+      "Oktober",
+      "November",
+      "Desember",
+    ];
+
+    const hari = tanggal.getDate();
+    const bulan = bulanMap[tanggal.getMonth()];
+    const tahun = tanggal.getFullYear();
+
+    return `${hari} ${bulan} ${tahun}`;
+  };
+
+  const handleDeleteGuru = async (e) => {
     e.preventDefault();
 
     if (!selectedGuru) return;
 
     setIsLoading(true); // Set loading state
 
-    // Hapus admin dari data
-    const filteredData = dataGuru.filter((item) => item.id !== selectedGuru.id);
+    try {
+      await axios.delete(`${baseUrl.apiUrl}/admin/guru/${selectedGuru.nip}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    // Simpan data yang sudah dihapus ke localStorage
-    localStorage.setItem("guruList", JSON.stringify(filteredData));
+      // reset
+      setToastMessage("");
+      setToastVariant("");
 
-    // reset
-    setToastMessage("");
-    setToastVariant("");
-
-    // Simulasi delay untuk loading
-    setTimeout(() => {
+      // Simulasi delay untuk loading
+      setTimeout(() => {
+        setIsLoading(false); // Reset loading state
+        setToastMessage("Data Guru berhasil dihapus");
+        setToastVariant("success");
+        // Hapus data dari state tanpa perlu fetch ulang
+        setdataGuru((prevData) =>
+          prevData.filter((item) => item.nip !== selectedGuru.nip)
+        );
+        document.getElementById("my_modal_3").close();
+      }, 1000);
+    } catch (error) {
+      console.error("Gagal menghapus data:", error);
       setIsLoading(false); // Reset loading state
-      setdataGuru(filteredData); // Update state dataAdmin
-      setSelectedGuru(null); // Reset selectedAdmin
-      // Set toast message setelah berhasil hapus
-      setToastMessage("Guru berhasil dihapus");
-      setToastVariant("success");
-      document.getElementById("my_modal_3").close(); // Tutup modal
-    }, 1000); // Delay 2 detik
+      setToastMessage("Gagal menghapus data");
+      setToastVariant("error");
+      document.getElementById("my_modal_3").close();
+    }
   };
 
   return (
@@ -163,15 +184,18 @@ export default function DataGuru() {
                 {currentData.map((data, index) => (
                   <tr
                     className="border-b border-t border-border-grey"
-                    key={data.id}
+                    key={data.nip}
                   >
                     <td>{index + 1}</td>
                     <td className="whitespace-nowrap">
                       <div className="flex items-center space-x-3">
                         <div className="avatar">
                           <div className="mask mask-circle w-12 h-12">
-                            {data.image ? (
-                              <img src={data.image} alt="Avatar" />
+                            {data.foto_profil ? (
+                              <img
+                                src={`${baseUrl.apiUrlImage}/Upload/profile_image/${data.foto_profil}`}
+                                alt="Avatar"
+                              />
                             ) : (
                               <img
                                 src="https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
@@ -181,13 +205,15 @@ export default function DataGuru() {
                           </div>
                         </div>
                         <div>
-                          <div className="font-bold">{data.nama}</div>
+                          <div className="font-bold">{data.nama_guru}</div>
                         </div>
                       </div>
                     </td>
                     <td className="whitespace-nowrap">{data.nip}</td>
                     <td className="whitespace-nowrap">{data.email}</td>
-                    <td className="whitespace-nowrap">{data.tgl}</td>
+                    <td className="whitespace-nowrap">
+                      {formatTanggalLengkap(data.created_at)}
+                    </td>
                     <td>
                       <div className="flex items-center justify-evenly w-20">
                         <button
@@ -201,7 +227,7 @@ export default function DataGuru() {
                         </button>
                         |
                         <ButtonHref
-                          href={`/dashboard/guru/update/${data.id}`}
+                          href={`/dashboard/guru/update/${data.nip}`}
                           variant="update"
                           text=<PencilSquareIcon className="w-5 h-5 text-amber-300"></PencilSquareIcon>
                         ></ButtonHref>
@@ -269,41 +295,54 @@ export default function DataGuru() {
               <>
                 <h1 className="text-3xl text-center">
                   Informasi Biodata Guru{" "}
-                  <span className="font-bold">{selectedGuru.nama}</span>
+                  <span className="font-bold capitalize">
+                    {selectedGuru.nama_guru}
+                  </span>
                 </h1>
                 <table className="table w-full mt-10 mx-auto">
                   <tbody className="">
                     <tr className="border-y border-border-grey">
                       <td className="text-lg font-bold">Nama :</td>
-                      <td className="text-lg">{selectedGuru.nama}</td>
+                      <td className="text-lg capitalize">
+                        {selectedGuru.nama_guru}
+                      </td>
                     </tr>
                     <tr className="border-y border-border-grey">
                       <td className="text-lg font-bold">NIP :</td>
-                      <td className="text-lg">{selectedGuru.nip}</td>
+                      <td className="text-lg v">{selectedGuru.nip}</td>
                     </tr>
                     <tr className="border-y border-border-grey">
                       <td className="text-lg font-bold">Email :</td>
-                      <td className="text-lg">{selectedGuru.email}</td>
+                      <td className="text-lg capitalize">
+                        {selectedGuru.email}
+                      </td>
                     </tr>
                     <tr className="border-y border-border-grey">
                       <td className="text-lg font-bold">
                         Tempat, Tanggal Lahir :
                       </td>
-                      <td className="text-lg">
-                        {selectedGuru.tempat_lahir}, {selectedGuru.tgl_lahir}
+                      <td className="text-lg capitalize">
+                        {selectedGuru.tempat_lahir_guru},{" "}
+                        {formatTanggalLengkap(selectedGuru.tanggal_lahir_guru)}
                       </td>
                     </tr>
                     <tr className="border-y border-border-grey">
                       <td className="text-lg font-bold">Agama :</td>
-                      <td className="text-lg">{selectedGuru.agama}</td>
+                      <td className="text-lg capitalize">
+                        {selectedGuru.agama_guru}
+                      </td>
                     </tr>
                     <tr className="border-y border-border-grey">
                       <td className="text-lg font-bold">Jenis Kelamin :</td>
-                      <td className="text-lg">{selectedGuru.kelamin}</td>
+                      <td className="text-lg capitalize">
+                        {selectedGuru.jenis_kelamin_guru}
+                      </td>
                     </tr>
                     <tr className="border-y border-border-grey">
                       <td className="text-lg font-bold">No Telepon :</td>
-                      <td className="text-lg">{selectedGuru.telp}</td>
+                      <td className="text-lg capitalize">
+                        {selectedGuru.no_telepon}
+                      </td>
                     </tr>
                     <tr className="border-y border-border-grey">
                       <td className="text-lg font-bold">Alamat :</td>

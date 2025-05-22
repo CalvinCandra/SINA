@@ -77,7 +77,7 @@ export default function DetailSiswa() {
               <FieldInput
                 text=<span>Nama Lengkap</span>
                 value={setSiswa.nama}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
                 readonly
               ></FieldInput>
             </div>
@@ -86,7 +86,7 @@ export default function DetailSiswa() {
               <FieldInput
                 text=<span>Email</span>
                 value={setSiswa.email ? setSiswa.email : "-"}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
                 readonly
               ></FieldInput>
             </div>
@@ -98,7 +98,7 @@ export default function DetailSiswa() {
               <FieldInput
                 text=<span>Nis</span>
                 value={setSiswa.nis}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
                 readonly
               ></FieldInput>
             </div>
@@ -107,7 +107,7 @@ export default function DetailSiswa() {
               <FieldInput
                 text=<span>NISN</span>
                 value={setSiswa.nisn}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
                 readonly
               ></FieldInput>
             </div>
@@ -119,7 +119,7 @@ export default function DetailSiswa() {
               <FieldInput
                 text=<span>Tempat Lahir</span>
                 value={setSiswa.tempat_lahir}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
                 readonly
               ></FieldInput>
             </div>
@@ -128,7 +128,7 @@ export default function DetailSiswa() {
               <FieldInput
                 text=<span>Tanggal Lahir</span>
                 value={setSiswa.tgl_lahir}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
                 readonly
               ></FieldInput>
             </div>
@@ -140,7 +140,7 @@ export default function DetailSiswa() {
               <FieldInput
                 text=<span>Agama</span>
                 value={setSiswa.agama}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
                 readonly
               ></FieldInput>
             </div>
@@ -149,7 +149,7 @@ export default function DetailSiswa() {
               <FieldInput
                 text=<span>Jenis Kelamin</span>
                 value={setSiswa.kelamin}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
                 readonly
               ></FieldInput>
             </div>
@@ -159,6 +159,7 @@ export default function DetailSiswa() {
             <Textarea
               text=<span>Alamat</span>
               value={setSiswa.alamat}
+              variant="disabled"
               readonly
             ></Textarea>
           </div>
@@ -174,7 +175,7 @@ export default function DetailSiswa() {
                 text=<span>Nama Lengkap</span>
                 readonly
                 value={setSiswa.nama_ayah}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
               ></FieldInput>
             </div>
 
@@ -183,7 +184,7 @@ export default function DetailSiswa() {
                 text=<span>Nik</span>
                 readonly
                 value={setSiswa.nik_ayah}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
               ></FieldInput>
             </div>
           </div>
@@ -195,7 +196,7 @@ export default function DetailSiswa() {
                 text=<span>Tempat Lahir</span>
                 readonly
                 value={setSiswa.tempat_lahir_ayah}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
               ></FieldInput>
             </div>
 
@@ -205,7 +206,7 @@ export default function DetailSiswa() {
                 text=<span>Tanggal Lahir</span>
                 readonly
                 value={formatDateToInput(setSiswa.tgl_lahir_ayah)}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
               ></FieldInput>
             </div>
           </div>
@@ -217,7 +218,7 @@ export default function DetailSiswa() {
                 text=<span>Pekerjaan</span>
                 readonly
                 value={setSiswa.pekerjaan_ayah}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
               ></FieldInput>
             </div>
 
@@ -226,7 +227,7 @@ export default function DetailSiswa() {
                 text=<span>No Handphone</span>
                 readonly
                 value={setSiswa.no_ayah}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
               ></FieldInput>
             </div>
           </div>
@@ -235,6 +236,7 @@ export default function DetailSiswa() {
             <Textarea
               text=<span>Alamat</span>
               value={setSiswa.alamat_ayah}
+              variant="disabled"
               readonly
             ></Textarea>
           </div>
@@ -250,7 +252,7 @@ export default function DetailSiswa() {
                 text=<span>Nama Lengkap</span>
                 readonly
                 value={setSiswa.nama_ibu}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
               ></FieldInput>
             </div>
 
@@ -259,7 +261,7 @@ export default function DetailSiswa() {
                 text=<span>Nik</span>
                 readonly
                 value={setSiswa.nik_ibu}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
               ></FieldInput>
             </div>
           </div>
@@ -271,7 +273,7 @@ export default function DetailSiswa() {
                 text=<span>Tempat Lahir</span>
                 readonly
                 value={setSiswa.tempat_lahir_ibu}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
               ></FieldInput>
             </div>
 
@@ -281,7 +283,7 @@ export default function DetailSiswa() {
                 text=<span>Tanggal Lahir</span>
                 readonly
                 value={formatDateToInput(setSiswa.tgl_lahir_ibu)}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
               ></FieldInput>
             </div>
           </div>
@@ -293,7 +295,7 @@ export default function DetailSiswa() {
                 text=<span>Pekerjaan</span>
                 readonly
                 value={setSiswa.pekerjaan_ibu}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
               ></FieldInput>
             </div>
 
@@ -302,7 +304,7 @@ export default function DetailSiswa() {
                 text=<span>No Handphone</span>
                 readonly
                 value={setSiswa.no_ibu}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
               ></FieldInput>
             </div>
           </div>
@@ -311,6 +313,7 @@ export default function DetailSiswa() {
             <Textarea
               text=<span>Alamat</span>
               value={setSiswa.alamat_ibu}
+              variant="disabled"
               readonly
             ></Textarea>
           </div>
@@ -326,7 +329,7 @@ export default function DetailSiswa() {
                 text=<span>Nama Lengkap</span>
                 readonly
                 value={setSiswa.nama_wali ? setSiswa.nama_wali : "-"}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
               ></FieldInput>
             </div>
 
@@ -335,7 +338,7 @@ export default function DetailSiswa() {
                 text=<span>Nik</span>
                 readonly
                 value={setSiswa.nik_wali ? setSiswa.nik_wali : "-"}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
               ></FieldInput>
             </div>
           </div>
@@ -350,7 +353,7 @@ export default function DetailSiswa() {
                 value={
                   setSiswa.tempat_lahir_wali ? setSiswa.tempat_lahir_wali : "-"
                 }
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
               ></FieldInput>
             </div>
 
@@ -364,7 +367,7 @@ export default function DetailSiswa() {
                     ? formatDateToInput(setSiswa.tgl_lahir_wali)
                     : ""
                 }
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
               ></FieldInput>
             </div>
           </div>
@@ -376,7 +379,7 @@ export default function DetailSiswa() {
                 text=<span>Pekerjaan</span>
                 readonly
                 value={setSiswa.pekerjaan_wali ? setSiswa.pekerjaan_wali : "-"}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
               ></FieldInput>
             </div>
 
@@ -385,7 +388,7 @@ export default function DetailSiswa() {
                 text=<span>No Handphone</span>
                 readonly
                 value={setSiswa.no_wali ? setSiswa.no_wali : "-"}
-                variant="biasa_text_sm"
+                variant="biasa_text_sm_disabled"
               ></FieldInput>
             </div>
           </div>
@@ -394,6 +397,7 @@ export default function DetailSiswa() {
             <Textarea
               text=<span>Alamat</span>
               value={setSiswa.alamat_wali ? setSiswa.alamat_wali : "-"}
+              variant="disabled"
               readonly
             ></Textarea>
           </div>

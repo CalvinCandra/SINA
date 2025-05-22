@@ -36,7 +36,12 @@ function Sidebar() {
   );
   const isKrsActive = path.startsWith("/dashboard/akademik/krs");
   const isGuruActive = path.startsWith("/dashboard/guru"); //untuk dropdown
-  const isSiswaActive = path.startsWith("/dashboard/siswa"); //untuk dropdown
+  const isDataGuruActive =
+    path === "/dashboard/guru" ||
+    path === "/dashboard/guru/tambah" ||
+    path.startsWith("/dashboard/guru/update/");
+  const isAbsenGuruActive = path === "/dashboard/guru/absen";
+  const isSiswaActive = path.startsWith("/dashboard/siswa");
   const isPengumumanActive = path.startsWith("/dashboard/pengumuman");
 
   // useEffect untuk menghapus localStorage saat berpindah dari halaman
@@ -50,26 +55,10 @@ function Sidebar() {
   // useEffect untuk menghapus localStorage saat berpindah dari halaman
   useEffect(() => {
     // Jika berpindah dari halaman
-    if (!isKurikulumActive) {
-      localStorage.removeItem("kurikulumList");
-    }
-  }, [isKurikulumActive]); // Memantau perubahan path
-
-  // useEffect untuk menghapus localStorage saat berpindah dari halaman
-  useEffect(() => {
-    // Jika berpindah dari halaman
     if (!isTahunAkademikActive) {
       localStorage.removeItem("tahunList");
     }
   }, [isTahunAkademikActive]); // Memantau perubahan path
-
-  // useEffect untuk menghapus localStorage saat berpindah dari halaman
-  useEffect(() => {
-    // Jika berpindah dari halaman
-    if (!isGuruActive) {
-      localStorage.removeItem("guruList");
-    }
-  }, [isGuruActive]); // Memantau perubahan path
 
   // useEffect untuk menghapus localStorage saat berpindah dari halaman
   useEffect(() => {
@@ -129,7 +118,7 @@ function Sidebar() {
         </li>
 
         {/* Admin */}
-        {role === "admin" && (
+        {role === "superadmin" && (
           <li
             className={`mb-3 ${
               isAdminActive ? "bg-biru-active text-white  rounded-sm" : ""
@@ -258,8 +247,8 @@ function Sidebar() {
         <li className="mb-3">
           <details open={isGuruActive}>
             <summary
-              className={`flex items-center cursor-pointer py-2 ${
-                isGuruActive ? "bg-biru-active text-white  rounded-sm" : ""
+              className={`flex items-center cursor-pointer py-2 rounded-sm ${
+                isGuruActive ? "bg-biru-active text-white" : ""
               }`}
             >
               <UserGroupIcon className="w-6 h-6 me-1" />
@@ -271,7 +260,9 @@ function Sidebar() {
                 <Link
                   to="/dashboard/guru"
                   className={`block py-1 ${
-                    isGuruActive ? "text-black font-semibold" : "text-gray-500"
+                    isDataGuruActive && !isAbsenGuruActive
+                      ? "text-black font-semibold"
+                      : "text-gray-500"
                   }`}
                 >
                   Data Guru
@@ -282,7 +273,7 @@ function Sidebar() {
                 <Link
                   to="/dashboard/guru/absen"
                   className={`block py-1 ${
-                    path === "/dashboard/guru/absen"
+                    isAbsenGuruActive && !isDataGuruActive
                       ? "text-black font-semibold"
                       : "text-gray-500"
                   }`}
