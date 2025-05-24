@@ -40,6 +40,9 @@ import EditJadwalKelas from "./Dashboard/pages/Akademik/Jadwal/EditJadwalKelas";
 import AbsenGuru from "./Dashboard/pages/Guru/AbsenGuru/AbsenGuru";
 import AbsenkelasSiswa from "./Dashboard/pages/Siswa/AbsenSiswa/AbsenKelasSiswa";
 import AbsenSiswaPage from "./Dashboard/pages/Siswa/AbsenSiswa/AbsenSiswaPage";
+import Krs from "./Dashboard/pages/Akademik/KRS/Krs";
+import KrsSiswa from "./Dashboard/pages/Akademik/KRS/KrsSiswa";
+import ErrorPage from "./pages/Errors";
 
 function App() {
   return (
@@ -118,6 +121,13 @@ function App() {
           element={<EditJadwalKelas />}
         />
 
+        {/* Krs */}
+        <Route path="akademik/krs" element={<Krs />} />
+        <Route
+          path="akademik/krs/:nama_kelas/:tingkat"
+          element={<KrsSiswa />}
+        />
+
         {/* Guru */}
         {/* Data Guru */}
         <Route path="guru" element={<DataGuru />} />
@@ -158,6 +168,9 @@ function App() {
         <Route path="pengumuman/detail/:id" element={<DetailPengumuman />} />
         <Route path="pengumuman/update/:id" element={<UpdatePengumuman />} />
       </Route>
+
+      {/* Error Pages */}
+      <Route path="*" element={<ErrorPage />} />
     </Routes>
   );
 }
