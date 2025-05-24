@@ -76,6 +76,14 @@ function Sidebar() {
     }
   }, [isJadwalActive]); // Memantau perubahan path
 
+  // useEffect untuk menghapus localStorage saat berpindah dari halaman
+  useEffect(() => {
+    // Jika berpindah dari halaman
+    if (!isKrsActive) {
+      localStorage.removeItem("krsList");
+    }
+  }, [isKrsActive]); // Memantau perubahan path
+
   return (
     <div className="drawer-side z-30 shadow-black shadow-md font-semibold">
       <label htmlFor="left-sidebar-drawer" className="drawer-overlay"></label>
@@ -236,7 +244,7 @@ function Sidebar() {
                     isKrsActive ? "text-black font-semibold" : "text-gray-500"
                   }`}
                 >
-                  Krs
+                  KRS
                 </Link>
               </li>
             </ul>
