@@ -1,12 +1,13 @@
 import Calender from "../../components/Calender/Calender";
 import ButtonHref from "../../../component/Button/ButtonHref";
 import Search from "../../../component/Input/Search";
-import DataKelas from "../../../data/Kelas/DataKelas";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
 import Button from "../../../component/Button/Button";
 import { useState, useEffect } from "react";
 import Toast from "../../../component/Toast/Toast";
 import Loading from "../../../component/Loading/Loading";
+import axios from "axios";
+import baseUrl from "../../../utils/config/baseUrl";
 
 export default function Kelas() {
   // simpan data kelas
@@ -18,26 +19,33 @@ export default function Kelas() {
   const [currentPage, setCurrentPage] = useState(1);
   const dataPerPage = 5;
 
-  const tahunoptions = [
-    { value: "2023/2024 Genap", label: "2023/2024 Genap" },
-    { value: "2023/2024 Ganjil", label: "2023/2024 Ganjil" },
-    { value: "2024/2025 Genap", label: "2024/2025 Ganjil" },
-  ];
+  // const token
+  const token = sessionStorage.getItem("session");
+
+  // const tahunoptions = [
+  //   { value: "2023/2024 Genap", label: "2023/2024 Genap" },
+  //   { value: "2023/2024 Ganjil", label: "2023/2024 Ganjil" },
+  //   { value: "2024/2025 Genap", label: "2024/2025 Ganjil" },
+  // ];
 
   useEffect(() => {
-    const fetchData = () => {
-      const storedData = localStorage.getItem("kelasList");
-      if (!storedData || storedData === "undefined") {
-        localStorage.setItem("kelasList", JSON.stringify(DataKelas));
-        setdatakelas(DataKelas);
-      } else {
-        try {
-          const parsedData = JSON.parse(storedData);
-          setdatakelas(parsedData);
-        } catch (e) {
-          console.error("Data di localStorage rusak:", e);
-          setdatakelas(DataKelas); // fallback
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${baseUrl.apiUrl}/admin/kelas`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        console.log(response);
+
+        if (response.status == 200 || response.status == 201) {
+          setdatakelas(response.data);
         }
+      } catch (error) {
+        console.error("Gagal mengambil data:", error);
+        setToastMessage("Gagal mengambil data");
+        setToastVariant("error");
       }
     };
 
@@ -72,17 +80,6 @@ export default function Kelas() {
     }
 
     fetchData();
-
-    // Tambah event listener untuk menangani perubahan localStorage
-    const handleStorageChange = () => {
-      fetchData();
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
   }, []);
 
   // Pagination
@@ -126,10 +123,8 @@ export default function Kelas() {
       {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
       <div className="flex flex-col lg:flex-row w-full justify-between items-center">
         <div className="flex items-center">
-          <h2 className="text-2xl font-semibold me-2">
-            Data Kelas Tahun Akademik
-          </h2>
-          <select className="select bg-white border border-border-grey w-30 rounded-lg">
+          <h2 className="text-2xl font-semibold me-2">Data Kelas</h2>
+          {/* <select className="select bg-white border border-border-grey w-30 rounded-lg">
             <option disabled={true} selected>
               -- Pilih --
             </option>
@@ -138,7 +133,7 @@ export default function Kelas() {
                 {item.label}
               </option>
             ))}
-          </select>
+          </select> */}
         </div>
         <Calender className="w-40 lg:w-full"></Calender>
       </div>
@@ -176,9 +171,9 @@ export default function Kelas() {
                 {currentData.map((data, index) => (
                   <tr
                     className="border-b border-t border-border-grey"
-                    key={data.id}
+                    key={data.kelas_id}
                   >
-                    <td>{indexOfFirstData + index + 1}</td>
+                    <td>{index + 1}</td>
                     <td className="whitespace-nowrap">{data.nama_kelas}</td>
                     <td className="whitespace-nowrap">{data.tingkat}</td>
                     <td className="whitespace-nowrap">{data.wali_kelas}</td>
@@ -187,7 +182,7 @@ export default function Kelas() {
                     <td>
                       <div className="flex items-center justify-evenly w-20">
                         <ButtonHref
-                          href={`/dashboard/kelas/update/${data.id}`}
+                          href={`/dashboard/kelas/update/${data.kelas_id}`}
                           variant="update"
                           text=<PencilSquareIcon className="w-5 h-5 text-amber-300"></PencilSquareIcon>
                         ></ButtonHref>

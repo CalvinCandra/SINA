@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import InputFile from "../../../component/Input/InputFile";
 import ButtonHref from "../../../component/Button/ButtonHref";
 import Textarea from "../../../component/Input/Textarea";
@@ -8,45 +8,51 @@ import SelectField from "../../../component/Input/SelectField";
 import Loading from "../../../component/Loading/Loading";
 import Toast from "../../../component/Toast/Toast";
 import FieldInput from "../../../component/Input/FieldInput";
+import axios from "axios";
+import baseUrl from "../../../utils/config/baseUrl";
+import ImageImport from "../../../data/ImageImport";
 
 export default function TambahSiswa() {
-  const data = useParams();
-  console.log(localStorage.getItem("siswaList"));
+  const { kelas_id } = useParams();
   const navigate = useNavigate();
-  const [preview, setPreview] = useState(
-    "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
-  );
+  const defaultImage = ImageImport.defaultGambar;
+  const [preview, setPreview] = useState("");
+  const [gambar, setgambar] = useState("");
 
   const agamaOption = [
     {
-      value: "Hindu",
+      value: "hindu",
       label: "Hindu",
     },
     {
-      value: "Buddha",
+      value: "buddha",
       label: "Buddha",
     },
     {
-      value: "Kristen Katolik",
-      label: "Kristen Katolik",
+      value: "katolik",
+      label: "Katolik",
     },
     {
-      value: "Kristen Protestan",
-      label: "Kristen Protestan",
+      value: "protestan",
+      label: "Protestan",
     },
     {
-      value: "Islam",
+      value: "islam",
       label: "Islam",
+    },
+    {
+      value: "konghuchu",
+      label: "Konghuchu",
     },
   ];
 
   const kelaminOption = [
     {
-      value: "Laki - Laki",
+      value: "laki-laki",
       label: "Laki - Laki",
     },
     {
-      value: "Perempuan",
+      value: "perempuan",
       label: "Perempuan",
     },
   ];
@@ -61,6 +67,7 @@ export default function TambahSiswa() {
   const [agama, setAgamaSiswa] = useState("");
   const [kelamin, setkelaminSiswa] = useState("");
   const [alamatSiswa, setAlamatSiswa] = useState("");
+  const [telpSiswa, setTelpSiswa] = useState("");
 
   // variabel ayah
   const [namaAyah, setNamaAyah] = useState("");
@@ -93,6 +100,15 @@ export default function TambahSiswa() {
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
 
+  const token = sessionStorage.getItem("session");
+
+  // jika tidak ada gambar
+  const getDefaultImageAsFile = async () => {
+    const response = await fetch(defaultImage);
+    const blob = await response.blob();
+    return new File([blob], "default.jpg", { type: blob.type });
+  };
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -102,9 +118,6 @@ export default function TambahSiswa() {
       if (!allowedTypes.includes(file.type)) {
         setToastMessage("File harus berformat PNG, JPG, atau JPEG");
         setToastVariant("error");
-        setPreview(
-          "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
-        );
         document.getElementById("file-name").textContent = "No file chosen";
         return;
       }
@@ -112,9 +125,6 @@ export default function TambahSiswa() {
       if (file.size >= fileSizeLimit) {
         setToastMessage("Ukuran file terlalu besar. Maksimum 5MB.");
         setToastVariant("error");
-        setPreview(
-          "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
-        );
         document.getElementById("file-name").textContent = "No file chosen";
         return;
       }
@@ -122,30 +132,19 @@ export default function TambahSiswa() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
+        setgambar(file);
         document.getElementById("file-name").textContent = file.name;
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // reset pesan toast terlebih dahulu
     setToastMessage("");
     setToastVariant("");
-
-    // Validasi input
-    if (
-      preview ===
-      "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
-    ) {
-      setTimeout(() => {
-        setToastMessage("Gambar wajib diisi");
-        setToastVariant("error");
-      }, 10);
-      return;
-    }
 
     // kumpulan filed tidak bole kosong
     const requiredFields = [
@@ -157,6 +156,7 @@ export default function TambahSiswa() {
       agama,
       kelamin,
       alamatSiswa,
+      telpSiswa,
       namaAyah,
       nikAyah,
       tempatLahirAyah,
@@ -174,7 +174,6 @@ export default function TambahSiswa() {
     ];
 
     const isAnyEmpty = requiredFields.some((field) => field.trim() === "");
-
     if (isAnyEmpty) {
       setTimeout(() => {
         setToastMessage("Kolom input tidak boleh kosong");
@@ -183,89 +182,105 @@ export default function TambahSiswa() {
       return;
     }
 
+    // Validasi panjang NIS, NISN, dan NIK
+    if (nisSiswa.length !== 10 || nisnSiswa.length !== 10) {
+      setTimeout(() => {
+        setToastMessage("NIS dan NISN harus 10 digit");
+        setToastVariant("error");
+      }, 10);
+      return;
+    }
+
+    if (nikAyah.length !== 16 || nikIbu.length !== 16) {
+      setTimeout(() => {
+        setToastMessage("NIK harus 16 digit");
+        setToastVariant("error");
+      }, 10);
+      return;
+    }
+
     setIsLoading(true);
 
-    const key = `${decodeURIComponent(data.nama_kelas)} ${decodeURIComponent(
-      data.tingkat
-    )}`;
-    const stored = JSON.parse(localStorage.getItem("siswaList")) || {};
-    const existing = stored[key] || [];
+    try {
+      const formData = new FormData();
+      formData.append("nama_siswa", namaSiswa);
+      formData.append("email", emailSiswa);
+      formData.append("nis", nisSiswa);
+      formData.append("nisn", nisnSiswa);
+      formData.append("tanggal_lahir", tglLahirSiswa);
+      formData.append("tempat_lahir", tglLahirSiswa);
+      formData.append("alamat", alamatSiswa);
+      formData.append("jenis_kelamin", kelamin);
+      formData.append("agama", agama);
+      formData.append("no_telepon", telpSiswa);
+      formData.append("kelas_id", kelas_id);
+      formData.append("ayah_nama", namaAyah);
+      formData.append("ayah_nik", nikAyah);
+      formData.append("ayah_tempat_lahir", tempatLahirAyah);
+      formData.append("ayah_tanggal_lahir", tglLahirAyah);
+      formData.append("ayah_alamat", alamatAyah);
+      formData.append("ayah_pekerjaan", pekerjaanAyah);
+      formData.append("ayah_no_telepon", telpAyah);
+      formData.append("ibu_nama", namaIbu);
+      formData.append("ibu_nik", nikIbu);
+      formData.append("ibu_tempat_lahir", tempatLahirIbu);
+      formData.append("ibu_tanggal_lahir", tglLahirIbu);
+      formData.append("ibu_alamat", alamatIbu);
+      formData.append("ibu_pekerjaan", pekerjaanIbu);
+      formData.append("ibu_no_telepon", telpIbu);
+      formData.append("wali_nama", namaWali);
+      formData.append("wali_nik", nikWali);
+      formData.append("wali_tempat_lahir", tempatLahirWali);
+      formData.append("wali_tanggal_lahir", tglLahirWali);
+      formData.append("wali_alamat", alamatWali);
+      formData.append("wali_pekerjaan", pekerjaanWali);
+      formData.append("wali_no_telepon", telpWali);
 
-    const lastId =
-      existing.length > 0 ? Math.max(...existing.map((item) => item.id)) : 0;
+      // Gambar default
+      const finalGambar = gambar || (await getDefaultImageAsFile());
+      formData.append("foto_profil", finalGambar);
 
-    // Membuat data admin baru
-    const newSiswa = {
-      id: lastId + 1,
-      image: preview,
-      nama: namaSiswa,
-      email: emailSiswa,
-      nis: nisSiswa,
-      nisn: nisnSiswa,
-      tempat_lahir: tempatLahirSiswa,
-      tgl_lahir: new Date(tglLahirSiswa).toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }),
-      agama: agama,
-      kelamin: kelamin,
-      alamat: alamatSiswa,
-      nama_ayah: namaAyah,
-      nik_ayah: nikAyah,
-      tempat_lahir_ayah: tempatLahirAyah,
-      tgl_lahir_ayah: new Date(tglLahirAyah).toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }),
-      pekerjaan_ayah: pekerjaanAyah,
-      no_ayah: telpAyah,
-      alamat_ayah: alamatAyah,
-      nama_ibu: namaIbu,
-      nik_ibu: nikIbu,
-      tempat_lahir_ibu: tempatLahirIbu,
-      tgl_lahir_ibu: new Date(tglLahirIbu).toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }),
-      pekerjaan_ibu: pekerjaanIbu,
-      no_ibu: telpIbu,
-      alamat_ibu: alamatIbu,
-      nama_wali: namaWali,
-      nik_wali: nikWali,
-      tempat_lahir_wali: tempatLahirWali,
-      tgl_lahir_wali: new Date(tglLahirWali).toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }),
-      pekerjaan_wali: pekerjaanWali,
-      no_wali: telpWali,
-      alamat_wali: alamatWali,
-    };
-
-    // Tambahkan admin baru ke data
-    const tambah = {
-      ...stored,
-      [key]: [...existing, newSiswa],
-    };
-
-    // Simpan data ke localStorage
-    localStorage.setItem("siswaList", JSON.stringify(tambah));
-
-    // Simpan status berhasil tambah
-    localStorage.setItem("siswaAdded", "success");
-
-    setTimeout(() => {
-      setIsLoading(false);
-      navigate(
-        `/dashboard/siswa/${encodeURIComponent(
-          data.nama_kelas
-        )}/${encodeURIComponent(data.tingkat)}`
+      const response = await axios.post(
+        `${baseUrl.apiUrl}/admin/siswa`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
       );
-    }, 2000);
+
+      console.log(response);
+
+      if (response.status == 200) {
+        // Simpan status berhasil tambah
+        localStorage.setItem("siswaAdded", "success");
+
+        setTimeout(() => {
+          setIsLoading(false);
+          navigate(`/dashboard/siswa/${kelas_id}`);
+        }, 2000);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      // Menangani error yang dikirimkan oleh server
+      let errorMessage = "Gagal";
+
+      if (error.response && error.response.data.message) {
+        // Jika error dari server ada di response.data
+        if (error.response.data.message) {
+          errorMessage = error.response.data.message; // Tampilkan pesan dari server jika ada
+        }
+      } else {
+        // Jika error tidak ada response dari server
+        errorMessage = error.message;
+      }
+
+      setIsLoading(false);
+      setToastMessage(errorMessage);
+      setToastVariant("error");
+    }
   };
 
   return (
@@ -284,7 +299,7 @@ export default function TambahSiswa() {
           <div className="flex flex-col justify-center items-center">
             <div className="p-1 w-60 h-64 my-3 overflow-hidden">
               <img
-                src={preview}
+                src={preview || defaultImage}
                 alt="Preview"
                 id="ImagePreview"
                 className="w-full h-full object-object rounded"
@@ -299,7 +314,6 @@ export default function TambahSiswa() {
           <div className="w-full flex flex-col lg:flex-row justify-between mt-5">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
-                type="text"
                 text=<span>
                   Nama Lengkap <span className="text-red-500">*</span>
                 </span>
@@ -324,9 +338,8 @@ export default function TambahSiswa() {
           <div className="w-full flex flex-col lg:flex-row justify-between">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
-                type="text"
                 text=<span>
-                  Nis <span className="text-red-500">*</span>
+                  NIS <span className="text-red-500">*</span>
                 </span>
                 value={nisSiswa}
                 variant="biasa_text_sm"
@@ -336,7 +349,6 @@ export default function TambahSiswa() {
 
             <div className="w-full lg:w-1/2 lg:ms-1">
               <FieldInput
-                type="text"
                 text=<span>
                   NISN <span className="text-red-500">*</span>
                 </span>
@@ -351,7 +363,6 @@ export default function TambahSiswa() {
           <div className="w-full flex flex-col lg:flex-row justify-between">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
-                type="text"
                 text=<span>
                   Tempat Lahir <span className="text-red-500">*</span>
                 </span>
@@ -378,24 +389,31 @@ export default function TambahSiswa() {
           <div className="w-full flex flex-col lg:flex-row justify-between">
             <div className="w-full lg:w-1/2 lg:me-1">
               <SelectField
-                text=<span>
-                  Agama <span className="text-red-500">*</span>
-                </span>
+                text=<span>Agama</span>
                 option={agamaOption}
                 value={agama}
                 onChange={(e) => setAgamaSiswa(e.target.value)}
               />
             </div>
 
-            <div className="w-full lg:w-1/2 lg:ms-1">
+            <div className="w-full lg:w-1/2 lg:mx-1">
               <SelectField
-                text=<span>
-                  Kelamin <span className="text-red-500">*</span>
-                </span>
+                text=<span>Kelamin</span>
                 option={kelaminOption}
                 value={kelamin}
                 onChange={(e) => setkelaminSiswa(e.target.value)}
               />
+            </div>
+
+            <div className="w-full lg:w-1/2 lg:ms-1">
+              <FieldInput
+                text=<span>
+                  No Telepon <span className="text-red-500">*</span>
+                </span>
+                value={telpSiswa}
+                variant="biasa_text_sm"
+                onChange={(e) => setTelpSiswa(e.target.value)}
+              ></FieldInput>
             </div>
           </div>
 
@@ -417,7 +435,6 @@ export default function TambahSiswa() {
           <div className="w-full flex flex-col lg:flex-row justify-between mt-3">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
-                type="text"
                 text=<span>
                   Nama Lengkap <span className="text-red-500">*</span>
                 </span>
@@ -444,7 +461,6 @@ export default function TambahSiswa() {
           <div className="w-full flex flex-col lg:flex-row justify-between">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
-                type="text"
                 text=<span>
                   Tempat Lahir <span className="text-red-500">*</span>
                 </span>
@@ -471,7 +487,6 @@ export default function TambahSiswa() {
           <div className="w-full flex flex-col lg:flex-row justify-between">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
-                type="text"
                 text=<span>
                   Pekerjaan <span className="text-red-500">*</span>
                 </span>
@@ -483,7 +498,6 @@ export default function TambahSiswa() {
 
             <div className="w-full lg:w-1/2 lg:ms-1">
               <FieldInput
-                type="text"
                 text=<span>
                   No Handphone <span className="text-red-500">*</span>
                 </span>
@@ -512,7 +526,6 @@ export default function TambahSiswa() {
           <div className="w-full flex flex-col lg:flex-row justify-between mt-3">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
-                type="text"
                 text=<span>
                   Nama Lengkap <span className="text-red-500">*</span>
                 </span>
@@ -524,7 +537,6 @@ export default function TambahSiswa() {
 
             <div className="w-full lg:w-1/2 lg:ms-1">
               <FieldInput
-                type="text"
                 text=<span>
                   Nik <span className="text-red-500">*</span>
                 </span>
@@ -539,7 +551,6 @@ export default function TambahSiswa() {
           <div className="w-full flex flex-col lg:flex-row justify-between">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
-                type="text"
                 text=<span>
                   Tempat Lahir <span className="text-red-500">*</span>
                 </span>
@@ -566,7 +577,6 @@ export default function TambahSiswa() {
           <div className="w-full flex flex-col lg:flex-row justify-between">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
-                type="text"
                 text=<span>
                   Pekerjaan <span className="text-red-500">*</span>
                 </span>
@@ -578,7 +588,6 @@ export default function TambahSiswa() {
 
             <div className="w-full lg:w-1/2 lg:ms-1">
               <FieldInput
-                type="text"
                 text=<span>
                   No Handphone <span className="text-red-500">*</span>
                 </span>
@@ -607,7 +616,6 @@ export default function TambahSiswa() {
           <div className="w-full flex flex-col lg:flex-row justify-between mt-3">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
-                type="text"
                 text=<span>Nama Lengkap</span>
                 value={namaWali}
                 onChange={(e) => setNamaWali(e.target.value)}
@@ -617,7 +625,6 @@ export default function TambahSiswa() {
 
             <div className="w-full lg:w-1/2 lg:ms-1">
               <FieldInput
-                type="text"
                 text=<span> Nik</span>
                 value={nikWali}
                 onChange={(e) => setNikWali(e.target.value)}
@@ -630,7 +637,6 @@ export default function TambahSiswa() {
           <div className="w-full flex flex-col lg:flex-row justify-between">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
-                type="text"
                 text=<span>Tempat Lahir</span>
                 value={tempatLahirWali}
                 onChange={(e) => settempatLahirWali(e.target.value)}
@@ -653,7 +659,6 @@ export default function TambahSiswa() {
           <div className="w-full flex flex-col lg:flex-row justify-between">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
-                type="text"
                 text=<span>Pekerjaan</span>
                 value={pekerjaanWali}
                 onChange={(e) => setPekerjaanWali(e.target.value)}
@@ -663,7 +668,6 @@ export default function TambahSiswa() {
 
             <div className="w-full lg:w-1/2 lg:ms-1">
               <FieldInput
-                type="text"
                 text=<span>No Handphone</span>
                 value={telpWali}
                 onChange={(e) => setTelpWali(e.target.value)}
@@ -686,9 +690,7 @@ export default function TambahSiswa() {
               <ButtonHref
                 text="Cancel"
                 variant="cancel"
-                href={`/dashboard/siswa/${encodeURIComponent(
-                  data.nama_kelas
-                )}/${encodeURIComponent(data.tingkat)}`}
+                href={`/dashboard/siswa/${kelas_id}`}
               ></ButtonHref>
             </div>
             <div className="w-40">

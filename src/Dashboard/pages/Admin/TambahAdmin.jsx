@@ -40,7 +40,6 @@ export default function TambahAdmin() {
       if (!allowedTypes.includes(file.type)) {
         setToastMessage("File harus berformat PNG, JPG, atau JPEG");
         setToastVariant("error");
-        setPreview(defaultImage);
         document.getElementById("file-name").textContent = "No file chosen";
         return;
       }
@@ -48,7 +47,6 @@ export default function TambahAdmin() {
       if (file.size > fileSizeLimit) {
         setToastMessage("Ukuran file terlalu besar. Maksimum 5MB.");
         setToastVariant("error");
-        setPreview(defaultImage);
         document.getElementById("file-name").textContent = "No file chosen";
         return;
       }
@@ -98,8 +96,6 @@ export default function TambahAdmin() {
       }
 
       formData.append("foto_profile", finalGambar);
-
-      console.log(finalGambar);
 
       const response = await axios.post(
         `${baseUrl.apiUrl}/admin/admin2`,

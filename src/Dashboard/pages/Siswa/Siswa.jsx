@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Calender from "../../components/Calender/Calender";
 import ButtonHref from "../../../component/Button/ButtonHref";
 import Search from "../../../component/Input/Search";
@@ -8,14 +8,35 @@ import {
 } from "@heroicons/react/16/solid";
 import Toast from "../../../component/Toast/Toast";
 import DataKelas from "../../../data/Kelas/DataKelas";
+import axios from "axios";
+import baseUrl from "../../../utils/config/baseUrl";
 
 export default function Siswa() {
-  useEffect(() => {
-    localStorage.removeItem("siswaList");
-    console.log(localStorage.getItem("siswaList")); // Cek setelah dihapus
-  }, []);
+  const [kelas, setDataKelas] = useState([]);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
+  const token = sessionStorage.getItem("session");
+  useEffect(() => {
+    const fecthData = async () => {
+      try {
+        const respones = await axios.get(`${baseUrl.apiUrl}/admin/kelas`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (respones.status == 200) {
+          setDataKelas(respones.data);
+        }
+      } catch (error) {
+        console.log(error);
+        setToastMessage(`Gagal Mengambil Data`);
+        setToastVariant("error");
+      }
+    };
+
+    fecthData();
+  });
 
   return (
     <div className="lg:py-5">
@@ -38,7 +59,7 @@ export default function Siswa() {
 
         {/* Table */}
         <div className="overflow-x-auto w-full">
-          {DataKelas && DataKelas.length > 0 ? (
+          {kelas && kelas.length > 0 ? (
             <table className="table w-full">
               <thead>
                 <tr className="border-b border-t border-border-grey">
@@ -49,10 +70,10 @@ export default function Siswa() {
                 </tr>
               </thead>
               <tbody>
-                {DataKelas.map((data, index) => (
+                {kelas.map((data, index) => (
                   <tr
                     className="border-b border-t border-border-grey"
-                    key={data.id}
+                    key={data.kelas_id}
                   >
                     <td className="whitespace-nowrap">{index + 1}</td>
                     <td className="whitespace-nowrap">{data.nama_kelas}</td>
@@ -60,9 +81,7 @@ export default function Siswa() {
                     <td>
                       <div className="flex items-center lg:flex-row">
                         <ButtonHref
-                          href={`/dashboard/siswa/${encodeURIComponent(
-                            data.nama_kelas
-                          )}/${encodeURIComponent(`Tingkat ${data.tingkat}`)}`}
+                          href={`/dashboard/siswa/${data.kelas_id}`}
                           text=<span className="flex items-center">
                             <DocumentMagnifyingGlassIcon className="lg:w-5 lg:h-5 w-6 h-6 me-2 text-sky-500"></DocumentMagnifyingGlassIcon>
                             <span className="whitespace-nowrap">

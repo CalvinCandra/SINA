@@ -13,50 +13,51 @@ import Button from "../../../component/Button/Button";
 import Toast from "../../../component/Toast/Toast";
 import Loading from "../../../component/Loading/Loading";
 import { useParams } from "react-router-dom";
+import axios from "axios";
+import baseUrl from "../../../utils/config/baseUrl";
 
 export default function DataSiswaPage() {
-  const kelas = useParams(); // Ambil kelas dan tingkat dari URL
+  const { kelas_id } = useParams(); // Ambil kelas dan tingkat dari URL
   const [isLoading, setIsLoading] = useState(false);
   const [dataSiswa, setdataSiswa] = useState([]);
+  const [dataKelas, setdataKelas] = useState([]);
   const [selectedSiswa, setSelectedSiswa] = useState(null);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const dataPerPage = 5;
 
+  const token = sessionStorage.getItem("session");
+
   useEffect(() => {
-    const fetchData = () => {
-      const storedData = localStorage.getItem("siswaList");
-      const key = `${decodeURIComponent(kelas.nama_kelas)} ${decodeURIComponent(
-        kelas.tingkat
-      )}`;
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${baseUrl.apiUrl}/admin/siswa_kelas/${kelas_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-      let finalData = [];
+        console.log(response);
 
-      if (!storedData || storedData === "undefined") {
-        const newData = DataSiswa[key] || [];
-        localStorage.setItem("siswaList", JSON.stringify({ [key]: newData }));
-        finalData = newData;
-      } else {
-        try {
-          const parsed = JSON.parse(storedData);
-          finalData = parsed[key] || [];
-        } catch (e) {
-          console.error("Data rusak:", e);
+        if (response.status == 200) {
+          setdataSiswa(response.data.siswa);
+          setdataKelas(response.data.kelas_info);
         }
+      } catch (error) {
+        console.log(error);
+        setToastMessage("Gagal ambil data");
+        setToastVariant("error");
       }
-
-      setdataSiswa(finalData);
     };
-
-    // Memanggil fetchData untuk mendapatkan data siswa
-    fetchData();
 
     // Tampilkan toast bila tambah atau update berhasil
     const invalidStatus = localStorage.getItem("siswaInvalid");
     const addedStatus = localStorage.getItem("siswaAdded");
     const updateStatus = localStorage.getItem("siswaUpdate");
-    const deleteStatus = localStorage.getItem("siswaDelete");
 
     if (invalidStatus === "error") {
       setToastMessage("Siswa Tidak ditemukan");
@@ -76,23 +77,8 @@ export default function DataSiswaPage() {
       localStorage.removeItem("siswaUpdate");
     }
 
-    if (deleteStatus === "success") {
-      setToastMessage("Siswa berhasil dihapus");
-      setToastVariant("success");
-      localStorage.removeItem("siswaDelete");
-    }
-
-    // Tambah event listener untuk menangani perubahan localStorage
-    const handleStorageChange = () => {
-      fetchData();
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, [kelas]);
+    fetchData();
+  }, [kelas_id]);
 
   // Pagination
   const indexOfLastData = currentPage * dataPerPage;
@@ -102,56 +88,39 @@ export default function DataSiswaPage() {
     .slice(indexOfFirstData, indexOfLastData);
   const totalPages = Math.ceil(dataSiswa.length / dataPerPage);
 
-  const handleDeleteSiswa = (e) => {
+  const handleDeleteSiswa = async (e) => {
     e.preventDefault();
 
     if (!selectedSiswa) return;
 
-    setToastMessage("");
-    setToastVariant("");
+    try {
+      await axios.delete(`${baseUrl.apiUrl}/admin/siswa/${selectedSiswa.nis}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    setIsLoading(true);
+      // reset
+      setToastMessage("");
+      setToastVariant("");
 
-    setTimeout(() => {
-      const storedData = localStorage.getItem("siswaList");
-      let finalData = {};
-
-      try {
-        finalData = JSON.parse(storedData);
-      } catch (e) {
-        console.error("Gagal parsing data:", e);
-      }
-
-      const key = `${decodeURIComponent(kelas.nama_kelas)} ${decodeURIComponent(
-        kelas.tingkat
-      )}`;
-      const filtered = finalData[key] || [];
-
-      // Hapus siswa berdasarkan ID
-      const updatedSiswa = filtered.filter(
-        (siswa) => siswa.id !== selectedSiswa.id
-      );
-
-      // Update data pada key tersebut
-      finalData[key] = updatedSiswa;
-
-      // Simpan kembali ke localStorage
-      localStorage.setItem("siswaList", JSON.stringify(finalData));
-
-      // Update state
-      setdataSiswa(updatedSiswa);
-
-      // Tampilkan toast
-      setToastMessage("Siswa berhasil dihapus");
-      setToastVariant("success");
-      localStorage.setItem("siswaDelete", "success");
-
-      setIsLoading(false);
-      setSelectedSiswa(null);
-
-      // Tutup modal
+      // Simulasi delay untuk loading
+      setTimeout(() => {
+        setIsLoading(false); // Reset loading state
+        setToastMessage("Siswa berhasil dihapus");
+        setToastVariant("success");
+        // Hapus data dari state tanpa perlu fetch ulang
+        setdataSiswa((prevData) =>
+          prevData.filter((item) => item.nis !== selectedBerita.nis)
+        );
+        document.getElementById("my_modal_3").close();
+      }, 1000);
+    } catch (error) {
+      console.error("Gagal menghapus data:", error);
+      setToastMessage("Gagal menghapus data");
+      setToastVariant("error");
       document.getElementById("my_modal_3").close();
-    }, 1000); // Simulasi loading
+    }
   };
 
   return (
@@ -168,8 +137,8 @@ export default function DataSiswaPage() {
               />
             </div>
             <h2 className="text-2xl font-semibold mb-3 lg:mb-0">
-              Data Siswa {decodeURIComponent(kelas.nama_kelas)}{" "}
-              {decodeURIComponent(kelas.tingkat)}
+              Data Siswa Kelas {dataKelas.nama_kelas} Tingkat{" "}
+              {dataKelas.tingkat}
             </h2>
           </div>
           <Calender className="w-40 lg:w-full"></Calender>
@@ -181,18 +150,14 @@ export default function DataSiswaPage() {
               <div className="lg:w-56 mb-6 lg:mb-0">
                 <ButtonHref
                   text="Tambah Siswa Via Excel"
-                  href={`/dashboard/siswa/${decodeURIComponent(
-                    kelas.nama_kelas
-                  )}/${decodeURIComponent(kelas.tingkat)}/tambahExcel`}
+                  href={`/dashboard/siswa/${dataKelas.kelas_id}/tambahExcel`}
                   variant="tambah"
                 />
               </div>
               <div className="lg:w-40 mb-6 lg:mb-0">
                 <ButtonHref
                   text="Tambah Siswa"
-                  href={`/dashboard/siswa/${decodeURIComponent(
-                    kelas.nama_kelas
-                  )}/${decodeURIComponent(kelas.tingkat)}/tambah`}
+                  href={`/dashboard/siswa/${dataKelas.kelas_id}/tambah`}
                   variant="tambah"
                 />
               </div>
@@ -219,47 +184,40 @@ export default function DataSiswaPage() {
                   {currentData.map((data, index) => (
                     <tr
                       className="border-b border-t border-border-grey"
-                      key={data.id}
+                      key={data.nis}
                     >
-                      <td>{indexOfFirstData + index + 1}</td>
+                      <td>{index + 1}</td>
                       <td className="whitespace-nowrap">
                         <div className="flex items-center space-x-3">
                           <div className="avatar">
                             <div className="mask mask-circle w-12 h-12">
                               <img
-                                src={
-                                  data.image ||
-                                  "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
-                                }
+                                src={`${baseUrl.apiUrlImage}/Upload/profile_image/${data.foto_profil}`}
                                 alt="Avatar"
                               />
                             </div>
                           </div>
                           <div>
-                            <div className="font-bold">{data.nama}</div>
+                            <div className="font-bold capitalize">
+                              {data.nama_siswa}
+                            </div>
                           </div>
                         </div>
                       </td>
                       <td className="whitespace-nowrap">{data.nisn}</td>
                       <td className="whitespace-nowrap">{data.nis}</td>
-                      <td className="whitespace-nowrap">{data.kelamin}</td>
+                      <td className="whitespace-nowrap capitalize">
+                        {data.jenis_kelamin}
+                      </td>
                       <td>
                         <div className="flex items-center justify-between w-14">
                           <ButtonHref
-                            href={`/dashboard/siswa/${encodeURIComponent(
-                              kelas.nama_kelas
-                            )}/${encodeURIComponent(
-                              kelas.tingkat
-                            )}/${encodeURIComponent(data.id)}`}
+                            href={`/dashboard/siswa/${dataKelas.kelas_id}/detail/${data.nis}`}
                             text=<DocumentMagnifyingGlassIcon className="w-5 h-5 text-sky-500"></DocumentMagnifyingGlassIcon>
                           ></ButtonHref>
                           |
                           <ButtonHref
-                            href={`/dashboard/siswa/${decodeURIComponent(
-                              kelas.nama_kelas
-                            )}/${decodeURIComponent(kelas.tingkat)}/update/${
-                              data.id
-                            }`}
+                            href={`/dashboard/siswa/${dataKelas.kelas_id}/update/${data.nis}`}
                             variant="update"
                             text={
                               <PencilSquareIcon className="w-5 h-5 text-amber-300" />
@@ -296,9 +254,8 @@ export default function DataSiswaPage() {
             {indexOfLastData > dataSiswa.length
               ? dataSiswa.length
               : indexOfLastData}{" "}
-            dari {dataSiswa.length} Data Siswa{" "}
-            {decodeURIComponent(kelas.nama_kelas)}{" "}
-            {decodeURIComponent(kelas.tingkat)}
+            dari {dataSiswa.length} Data Siswa Kelas {dataKelas.nama_kelas}{" "}
+            Tingkat {dataKelas.tingkat}
           </p>
           <div className="join">
             {[...Array(totalPages)].map((_, index) => (

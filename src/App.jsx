@@ -138,23 +138,14 @@ function App() {
 
         {/* Siswa */}
         <Route path="siswa" element={<Siswa />} />
-        <Route path="siswa/:nama_kelas/:tingkat" element={<DataSiswaPage />} />
+        <Route path="siswa/:kelas_id" element={<DataSiswaPage />} />
+        <Route path="siswa/:kelas_id/detail/:nis" element={<DetailSiswa />} />
         <Route
-          path="siswa/:nama_kelas/:tingkat/:id"
-          element={<DetailSiswa />}
-        />
-        <Route
-          path="siswa/:nama_kelas/:tingkat/tambahExcel"
+          path="siswa/:kelas_id/tambahExcel"
           element={<TambahSiswaExcel />}
         />
-        <Route
-          path="siswa/:nama_kelas/:tingkat/tambah"
-          element={<TambahSiswa />}
-        />
-        <Route
-          path="siswa/:nama_kelas/:tingkat/update/:id"
-          element={<UpdateSiswa />}
-        />
+        <Route path="siswa/:kelas_id/tambah" element={<TambahSiswa />} />
+        <Route path="siswa/:kelas_id/update/:nis" element={<UpdateSiswa />} />
         {/* Absen Siswa */}
         <Route path="siswa/absen/" element={<AbsenkelasSiswa />} />
         <Route

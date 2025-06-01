@@ -144,6 +144,7 @@ export default function Profile() {
     try {
       const formData = new FormData();
       formData.append("username", namaAdmin);
+      formData.append("email", emailAdmin);
       formData.append("oldpassword", passSekarang);
       formData.append("password", passBaru);
       formData.append("file", Gambar);
@@ -170,7 +171,7 @@ export default function Profile() {
     } catch (error) {
       console.error("Error:", error);
       // Menangani error yang dikirimkan oleh server
-      let errorMessage = "Login Gagal";
+      let errorMessage = "Gagal";
 
       if (error.response && error.response.data.message) {
         // Jika error dari server ada di response.data
@@ -209,9 +210,7 @@ export default function Profile() {
                 src={
                   GambarPreview
                     ? GambarPreview
-                    : Gambar
-                    ? `${baseUrl.apiUrlImage}/Upload/profile_image/${Gambar}`
-                    : ""
+                    : `${baseUrl.apiUrlImage}/Upload/profile_image/${Gambar}`
                 }
                 alt="Preview"
                 id="ImagePreview"

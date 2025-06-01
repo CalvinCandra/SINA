@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FieldInput from "../../../component/Input/FieldInput";
 import Button from "../../../component/Button/Button";
 import ButtonHref from "../../../component/Button/ButtonHref";
@@ -7,38 +7,90 @@ import DinamisSelect from "../../../component/Input/DinamisSelect";
 import Toast from "../../../component/Toast/Toast";
 import Loading from "../../../component/Loading/Loading";
 import { useNavigate } from "react-router-dom";
-import DataGuruu from "../../../data/Guru/DataGuruu";
-import DataTahun from "../../../data/Akademik/Tahun Akademik/DataTahun";
+import axios from "axios";
+import baseUrl from "../../../utils/config/baseUrl";
 
 export default function TambahKelas() {
-  const WaliKelas = DataGuruu.map((item) => ({
-    value: item.nama,
-    label: item.nama,
-  }));
-
-  const TahunAkademik = DataTahun.map((item) => ({
-    value: `${item.tgl_mulai} - ${item.tgl_akhir}`,
-    label: `${item.tgl_mulai} - ${item.tgl_akhir}`,
-  }));
-
   const navigate = useNavigate();
+  // buat option
+  const [akademik, setAkademik] = useState([]);
+  const [guru, setGuru] = useState([]);
+
   const [jenjang, setJenjang] = useState("");
   const [tingkat, setTingkat] = useState("");
   const [walikelas, setWaliKelas] = useState("");
   const [namakelas, setNamaKelas] = useState("");
-  const [akademik, setAkademik] = useState("");
+  const [tahun, setTahunAkademik] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
 
+  const token = sessionStorage.getItem("session");
+
+  // tranlate ke tahun
+  const formatTahun = (tanggalISO) => {
+    const tanggal = new Date(tanggalISO);
+
+    const tahun = tanggal.getFullYear();
+
+    return `${tahun}`;
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const responseGuru = await axios.get(`${baseUrl.apiUrl}/admin/guru`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const responseTahun = await axios.get(
+          `${baseUrl.apiUrl}/admin/tahunakademik`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (responseGuru.status == 200) {
+          setGuru(responseGuru.data);
+        }
+
+        if (responseTahun.status == 200) {
+          setAkademik(responseTahun.data);
+        }
+      } catch (error) {
+        console.error("Gagal mengambil data:", error);
+        setToastMessage("Gagal mengambil data");
+        setToastVariant("error");
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const WaliKelas = guru.map((item) => ({
+    value: item.guru_nip,
+    label: item.nama_guru,
+  }));
+
+  const TahunAkademik = akademik.map((item) => ({
+    value: `${item.tahun_akademik_id}`,
+    label: `${formatTahun(item.tahun_mulai)} - ${formatTahun(
+      item.tahun_berakhir
+    )}`,
+  }));
+
   const jenjangOptions = [
-    { value: "1", label: "SD" },
-    { value: "2", label: "SMP" },
-    { value: "3", label: "SMA" },
+    { value: "sd", label: "SD" },
+    { value: "smp", label: "SMP" },
+    { value: "sma", label: "SMA" },
   ];
 
   const tingkatOptionsMap = {
-    1: [
+    sd: [
       { value: "I", label: "I" },
       { value: "II", label: "II" },
       { value: "III", label: "III" },
@@ -46,12 +98,12 @@ export default function TambahKelas() {
       { value: "V", label: "V" },
       { value: "VI", label: "VI" },
     ],
-    2: [
+    smp: [
       { value: "VII", label: "VII" },
       { value: "VIII", label: "VIII" },
       { value: "IX", label: "IX" },
     ],
-    3: [
+    sma: [
       { value: "X", label: "X" },
       { value: "XI", label: "XI" },
       { value: "XII", label: "XII" },
@@ -67,7 +119,7 @@ export default function TambahKelas() {
     setTingkat(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // reset Toast
@@ -103,7 +155,7 @@ export default function TambahKelas() {
       }, 10);
       return;
     }
-    if (akademik.trim() === "") {
+    if (tahun.trim() === "") {
       setTimeout(() => {
         setToastMessage("Tahun Akademik tidak boleh kosong");
         setToastVariant("error");
@@ -113,39 +165,53 @@ export default function TambahKelas() {
 
     setIsLoading(true);
 
-    // ambil data
-    const storedDataKelas = JSON.parse(localStorage.getItem("kelasList")) || [];
+    try {
+      const response = await axios.post(
+        `${baseUrl.apiUrl}/admin/kelas`,
+        {
+          tahun_akademik_id: tahun,
+          guru_nip: walikelas,
+          nama_kelas: namakelas,
+          jenjang: jenjang,
+          tingkat: tingkat,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    const lastId =
-      storedDataKelas.length > 0
-        ? Math.max(...storedDataKelas.map((item) => item.id))
-        : 0;
+      if (response.status == 200 || response.status == 201) {
+        localStorage.setItem("kelasAdded", "success");
 
-    const newKelas = {
-      id: lastId + 1,
-      nama_kelas: namakelas,
-      wali_kelas: walikelas,
-      tingkat: tingkat,
-      tahun_akademik: akademik,
-      tgl: new Date().toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }),
-    };
+        setTimeout(() => {
+          setIsLoading(false);
+          navigate("/dashboard/kelas");
+        }, 2000);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      // Menangani error yang dikirimkan oleh server
+      let errorMessage = "Gagal Tambah";
 
-    // tambahkan
-    const tambahKelas = [...storedDataKelas, newKelas];
+      if (error.response && error.response.data.message) {
+        // Jika error dari server ada di response.data
+        if (error.response.data.message) {
+          errorMessage = error.response.data.message; // Tampilkan pesan dari server jika ada
+        }
+      } else {
+        // Jika error tidak ada response dari server
+        errorMessage = error.message;
+      }
 
-    // simpan ke localstorage
-    localStorage.setItem("kelasList", JSON.stringify(tambahKelas));
-
-    localStorage.setItem("kelasAdded", "success");
-
-    setTimeout(() => {
-      setIsLoading(false);
-      navigate("/dashboard/kelas");
-    }, 2000);
+      setIsLoading(false); // jangan lupa set false
+      setTimeout(() => {
+        setToastMessage(`${errorMessage}`);
+        setToastVariant("error");
+      }, 10);
+      return;
+    }
   };
 
   return (
@@ -214,8 +280,8 @@ export default function TambahKelas() {
               <SelectField
                 text="Tahun Akademik"
                 option={TahunAkademik}
-                value={akademik}
-                onChange={(e) => setAkademik(e.target.value)}
+                value={tahun}
+                onChange={(e) => setTahunAkademik(e.target.value)}
               ></SelectField>
             </div>
           </div>

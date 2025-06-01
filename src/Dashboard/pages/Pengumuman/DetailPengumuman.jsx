@@ -79,7 +79,9 @@ export default function DetailPengumuman() {
       <div className="w-full p-5 rounded-md bg-white mt-5">
         {/* Header Table */}
         <div className="w-full flex flex-col lg:flex-row justify-between items-center mb-5">
-          <p className="font-semibold text-lg capitalize">Detail Informasi {kategori}</p>
+          <p className="font-semibold text-lg capitalize">
+            Detail Informasi {kategori}
+          </p>
         </div>
 
         <hr className="border-border-grey border"></hr>
@@ -95,7 +97,7 @@ export default function DetailPengumuman() {
           </p>
           <h1 className="mt-6 font-bold text-2xl">{Judul}</h1>
           <p
-            className="mt-3 text-xs text-justify"
+            className="mt-3 text-base text-justify"
             dangerouslySetInnerHTML={{ __html: deskirpsi }}
           ></p>
         </div>

@@ -76,7 +76,7 @@ export default function MataPelajaran() {
   const indexOfLastData = currentPage * dataPerPage;
   const indexOfFirstData = indexOfLastData - dataPerPage;
   const currentData = dataPelajaran
-    .sort((a, b) => b.id - a.id)
+    .sort((a, b) => new Date(b.created_at) - new Date(a.id))
     .slice(indexOfFirstData, indexOfLastData);
   const totalPages = Math.ceil(dataPelajaran.length / dataPerPage);
 

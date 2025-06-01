@@ -46,7 +46,7 @@ const Grafik = () => {
             }}
           />
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-2xl font-bold text-white">{total}</span>
+            <span className="text-2xl font-bold text-black">{total}</span>
           </div>
         </div>
 

@@ -75,7 +75,7 @@ export default function DataGuru() {
   const indexOfLastData = currentPage * dataPerPage;
   const indexOfFirstData = indexOfLastData - dataPerPage;
   const currentData = dataGuru
-    .sort((a, b) => b.nip - a.nip)
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
     .slice(indexOfFirstData, indexOfLastData);
   const totalPages = Math.ceil(dataGuru.length / dataPerPage);
 

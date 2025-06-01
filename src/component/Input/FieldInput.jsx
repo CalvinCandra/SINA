@@ -1,6 +1,14 @@
 export default function FieldInput(props) {
-  const { text, type, name, variant, value, onChange, defaultValue, readonly } =
-    props;
+  const {
+    text,
+    type = "text",
+    name,
+    variant,
+    value,
+    onChange,
+    defaultValue,
+    readonly,
+  } = props;
   const variants = {
     biasa_text_sm: (
       <>

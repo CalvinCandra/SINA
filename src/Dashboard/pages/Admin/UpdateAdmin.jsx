@@ -35,8 +35,6 @@ export default function UpdateAdmin() {
           }
         );
 
-        console.log(response);
-
         if (response.status == 200 || response.status == 201) {
           setNamaAdmin(response.data.username);
           setEmailAdmin(response.data.email);
@@ -103,12 +101,14 @@ export default function UpdateAdmin() {
       formData.append("email", emailAdmin);
       formData.append("foto_profile", Gambar);
 
+      console.log(Gambar);
+
       const response = await axios.put(
         `${baseUrl.apiUrl}/admin/admin2/${id}`,
         formData,
         {
           headers: {
-            Authorization: `Beazer ${token}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
           },
         }
@@ -162,9 +162,7 @@ export default function UpdateAdmin() {
                 src={
                   preview
                     ? preview
-                    : Gambar
-                    ? `${baseUrl.apiUrlImage}/Upload/profile_image/${Gambar}`
-                    : ""
+                    : `${baseUrl.apiUrlImage}/Upload/profile_image/${Gambar}`
                 }
                 id="ImagePreview"
                 className="w-full h-full object-cover rounded"
