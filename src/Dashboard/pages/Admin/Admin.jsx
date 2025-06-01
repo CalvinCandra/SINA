@@ -79,7 +79,7 @@ export default function Admin() {
   const indexOfLastData = currentPage * dataPerPage;
   const indexOfFirstData = indexOfLastData - dataPerPage;
   const currentData = dataAdmin
-    .sort((a, b) => b.id - a.id)
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
     .slice(indexOfFirstData, indexOfLastData);
   const totalPages = Math.ceil(dataAdmin.length / dataPerPage);
 
@@ -193,7 +193,6 @@ export default function Admin() {
                       className="border-b border-t border-border-grey"
                       key={data.admin_id}
                     >
-                      {console.log(data.foto_profil)}
                       <td>{index + 1}</td>
                       <td className="whitespace-nowrap">
                         <div className="flex items-center space-x-3">

@@ -7,45 +7,96 @@ import Loading from "../../../component/Loading/Loading";
 import Toast from "../../../component/Toast/Toast";
 import { useNavigate, useParams } from "react-router-dom";
 import DinamisSelect from "../../../component/Input/DinamisSelect";
+import axios from "axios";
+import baseUrl from "../../../utils/config/baseUrl";
 
 export default function UpdateKelas() {
   const navigate = useNavigate();
   const { id } = useParams();
+
+  // option
+  const [guru, setGuru] = useState([]);
+  const [akademik, setAkademik] = useState([]);
+
   const [jenjang, setJenjang] = useState("");
   const [tingkat, setTingkat] = useState("");
   const [walikelas, setWaliKelas] = useState("");
   const [namakelas, setNamaKelas] = useState("");
-  const [akademik, setAkademik] = useState("");
+  const [tahun, setTahunAkademik] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
 
+  const token = sessionStorage.getItem("session");
+
+  // tranlate ke tahun
+  const formatTahun = (tanggalISO) => {
+    const tanggal = new Date(tanggalISO);
+
+    const tahun = tanggal.getFullYear();
+
+    return `${tahun}`;
+  };
+
   useEffect(() => {
-    const storedDataKelas = JSON.parse(localStorage.getItem("kelasList"));
-    const foundData = storedDataKelas.find((item) => item.id === parseInt(id));
+    const fetchData = async () => {
+      try {
+        // get guru
+        const responseGuru = await axios.get(`${baseUrl.apiUrl}/admin/guru`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-    if (!foundData) {
-      localStorage.setItem("kelasInvalid", "error");
-      setTimeout(() => {
-        window.location.href = "/dashboard/kelas";
-      }, 10);
-    }
+        // get tahun
+        const responseTahun = await axios.get(
+          `${baseUrl.apiUrl}/admin/tahunakademik`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-    setJenjang(foundData.jenjang);
-    setNamaKelas(foundData.nama_kelas);
-    setTingkat(foundData.tingkat);
-    setWaliKelas(foundData.wali_kelas);
-    setAkademik(foundData.tahun_akademik);
+        // get kelas
+        const responseKelas = await axios.get(
+          `${baseUrl.apiUrl}/admin/kelas/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (responseGuru.status == 200) {
+          setGuru(responseGuru.data);
+        }
+
+        if (responseTahun.status == 200) {
+          setAkademik(responseTahun.data);
+        }
+
+        if (responseKelas.status == 200) {
+          setNamaKelas(responseKelas.data.nama_kelas);
+          setWaliKelas(responseKelas.data.guru_nip);
+          setTingkat(responseKelas.data.tingkat);
+          setJenjang(responseKelas.data.jenjang);
+          setTahunAkademik(responseKelas.data.tahun_akademik_id);
+        }
+      } catch (error) {}
+    };
+
+    fetchData();
   }, [id]);
 
   const jenjangOptions = [
-    { value: "1", label: "SD" },
-    { value: "2", label: "SMP" },
-    { value: "3", label: "SMA" },
+    { value: "sd", label: "SD" },
+    { value: "smp", label: "SMP" },
+    { value: "sma", label: "SMA" },
   ];
 
   const tingkatOptionsMap = {
-    1: [
+    sd: [
       { value: "I", label: "I" },
       { value: "II", label: "II" },
       { value: "III", label: "III" },
@@ -53,12 +104,12 @@ export default function UpdateKelas() {
       { value: "V", label: "V" },
       { value: "VI", label: "VI" },
     ],
-    2: [
+    smp: [
       { value: "VII", label: "VII" },
       { value: "VIII", label: "VIII" },
       { value: "IX", label: "IX" },
     ],
-    3: [
+    sma: [
       { value: "X", label: "X" },
       { value: "XI", label: "XI" },
       { value: "XII", label: "XII" },
@@ -74,43 +125,17 @@ export default function UpdateKelas() {
     setTingkat(e.target.value);
   };
 
-  const WaliKelas = [
-    {
-      value: "Guru Draviin",
-      label: "Guru Draviin",
-    },
-    {
-      value: "Guru Oka",
-      label: "Guru Oka",
-    },
-    {
-      value: "Guru Willy",
-      label: "Guru Willy",
-    },
-    {
-      value: "Guru IGLOW",
-      label: "Guru IGLOW",
-    },
-  ];
+  const WaliKelas = guru.map((item) => ({
+    value: item.nama_guru,
+    label: item.nama_guru,
+  }));
 
-  const TahunAkademik = [
-    {
-      value: "15 Januari 2022 - 20 Januari 2023",
-      label: "15 Januari 2022 - 20 Januari 2023",
-    },
-    {
-      value: "15 Januari 2023 - 20 Januari 2024",
-      label: "15 Januari 2023 - 20 Januari 2024",
-    },
-    {
-      value: "15 Januari 2024 - 20 Januari 2025",
-      label: "15 Januari 2024 - 20 Januari 2025",
-    },
-    {
-      value: "15 Januari 2025 - 20 Januari 2026",
-      label: "15 Januari 2025 - 20 Januari 2026",
-    },
-  ];
+  const TahunAkademik = akademik.map((item) => ({
+    value: `${item.tahun_akademik_id}`,
+    label: `${formatTahun(item.tahun_mulai)} - ${formatTahun(
+      item.tahun_berakhir
+    )}`,
+  }));
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -149,7 +174,7 @@ export default function UpdateKelas() {
       }, 10);
       return;
     }
-    if (akademik.trim() === "") {
+    if (tahun.trim() === "") {
       setTimeout(() => {
         setToastMessage("Tahun Akademik tidak boleh kosong");
         setToastVariant("error");
@@ -247,8 +272,8 @@ export default function UpdateKelas() {
               <SelectField
                 text="Tahun Akademik"
                 option={TahunAkademik}
-                value={akademik}
-                onChange={(e) => setAkademik(e.target.value)}
+                value={tahun}
+                onChange={(e) => setTahunAkademik(e.target.value)}
               ></SelectField>
             </div>
           </div>
