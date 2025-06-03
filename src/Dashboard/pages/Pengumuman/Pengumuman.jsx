@@ -7,151 +7,29 @@ import {
   DocumentMagnifyingGlassIcon,
 } from "@heroicons/react/16/solid";
 import Button from "../../../component/Button/Button";
-import { useState, useEffect } from "react";
-import baseUrl from "../../../utils/config/baseUrl";
-import axios from "axios";
 import Loading from "../../../component/Loading/Loading";
 import Toast from "../../../component/Toast/Toast";
-import { useNavigate } from "react-router-dom";
+import { usePengumuman } from "../../../hooks/Pengumuman/Pengumuman";
+import { formatTanggalLengkap } from "../../../utils/helper/dateFormat";
 
 export default function Pengumuman() {
-  // simpan data pengumuman
-  const [selectedBerita, setSelectedBerita] = useState(null);
-  const [dataBerita, setdataBerita] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastVariant, setToastVariant] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const dataPerPage = 10;
-  const navigate = useNavigate();
-
-  // get token
-  const token = sessionStorage.getItem("session");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(`${baseUrl.apiUrl}/admin/berita`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        console.log(response);
-
-        if (response.status === 200) {
-          setdataBerita(response.data);
-          // console.log(response);
-        }
-      } catch (error) {
-        console.error("Gagal mengambil data:", error);
-        setToastMessage("Gagal mengambil data");
-        setToastVariant("error");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    // Tampilkan toast bila tambah atau update berhasil
-    const invalidStatus = localStorage.getItem("informasiInvalid");
-    const addedStatus = localStorage.getItem("informasiAdded");
-    const updateStatus = localStorage.getItem("informasiUpdate");
-
-    if (invalidStatus === "error") {
-      setToastMessage("Informasi Tidak ditemukan");
-      setToastVariant("error");
-      localStorage.removeItem("informasiInvalid");
-    }
-
-    if (addedStatus === "success") {
-      setToastMessage("Informasi berhasil ditambahkan");
-      setToastVariant("success");
-      localStorage.removeItem("informasiAdded");
-    }
-
-    if (updateStatus === "success") {
-      setToastMessage("Informasi berhasil diupdate");
-      setToastVariant("success");
-      localStorage.removeItem("informasiUpdate");
-    }
-
-    fetchData();
-  }, []);
-
-  // fomat datetime
-  const formatTanggalLengkap = (tanggalISO) => {
-    const tanggal = new Date(tanggalISO);
-
-    const bulanMap = [
-      "Januari",
-      "Februari",
-      "Maret",
-      "April",
-      "Mei",
-      "Juni",
-      "Juli",
-      "Agustus",
-      "September",
-      "Oktober",
-      "November",
-      "Desember",
-    ];
-
-    const hari = tanggal.getDate();
-    const bulan = bulanMap[tanggal.getMonth()];
-    const tahun = tanggal.getFullYear();
-
-    return `${hari} ${bulan} ${tahun}`;
-  };
-
-  // Pagination
-  const indexOfLastData = currentPage * dataPerPage;
-  const indexOfFirstData = indexOfLastData - dataPerPage;
-  const currentData = dataBerita
-    .sort((a, b) => b.id - a.id)
-    .slice(indexOfFirstData, indexOfLastData);
-  const totalPages = Math.ceil(dataBerita.length / dataPerPage);
-
-  // Hapus
-  const handleDeleteBerita = async (e) => {
-    e.preventDefault();
-    if (!selectedBerita) return;
-
-    setIsLoading(true); // Set loading state
-
-    try {
-      await axios.delete(
-        `${baseUrl.apiUrl}/admin/berita/${selectedBerita.berita_id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      // reset
-      setToastMessage("");
-      setToastVariant("");
-
-      // Simulasi delay untuk loading
-      setTimeout(() => {
-        setIsLoading(false); // Reset loading state
-        setToastMessage("Informasi berhasil dihapus");
-        setToastVariant("success");
-        // Hapus data dari state tanpa perlu fetch ulang
-        setdataBerita((prevData) =>
-          prevData.filter((item) => item.berita_id !== selectedBerita.berita_id)
-        );
-        document.getElementById("my_modal_3").close();
-      }, 1000);
-    } catch (error) {
-      console.error("Gagal menghapus data:", error);
-      setToastMessage("Gagal menghapus data");
-      setToastVariant("error");
-      document.getElementById("my_modal_3").close();
-    }
-  };
+  const {
+    isLoading,
+    toastMessage,
+    toastVariant,
+    selectedBerita,
+    setSelectedBerita,
+    searchQuery,
+    setSearchQuery,
+    currentPage,
+    setCurrentPage,
+    currentData,
+    totalPages,
+    dataBerita,
+    handleDeleteBerita,
+    indexOfFirstData,
+    indexOfLastData,
+  } = usePengumuman();
 
   return (
     <div className="lg:py-5">
@@ -171,7 +49,14 @@ export default function Pengumuman() {
               variant="tambah"
             ></ButtonHref>
           </div>
-          <Search className="bg-white"></Search>
+          <Search
+            className="bg-white"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+          ></Search>
         </div>
 
         <hr className="border-border-grey border"></hr>

@@ -9,12 +9,15 @@ import {
   ArrowLeftCircleIcon,
 } from "@heroicons/react/16/solid";
 import { useParams } from "react-router-dom";
-import DataJadwal from "../../../../data/Akademik/Jadwal/DataJadwal";
 import Toast from "../../../../component/Toast/Toast";
 import Loading from "../../../../component/Loading/Loading";
+import axios from "axios";
+import baseUrl from "../../../../utils/config/baseUrl";
 
 export default function JadwalKelas() {
-  const kelas = useParams();
+  const { kelas_id } = useParams();
+  const [nama_kelas, setNamaKelas] = useState("");
+  const [tingkat_kelas, setTingkatKelas] = useState("");
   const [selectedJadwal, setSelectedJadwal] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [dataJadwal, setdataJadwal] = useState([]);
@@ -23,36 +26,28 @@ export default function JadwalKelas() {
   const [currentPage, setCurrentPage] = useState(1);
   const dataPerPage = 5;
 
+  const token = sessionStorage.getItem("session");
+
   useEffect(() => {
-    const fetchData = () => {
-      const storedData = localStorage.getItem("jadwalList");
-      console.log(storedData);
-      const key = `${decodeURIComponent(kelas.nama_kelas)} ${decodeURIComponent(
-        kelas.tingkat
-      )}`;
+    const fetchData = async () => {
+      try {
+        const responseKelas = await axios.get(
+          `${baseUrl.apiUrl}/admin/kelas/${kelas_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-      let finalData = [];
+        console.log(responseKelas);
 
-      if (!storedData || storedData === "undefined") {
-        const newData = DataJadwal[key] || [];
-        console.log("Data dari DataJadwal:", newData); // Cek data dari DataJadwal
-
-        // Simpan data ke localStorage dengan key yang sesuai
-        localStorage.setItem("jadwalList", JSON.stringify({ [key]: newData }));
-        console.log("Data disimpan ke localStorage:", { [key]: newData }); // Log data yang disimpan
-        finalData = newData;
-      } else {
-        try {
-          const parsed = JSON.parse(storedData);
-          console.log("Data yang diambil dari localStorage:", parsed);
-
-          finalData = parsed[key] || [];
-        } catch (e) {
-          console.error("Data rusak di localStorage:", e);
+        if (responseKelas.status == 200) {
+          setNamaKelas(responseKelas.data.nama_kelas);
+          setTingkatKelas(responseKelas.data.tingkat);
         }
-      }
+      } catch (error) {}
 
-      console.log("Final data yang akan diset:", finalData); // Cek data yang akan diset ke state
       setdataJadwal(finalData);
     };
 
@@ -62,7 +57,6 @@ export default function JadwalKelas() {
     const invalidStatus = localStorage.getItem("jadwalInvalid");
     const addedStatus = localStorage.getItem("jadwalAdded");
     const updateStatus = localStorage.getItem("jadwalUpdate");
-    const deleteStatus = localStorage.getItem("jadwalDelete");
 
     if (invalidStatus === "error") {
       setToastMessage("Jadwal Tidak ditemukan");
@@ -82,23 +76,8 @@ export default function JadwalKelas() {
       localStorage.removeItem("jadwalUpdate");
     }
 
-    if (deleteStatus === "success") {
-      setToastMessage("Jadwal berhasil dihapus");
-      setToastVariant("success");
-      localStorage.removeItem("jadwalDelete");
-    }
-
-    // Tambah event listener untuk menangani perubahan localStorage
-    const handleStorageChange = () => {
-      fetchData();
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, [kelas]);
+    fetchData();
+  }, [kelas_id]);
 
   // Pagination
   const indexOfLastData = currentPage * dataPerPage;
@@ -173,8 +152,7 @@ export default function JadwalKelas() {
               />
             </div>
             <h2 className="text-2xl font-bold">
-              Jadwal Pelajaran {decodeURIComponent(kelas.nama_kelas)}{" "}
-              {decodeURIComponent(kelas.tingkat)}
+              Jadwal Pelajaran Kelas {nama_kelas} Tingkat {tingkat_kelas}
             </h2>
           </div>
 
@@ -187,9 +165,7 @@ export default function JadwalKelas() {
             <div className="mb-6 lg:mb-0">
               <ButtonHref
                 text="Tambah Jadwal Pelajaran"
-                href={`/dashboard/akademik/jadwal-kelas/${decodeURIComponent(
-                  kelas.nama_kelas
-                )}/${decodeURIComponent(kelas.tingkat)}/tambah`}
+                href={`/dashboard/akademik/jadwal-kelas/${kelas_id}/tambah`}
                 variant="tambah"
               ></ButtonHref>
             </div>
@@ -245,11 +221,7 @@ export default function JadwalKelas() {
                       <td className="align-middle">
                         <div className="flex items-center gap-2 pr-2">
                           <ButtonHref
-                            href={`/dashboard/akademik/jadwal-kelas/${encodeURIComponent(
-                              kelas.nama_kelas
-                            )}/${encodeURIComponent(kelas.tingkat)}/update/${
-                              data.id
-                            }`}
+                            href={`/dashboard/akademik/jadwal-kelas/${kelas_id}/update/${data.id}`}
                             variant="update"
                             text={
                               <PencilSquareIcon className="w-5 h-5 text-amber-300" />
@@ -272,8 +244,8 @@ export default function JadwalKelas() {
                 </tbody>
               </table>
             ) : (
-              <div className="w-full flex justify-center items-center py-10">
-                <p className="text-lg font-semibold">Tidak ada data</p>
+              <div className="italic text-gray-400 mt-5 text-center">
+                Data Jadwal Belum Ada
               </div>
             )}
           </div>
@@ -286,9 +258,8 @@ export default function JadwalKelas() {
             {indexOfLastData > dataJadwal.length
               ? dataJadwal.length
               : indexOfLastData}{" "}
-            dari {dataJadwal.length} Data Siswa{" "}
-            {decodeURIComponent(kelas.nama_kelas)}{" "}
-            {decodeURIComponent(kelas.tingkat)}
+            dari {dataJadwal.length} Data Jadwal Kelas {nama_kelas} Tingkat{" "}
+            {tingkat_kelas}
           </p>
           <div className="join">
             {[...Array(totalPages)].map((_, index) => (

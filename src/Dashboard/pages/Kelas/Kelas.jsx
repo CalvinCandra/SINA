@@ -3,120 +3,32 @@ import ButtonHref from "../../../component/Button/ButtonHref";
 import Search from "../../../component/Input/Search";
 import { PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
 import Button from "../../../component/Button/Button";
-import { useState, useEffect } from "react";
 import Toast from "../../../component/Toast/Toast";
 import Loading from "../../../component/Loading/Loading";
-import axios from "axios";
-import baseUrl from "../../../utils/config/baseUrl";
+import { useKelas } from "../../../hooks/Kelas/Kelas";
+import {
+  formatTahun,
+  formatTanggalLengkap,
+} from "../../../utils/helper/dateFormat";
 
 export default function Kelas() {
-  // simpan data kelas
-  const [selectedKelas, setSelectedKelas] = useState(null);
-  const [dataKelas, setdatakelas] = useState([]);
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastVariant, setToastVariant] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const dataPerPage = 5;
-
-  // const token
-  const token = sessionStorage.getItem("session");
-
-  // const tahunoptions = [
-  //   { value: "2023/2024 Genap", label: "2023/2024 Genap" },
-  //   { value: "2023/2024 Ganjil", label: "2023/2024 Ganjil" },
-  //   { value: "2024/2025 Genap", label: "2024/2025 Ganjil" },
-  // ];
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${baseUrl.apiUrl}/admin/kelas`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        console.log(response);
-
-        if (response.status == 200 || response.status == 201) {
-          setdatakelas(response.data);
-        }
-      } catch (error) {
-        console.error("Gagal mengambil data:", error);
-        setToastMessage("Gagal mengambil data");
-        setToastVariant("error");
-      }
-    };
-
-    // Tampilkan toast bila tambah atau update berhasil
-    const invalidStatus = localStorage.getItem("kelasInvalid");
-    const addedStatus = localStorage.getItem("kelasAdded");
-    const updateStatus = localStorage.getItem("kelasUpdate");
-    const deleteStatus = localStorage.getItem("kelasDelete");
-
-    if (invalidStatus === "error") {
-      setToastMessage("Kelas tidak ditemukan");
-      setToastVariant("error");
-      localStorage.removeItem("adminInvalid");
-    }
-
-    if (addedStatus === "success") {
-      setToastMessage("Kelas berhasil ditambahkan");
-      setToastVariant("success");
-      localStorage.removeItem("kelasAdded");
-    }
-
-    if (updateStatus === "success") {
-      setToastMessage("Kelas berhasil diupdate");
-      setToastVariant("success");
-      localStorage.removeItem("kelasUpdate");
-    }
-
-    if (deleteStatus === "success") {
-      setToastMessage("Kelas berhasil dihapus");
-      setToastVariant("success");
-      localStorage.removeItem("kelasDelete");
-    }
-
-    fetchData();
-  }, []);
-
-  // Pagination
-  const indexOfLastData = currentPage * dataPerPage;
-  const indexOfFirstData = indexOfLastData - dataPerPage;
-  const currentData = dataKelas
-    .sort((a, b) => b.id - a.id)
-    .slice(indexOfFirstData, indexOfLastData);
-  const totalPages = Math.ceil(dataKelas.length / dataPerPage);
-
-  const handleDeleteKelas = () => {
-    if (!selectedKelas) return;
-
-    setIsLoading(true); // Set loading state
-
-    // Hapus dari data
-    const filteredData = dataKelas.filter(
-      (item) => item.id !== selectedKelas.id
-    );
-
-    // Simpan data yang sudah dihapus ke localStorage
-    localStorage.setItem("kelasList", JSON.stringify(filteredData));
-
-    // reset
-    setToastMessage("");
-    setToastVariant("");
-
-    setTimeout(() => {
-      setIsLoading(false); // Reset loading state
-      setdatakelas(filteredData);
-      setSelectedKelas(null);
-      // Set toast message setelah berhasil hapus
-      setToastMessage("Kelas berhasil dihapus");
-      setToastVariant("success");
-      document.getElementById("my_modal_3").close(); // Tutup modal
-    }, 1000);
-  };
+  const {
+    isLoading,
+    toastMessage,
+    toastVariant,
+    selectedKelas,
+    setSelectedKelas,
+    dataKelas,
+    searchQuery,
+    setSearchQuery,
+    currentData,
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    handleDeleteKelas,
+    indexOfFirstData,
+    indexOfLastData,
+  } = useKelas();
 
   return (
     <div className="lg:py-5">
@@ -148,7 +60,14 @@ export default function Kelas() {
               variant="tambah"
             ></ButtonHref>
           </div>
-          <Search className="bg-white"></Search>
+          <Search
+            className="bg-white"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+          ></Search>
         </div>
 
         <hr className="border-border-grey border"></hr>
@@ -176,9 +95,16 @@ export default function Kelas() {
                     <td>{index + 1}</td>
                     <td className="whitespace-nowrap">{data.nama_kelas}</td>
                     <td className="whitespace-nowrap">{data.tingkat}</td>
-                    <td className="whitespace-nowrap">{data.wali_kelas}</td>
-                    <td className="whitespace-nowrap">{data.tahun_akademik}</td>
-                    <td className="whitespace-nowrap">{data.tgl}</td>
+                    <td className="whitespace-nowrap">
+                      {data.nama_guru || `Belum Ada`}
+                    </td>
+                    <td className="whitespace-nowrap">
+                      {formatTahun(data.tahun_mulai)} -{" "}
+                      {formatTahun(data.tahun_berakhir)}
+                    </td>
+                    <td className="whitespace-nowrap">
+                      {formatTanggalLengkap(data.created_at)}
+                    </td>
                     <td>
                       <div className="flex items-center justify-evenly w-20">
                         <ButtonHref
@@ -260,13 +186,7 @@ export default function Kelas() {
               <form method="dialog" className="w-full me-1">
                 <Button variant="button_submit_cancel" text="Cancel"></Button>
               </form>
-              <form
-                className="w-full ms-1"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleDeleteKelas();
-                }}
-              >
+              <form className="w-full ms-1" onSubmit={handleDeleteKelas}>
                 <div className="w-full">
                   <Button
                     variant="button_submit_dash"

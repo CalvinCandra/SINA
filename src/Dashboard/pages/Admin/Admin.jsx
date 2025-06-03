@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import Calender from "../../components/Calender/Calender";
 import ButtonHref from "../../../component/Button/ButtonHref";
 import Search from "../../../component/Input/Search";
@@ -6,150 +5,28 @@ import { PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
 import Button from "../../../component/Button/Button";
 import Toast from "../../../component/Toast/Toast";
 import Loading from "../../../component/Loading/Loading";
-import axios from "axios";
 import baseUrl from "../../../utils/config/baseUrl";
+import { useAdmin } from "../../../hooks/Admin/Admin";
+import { formatTanggalLengkap } from "../../../utils/helper/dateFormat";
 
 export default function Admin() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [dataAdmin, setdataAdmin] = useState([]);
-  const [selectedAdmin, setSelectedAdmin] = useState(null);
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastVariant, setToastVariant] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const dataPerPage = 10;
-
-  // get token
-  const token = sessionStorage.getItem("session");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${baseUrl.apiUrl}/admin/admin2`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.status === 200) {
-          setdataAdmin(response.data);
-        }
-      } catch (error) {
-        console.error("Gagal mengambil data:", error);
-        setToastMessage("Gagal mengambil data");
-        setToastVariant("error");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    // Tampilkan toast bila tambah atau update berhasil
-    const invalidStatus = localStorage.getItem("adminInvalid");
-    const addedStatus = localStorage.getItem("adminAdded");
-    const updateStatus = localStorage.getItem("adminUpdate");
-    const deleteStatus = localStorage.getItem("adminDelete");
-
-    if (invalidStatus === "error") {
-      setToastMessage("Admin Tidak ditemukan");
-      setToastVariant("error");
-      localStorage.removeItem("adminInvalid");
-    }
-
-    if (addedStatus === "success") {
-      setToastMessage("Admin berhasil ditambahkan");
-      setToastVariant("success");
-      localStorage.removeItem("adminAdded");
-    }
-
-    if (updateStatus === "success") {
-      setToastMessage("Admin berhasil diupdate");
-      setToastVariant("success");
-      localStorage.removeItem("adminUpdate");
-    }
-
-    if (deleteStatus === "success") {
-      setToastMessage("Admin berhasil dihapus");
-      setToastVariant("success");
-      localStorage.removeItem("adminDelete");
-    }
-
-    fetchData();
-  }, []);
-
-  // Pagination
-  const indexOfLastData = currentPage * dataPerPage;
-  const indexOfFirstData = indexOfLastData - dataPerPage;
-  const currentData = dataAdmin
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-    .slice(indexOfFirstData, indexOfLastData);
-  const totalPages = Math.ceil(dataAdmin.length / dataPerPage);
-
-  // fomat datetime
-  const formatTanggalLengkap = (tanggalISO) => {
-    const tanggal = new Date(tanggalISO);
-
-    const bulanMap = [
-      "Januari",
-      "Februari",
-      "Maret",
-      "April",
-      "Mei",
-      "Juni",
-      "Juli",
-      "Agustus",
-      "September",
-      "Oktober",
-      "November",
-      "Desember",
-    ];
-
-    const hari = tanggal.getDate();
-    const bulan = bulanMap[tanggal.getMonth()];
-    const tahun = tanggal.getFullYear();
-
-    return `${hari} ${bulan} ${tahun}`;
-  };
-
-  // Hapus admin (method kosong, Anda bisa implementasikan)
-  const handleDeleteAdmin = async (e) => {
-    e.preventDefault();
-
-    if (!selectedAdmin) return;
-
-    setIsLoading(true); // Set loading state
-
-    try {
-      await axios.delete(
-        `${baseUrl.apiUrl}/admin/admin2/${selectedAdmin.admin_id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      // reset
-      setToastMessage("");
-      setToastVariant("");
-
-      // Simulasi delay untuk loading
-      setTimeout(() => {
-        setIsLoading(false); // Reset loading state
-        setToastMessage("Data Admin berhasil dihapus");
-        setToastVariant("success");
-        // Hapus data dari state tanpa perlu fetch ulang
-        setdataAdmin((prevData) =>
-          prevData.filter((item) => item.admin_id !== selectedAdmin.admin_id)
-        );
-        document.getElementById("my_modal_3").close();
-      }, 1000);
-    } catch (error) {
-      console.error("Gagal menghapus data:", error);
-      setIsLoading(false); // Reset loading state
-      setToastMessage("Gagal menghapus data");
-      setToastVariant("error");
-      document.getElementById("my_modal_3").close();
-    }
-  };
+  const {
+    isLoading,
+    currentData,
+    selectedAdmin,
+    toastMessage,
+    toastVariant,
+    searchQuery,
+    currentPage,
+    totalPages,
+    indexOfFirstData,
+    indexOfLastData,
+    dataAdmin,
+    setSearchQuery,
+    setCurrentPage,
+    setSelectedAdmin,
+    handleDeleteAdmin,
+  } = useAdmin();
 
   return (
     <>
@@ -170,7 +47,14 @@ export default function Admin() {
                 variant="tambah"
               />
             </div>
-            <Search className="bg-white" />
+            <Search
+              className="bg-white"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+            />
           </div>
 
           <hr className="border-border-grey border" />

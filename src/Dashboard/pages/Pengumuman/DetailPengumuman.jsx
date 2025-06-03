@@ -1,81 +1,23 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import ButtonHref from "../../../component/Button/ButtonHref";
-import axios from "axios";
 import baseUrl from "../../../utils/config/baseUrl";
+import { useDetailPengumuman } from "../../../hooks/Pengumuman/DetailPengumuman";
+import Toast from "../../../component/Toast/Toast";
 
 export default function DetailPengumuman() {
-  const { id } = useParams();
-  const [Gambar, setGambar] = useState("");
-  const [Judul, setJudul] = useState("");
-  const [deskirpsi, setDeskripsi] = useState("");
-  const [kategori, setKategori] = useState("");
-  const [username, setUsername] = useState("");
-  const [tgl, setTgl] = useState("");
-
-  // fomat datetime
-  const formatTanggalLengkap = (tanggalISO) => {
-    const tanggal = new Date(tanggalISO);
-
-    const bulanMap = [
-      "Januari",
-      "Februari",
-      "Maret",
-      "April",
-      "Mei",
-      "Juni",
-      "Juli",
-      "Agustus",
-      "September",
-      "Oktober",
-      "November",
-      "Desember",
-    ];
-
-    const hari = tanggal.getDate();
-    const bulan = bulanMap[tanggal.getMonth()];
-    const tahun = tanggal.getFullYear();
-
-    return `${hari} ${bulan} ${tahun}`;
-  };
-
-  // token
-  const token = sessionStorage.getItem("session");
-
-  useEffect(() => {
-    const fetchData = async (e) => {
-      try {
-        const response = await axios.get(
-          `${baseUrl.apiUrl}/admin/berita/${id}`,
-          {
-            headers: {
-              Authorization: `Beazer ${token}`,
-            },
-          }
-        );
-
-        console.log(response.data);
-
-        if (response.status == 200 || response.status == 201) {
-          setDeskripsi(response.data.isi);
-          setJudul(response.data.judul);
-          setGambar(response.data.foto);
-          setUsername(response.data.username);
-          setKategori(response.data.tipe);
-          setTgl(formatTanggalLengkap(response.data.created_at));
-        }
-      } catch (error) {
-        console.error("Gagal mengambil data:", error);
-        setToastMessage("Gagal mengambil data");
-        setToastVariant("error");
-      }
-    };
-
-    fetchData();
-  }, [id]);
+  const {
+    toastMessage,
+    toastVariant,
+    Gambar,
+    Judul,
+    deskirpsi,
+    kategori,
+    username,
+    tgl,
+  } = useDetailPengumuman();
 
   return (
     <div className="lg:py-5">
+      {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
       <div className="w-full p-5 rounded-md bg-white mt-5">
         {/* Header Table */}
         <div className="w-full flex flex-col lg:flex-row justify-between items-center mb-5">

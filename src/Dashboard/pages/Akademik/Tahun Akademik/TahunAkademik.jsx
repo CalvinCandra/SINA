@@ -8,146 +8,33 @@ import Toast from "../../../../component/Toast/Toast";
 import Loading from "../../../../component/Loading/Loading";
 import axios from "axios";
 import baseUrl from "../../../../utils/config/baseUrl";
+import { formatTahun } from "../../../../utils/helper/dateFormat";
+import { useTahunAkademik } from "../../../../hooks/TahunAkademik/TahunAkademik";
 
 export default function TahunAkademik() {
-  // simpan data
-  const [selectedTahun, setSelectedTahun] = useState(null);
-  const [dataTahun, setdataTahun] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastVariant, setToastVariant] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const dataPerPage = 10;
-
-  const token = sessionStorage.getItem("session");
-
-  // fomat datetime
-  const formatTanggalLengkap = (tanggalISO) => {
-    const tanggal = new Date(tanggalISO);
-
-    const bulanMap = [
-      "Januari",
-      "Februari",
-      "Maret",
-      "April",
-      "Mei",
-      "Juni",
-      "Juli",
-      "Agustus",
-      "September",
-      "Oktober",
-      "November",
-      "Desember",
-    ];
-
-    const hari = tanggal.getDate();
-    const bulan = bulanMap[tanggal.getMonth()];
-    const tahun = tanggal.getFullYear();
-
-    return `${hari} ${bulan} ${tahun}`;
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `${baseUrl.apiUrl}/admin/tahunakademik`,
-          {
-            headers: {
-              Authorization: `Beazer ${token}`,
-            },
-          }
-        );
-
-        if (response.status == 200 || response.status == 201) {
-          setdataTahun(response.data);
-        }
-      } catch (error) {}
-    };
-
-    // Tampilkan toast bila tambah atau update berhasil
-    const invalidStatus = localStorage.getItem("tahunInvalid");
-    const addedStatus = localStorage.getItem("tahunAdded");
-    const updateStatus = localStorage.getItem("tahunUpdate");
-
-    if (invalidStatus === "error") {
-      setToastMessage("Tahun Akdemik Tidak ditemukan");
-      setToastVariant("error");
-      localStorage.removeItem("tahunInvalid");
-    }
-
-    if (addedStatus === "success") {
-      setToastMessage("Tahun Akademik berhasil ditambahkan");
-      setToastVariant("success");
-      localStorage.removeItem("tahunAdded");
-    }
-
-    if (updateStatus === "success") {
-      setToastMessage("Tahun Akdemik berhasil diupdate");
-      setToastVariant("success");
-      localStorage.removeItem("tahunUpdate");
-    }
-
-    fetchData();
-  }, []);
-
-  // Pagination
-  const indexOfLastData = currentPage * dataPerPage;
-  const indexOfFirstData = indexOfLastData - dataPerPage;
-  const currentData = dataTahun
-    .sort((a, b) => b.id - a.id)
-    .slice(indexOfFirstData, indexOfLastData);
-  const totalPages = Math.ceil(dataTahun.length / dataPerPage);
-
-  // Hapus
-  const handleDeleteTahun = async (e) => {
-    e.preventDefault();
-
-    if (!selectedTahun) return;
-
-    setIsLoading(true); // Set loading state
-
-    try {
-      await axios.delete(
-        `${baseUrl.apiUrl}/admin/tahunakademik/${selectedTahun.tahun_akademik_id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      // reset
-      setToastMessage("");
-      setToastVariant("");
-
-      // Simulasi delay untuk loading
-      setTimeout(() => {
-        setIsLoading(false); // Reset loading state
-        setToastMessage("Data Tahun Akademik berhasil dihapus");
-        setToastVariant("success");
-        // Hapus data dari state tanpa perlu fetch ulang
-        setdataTahun((prevData) =>
-          prevData.filter(
-            (item) => item.tahun_akademik_id !== selectedTahun.tahun_akademik_id
-          )
-        );
-        document.getElementById("my_modal_3").close();
-      }, 1000);
-    } catch (error) {
-      console.error("Gagal menghapus data:", error);
-      setIsLoading(false); // Reset loading state
-      setToastMessage("Gagal menghapus data");
-      setToastVariant("error");
-      document.getElementById("my_modal_3").close();
-    }
-  };
+  const {
+    selectedTahun,
+    setSelectedTahun,
+    dataTahun,
+    isLoading,
+    toastMessage,
+    toastVariant,
+    searchQuery,
+    setSearchQuery,
+    setCurrentPage,
+    indexOfLastData,
+    indexOfFirstData,
+    currentData,
+    currentPage,
+    totalPages,
+    handleDeleteTahun,
+  } = useTahunAkademik();
 
   return (
     <div className="lg:py-5">
       {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
       <div className="flex flex-col lg:flex-row w-full justify-between items-center">
-        <h2 className="text-2xl font-semibold">Tahun Kurikulum</h2>
+        <h2 className="text-2xl font-semibold">Tahun Akademik</h2>
         <Calender className="w-40 lg:w-full"></Calender>
       </div>
 
@@ -156,12 +43,19 @@ export default function TahunAkademik() {
         <div className="w-full flex flex-col lg:flex-row justify-between items-center mb-5">
           <div className="lg:w-60 mb-6 lg:mb-0">
             <ButtonHref
-              text="Tambah Tahun Kurikulum"
+              text="Tambah Tahun Akademik"
               href="/dashboard/akademik/tahun-akademik/tambah"
               variant="tambah"
             ></ButtonHref>
           </div>
-          <Search className="bg-white"></Search>
+          <Search
+            className="bg-white"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+          ></Search>
         </div>
 
         <hr className="border-border-grey border"></hr>
@@ -174,8 +68,8 @@ export default function TahunAkademik() {
                 <tr className="border-b border-t border-border-grey">
                   <th>No</th>
                   <th>Nama Kurikulum</th>
-                  <th>Tanggal Mulai</th>
-                  <th>Tanggal Berakhir</th>
+                  <th>Tahun Mulai</th>
+                  <th>Tahun Berakhir</th>
                   <th>Status</th>
                   <th>Aksi</th>
                 </tr>
@@ -189,14 +83,14 @@ export default function TahunAkademik() {
                     <td>{index + 1}</td>
                     <td className="whitespace-nowrap">{data.nama_kurikulum}</td>
                     <td className="text-justify">
-                      {formatTanggalLengkap(data.tahun_mulai)}
+                      {formatTahun(data.tahun_mulai)}
                     </td>
                     <td className="whitespace-nowrap">
-                      {formatTanggalLengkap(data.tahun_berakhir)}
+                      {formatTahun(data.tahun_berakhir)}
                     </td>
                     <td className="whitespace-nowrap">
                       <p
-                        className={`w-24 p-0.5 text-center rounded-full text-white ${
+                        className={`w-24 p-0.5 text-center rounded-full text-white capitalize ${
                           data.status == "aktif" ? "bg-green-500" : "bg-red-500"
                         }`}
                       >
@@ -275,8 +169,8 @@ export default function TahunAkademik() {
               <p className="text-center my-2">
                 Anda yakin ingin menghapus data{" "}
                 <b>{selectedTahun.nama_kurikulum}</b>{" "}
-                <b>{formatTanggalLengkap(selectedTahun.tahun_mulai)}</b> -{" "}
-                <b>{formatTanggalLengkap(selectedTahun.tahun_berakhir)}</b>?
+                <b>{formatTahun(selectedTahun.tahun_mulai)}</b> -{" "}
+                <b>{formatTahun(selectedTahun.tahun_berakhir)}</b>?
               </p>
             )}
             <div className="w-56 mx-auto p-1 flex justify-between items-center mt-4">

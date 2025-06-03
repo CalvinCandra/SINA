@@ -1,42 +1,14 @@
-import { useEffect, useState } from "react";
 import Calender from "../../components/Calender/Calender";
 import ButtonHref from "../../../component/Button/ButtonHref";
-import Search from "../../../component/Input/Search";
 import {
   TrashIcon,
   DocumentMagnifyingGlassIcon,
 } from "@heroicons/react/16/solid";
 import Toast from "../../../component/Toast/Toast";
-import DataKelas from "../../../data/Kelas/DataKelas";
-import axios from "axios";
-import baseUrl from "../../../utils/config/baseUrl";
+import { useSiswaKelas } from "../../../hooks/Siswa/SiswaKelas";
 
 export default function Siswa() {
-  const [kelas, setDataKelas] = useState([]);
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastVariant, setToastVariant] = useState("");
-  const token = sessionStorage.getItem("session");
-  useEffect(() => {
-    const fecthData = async () => {
-      try {
-        const respones = await axios.get(`${baseUrl.apiUrl}/admin/kelas`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (respones.status == 200) {
-          setDataKelas(respones.data);
-        }
-      } catch (error) {
-        console.log(error);
-        setToastMessage(`Gagal Mengambil Data`);
-        setToastVariant("error");
-      }
-    };
-
-    fecthData();
-  });
+  const { kelas, toastMessage, toastVariant } = useSiswaKelas();
 
   return (
     <div className="lg:py-5">
@@ -52,7 +24,6 @@ export default function Siswa() {
           <div className="lg:w-40 mb-6 lg:mb-0">
             <h1 className="text-lg font-semibold">Daftar Kelas</h1>
           </div>
-          <Search className="bg-white"></Search>
         </div>
 
         <hr className="border-border-grey border"></hr>

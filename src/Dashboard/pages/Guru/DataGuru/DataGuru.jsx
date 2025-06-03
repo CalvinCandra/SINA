@@ -1,4 +1,3 @@
-import React from "react";
 import Calender from "../../../components/Calender/Calender";
 import ButtonHref from "../../../../component/Button/ButtonHref";
 import Search from "../../../../component/Input/Search";
@@ -8,140 +7,30 @@ import {
   DocumentMagnifyingGlassIcon,
 } from "@heroicons/react/16/solid";
 import Button from "../../../../component/Button/Button";
-import { useState, useEffect } from "react";
 import Toast from "../../../../component/Toast/Toast";
 import Loading from "../../../../component/Loading/Loading";
-import axios from "axios";
 import baseUrl from "../../../../utils/config/baseUrl";
+import { formatTanggalLengkap } from "../../../../utils/helper/dateFormat";
+import { useGuru } from "../../../../hooks/Guru/Guru";
 
 export default function DataGuru() {
-  // simpan data
-  const [isLoading, setIsLoading] = useState(false);
-  const [dataGuru, setdataGuru] = useState([]);
-  const [selectedGuru, setSelectedGuru] = useState(null);
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastVariant, setToastVariant] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const dataPerPage = 10;
-
-  const token = sessionStorage.getItem("session");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${baseUrl.apiUrl}/admin/guru`, {
-          headers: {
-            Authorization: `Beazer ${token}`,
-          },
-        });
-
-        if (response.status == 200 || response.status == 201) {
-          setdataGuru(response.data);
-        }
-      } catch (error) {
-        console.error("Gagal mengambil data:", error);
-        setToastMessage("Gagal mengambil data");
-        setToastVariant("error");
-      }
-    };
-
-    // Tampilkan toast bila tambah atau update berhasil
-    const invalidStatus = localStorage.getItem("guruInvalid");
-    const addedStatus = localStorage.getItem("guruAdded");
-    const updateStatus = localStorage.getItem("guruUpdate");
-
-    if (invalidStatus === "error") {
-      setToastMessage("Guru Tidak ditemukan");
-      setToastVariant("error");
-      localStorage.removeItem("guruInvalid");
-    }
-
-    if (addedStatus === "success") {
-      setToastMessage("Guru berhasil ditambahkan");
-      setToastVariant("success");
-      localStorage.removeItem("guruAdded");
-    }
-
-    if (updateStatus === "success") {
-      setToastMessage("Guru berhasil diupdate");
-      setToastVariant("success");
-      localStorage.removeItem("guruUpdate");
-    }
-
-    fetchData();
-  }, []);
-
-  // Pagination
-  const indexOfLastData = currentPage * dataPerPage;
-  const indexOfFirstData = indexOfLastData - dataPerPage;
-  const currentData = dataGuru
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-    .slice(indexOfFirstData, indexOfLastData);
-  const totalPages = Math.ceil(dataGuru.length / dataPerPage);
-
-  // fomat datetime
-  const formatTanggalLengkap = (tanggalISO) => {
-    const tanggal = new Date(tanggalISO);
-
-    const bulanMap = [
-      "Januari",
-      "Februari",
-      "Maret",
-      "April",
-      "Mei",
-      "Juni",
-      "Juli",
-      "Agustus",
-      "September",
-      "Oktober",
-      "November",
-      "Desember",
-    ];
-
-    const hari = tanggal.getDate();
-    const bulan = bulanMap[tanggal.getMonth()];
-    const tahun = tanggal.getFullYear();
-
-    return `${hari} ${bulan} ${tahun}`;
-  };
-
-  const handleDeleteGuru = async (e) => {
-    e.preventDefault();
-
-    if (!selectedGuru) return;
-
-    setIsLoading(true); // Set loading state
-
-    try {
-      await axios.delete(`${baseUrl.apiUrl}/admin/guru/${selectedGuru.nip}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      // reset
-      setToastMessage("");
-      setToastVariant("");
-
-      // Simulasi delay untuk loading
-      setTimeout(() => {
-        setIsLoading(false); // Reset loading state
-        setToastMessage("Data Guru berhasil dihapus");
-        setToastVariant("success");
-        // Hapus data dari state tanpa perlu fetch ulang
-        setdataGuru((prevData) =>
-          prevData.filter((item) => item.nip !== selectedGuru.nip)
-        );
-        document.getElementById("my_modal_3").close();
-      }, 1000);
-    } catch (error) {
-      console.error("Gagal menghapus data:", error);
-      setIsLoading(false); // Reset loading state
-      setToastMessage("Gagal menghapus data");
-      setToastVariant("error");
-      document.getElementById("my_modal_3").close();
-    }
-  };
+  const {
+    isLoading,
+    toastMessage,
+    toastVariant,
+    indexOfFirstData,
+    indexOfLastData,
+    currentData,
+    currentPage,
+    dataGuru,
+    totalPages,
+    handleDeleteGuru,
+    setCurrentPage,
+    setSelectedGuru,
+    selectedGuru,
+    setSearchQuery,
+    searchQuery,
+  } = useGuru();
 
   return (
     <div className="lg:py-5">
@@ -161,7 +50,14 @@ export default function DataGuru() {
               variant="tambah"
             ></ButtonHref>
           </div>
-          <Search className="bg-white"></Search>
+          <Search
+            className="bg-white"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+          ></Search>
         </div>
 
         <hr className="border-border-grey border"></hr>
@@ -371,7 +267,7 @@ export default function DataGuru() {
             <h1 className="font-bold text-3xl text-center">Konfirmasi!</h1>
             {selectedGuru && (
               <p className="text-center my-2">
-                Anda yakin ingin menghapus data <b>{selectedGuru.nama}</b>?
+                Anda yakin ingin menghapus data <b>{selectedGuru.nama_guru}</b>?
               </p>
             )}
             <div className="w-56 mx-auto p-1 flex justify-between items-center mt-4">
