@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
 import Calender from "../../components/Calender/Calender";
 import ButtonHref from "../../../component/Button/ButtonHref";
 import Search from "../../../component/Input/Search";
-import DataSiswa from "../../../data/Siswa/DataSiswa";
 import {
   PencilSquareIcon,
   TrashIcon,
@@ -12,116 +10,28 @@ import { ArrowLeftCircleIcon } from "@heroicons/react/24/solid";
 import Button from "../../../component/Button/Button";
 import Toast from "../../../component/Toast/Toast";
 import Loading from "../../../component/Loading/Loading";
-import { useParams } from "react-router-dom";
-import axios from "axios";
 import baseUrl from "../../../utils/config/baseUrl";
+import { useSiswa } from "../../../hooks/Siswa/Siswa";
 
 export default function DataSiswaPage() {
-  const { kelas_id } = useParams(); // Ambil kelas dan tingkat dari URL
-  const [isLoading, setIsLoading] = useState(false);
-  const [dataSiswa, setdataSiswa] = useState([]);
-  const [dataKelas, setdataKelas] = useState([]);
-  const [selectedSiswa, setSelectedSiswa] = useState(null);
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastVariant, setToastVariant] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const dataPerPage = 5;
-
-  const token = sessionStorage.getItem("session");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `${baseUrl.apiUrl}/admin/siswa_kelas/${kelas_id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        console.log(response);
-
-        if (response.status == 200) {
-          setdataSiswa(response.data.siswa);
-          setdataKelas(response.data.kelas_info);
-        }
-      } catch (error) {
-        console.log(error);
-        setToastMessage("Gagal ambil data");
-        setToastVariant("error");
-      }
-    };
-
-    // Tampilkan toast bila tambah atau update berhasil
-    const invalidStatus = localStorage.getItem("siswaInvalid");
-    const addedStatus = localStorage.getItem("siswaAdded");
-    const updateStatus = localStorage.getItem("siswaUpdate");
-
-    if (invalidStatus === "error") {
-      setToastMessage("Siswa Tidak ditemukan");
-      setToastVariant("error");
-      localStorage.removeItem("siswaInvalid");
-    }
-
-    if (addedStatus === "success") {
-      setToastMessage("Siswa berhasil ditambahkan");
-      setToastVariant("success");
-      localStorage.removeItem("siswaAdded");
-    }
-
-    if (updateStatus === "success") {
-      setToastMessage("Siswa berhasil diupdate");
-      setToastVariant("success");
-      localStorage.removeItem("siswaUpdate");
-    }
-
-    fetchData();
-  }, [kelas_id]);
-
-  // Pagination
-  const indexOfLastData = currentPage * dataPerPage;
-  const indexOfFirstData = indexOfLastData - dataPerPage;
-  const currentData = dataSiswa
-    .sort((a, b) => b.id - a.id)
-    .slice(indexOfFirstData, indexOfLastData);
-  const totalPages = Math.ceil(dataSiswa.length / dataPerPage);
-
-  const handleDeleteSiswa = async (e) => {
-    e.preventDefault();
-
-    if (!selectedSiswa) return;
-
-    try {
-      await axios.delete(`${baseUrl.apiUrl}/admin/siswa/${selectedSiswa.nis}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      // reset
-      setToastMessage("");
-      setToastVariant("");
-
-      // Simulasi delay untuk loading
-      setTimeout(() => {
-        setIsLoading(false); // Reset loading state
-        setToastMessage("Siswa berhasil dihapus");
-        setToastVariant("success");
-        // Hapus data dari state tanpa perlu fetch ulang
-        setdataSiswa((prevData) =>
-          prevData.filter((item) => item.nis !== selectedBerita.nis)
-        );
-        document.getElementById("my_modal_3").close();
-      }, 1000);
-    } catch (error) {
-      console.error("Gagal menghapus data:", error);
-      setToastMessage("Gagal menghapus data");
-      setToastVariant("error");
-      document.getElementById("my_modal_3").close();
-    }
-  };
+  const {
+    isLoading,
+    toastMessage,
+    toastVariant,
+    dataKelas,
+    indexOfFirstData,
+    indexOfLastData,
+    currentData,
+    currentPage,
+    searchQuery,
+    setSearchQuery,
+    selectedSiswa,
+    setSelectedSiswa,
+    totalPages,
+    handleDeleteSiswa,
+    dataSiswa,
+    setCurrentPage,
+  } = useSiswa();
 
   return (
     <>
@@ -147,13 +57,6 @@ export default function DataSiswaPage() {
         <div className="w-full p-5 rounded-md bg-white mt-5">
           <div className="w-full flex flex-col lg:flex-row justify-between items-center mb-5">
             <div className="flex flex-col lg:flex-row items-center">
-              <div className="lg:w-56 mb-6 lg:mb-0">
-                <ButtonHref
-                  text="Tambah Siswa Via Excel"
-                  href={`/dashboard/siswa/${dataKelas.kelas_id}/tambahExcel`}
-                  variant="tambah"
-                />
-              </div>
               <div className="lg:w-40 mb-6 lg:mb-0">
                 <ButtonHref
                   text="Tambah Siswa"
@@ -161,8 +64,22 @@ export default function DataSiswaPage() {
                   variant="tambah"
                 />
               </div>
+              <div className="lg:w-56 mb-6 lg:mb-0">
+                <ButtonHref
+                  text="Tambah Siswa Via Excel"
+                  href={`/dashboard/siswa/${dataKelas.kelas_id}/tambahExcel`}
+                  variant="tambah"
+                />
+              </div>
             </div>
-            <Search className="bg-white" />
+            <Search
+              className="bg-white"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+            />
           </div>
 
           <hr className="border-border-grey border" />
@@ -192,7 +109,7 @@ export default function DataSiswaPage() {
                           <div className="avatar">
                             <div className="mask mask-circle w-12 h-12">
                               <img
-                                src={`${baseUrl.apiUrlImage}/Upload/profile_image/${data.foto_profil}`}
+                                src={`${baseUrl.apiUrlImageSiswa}/Upload/profile_image/${data.foto_profil}`}
                                 alt="Avatar"
                               />
                             </div>
@@ -286,7 +203,8 @@ export default function DataSiswaPage() {
               <h1 className="font-bold text-3xl text-center">Konfirmasi!</h1>
               {selectedSiswa && (
                 <p className="text-center my-2">
-                  Anda yakin ingin menghapus data <b>{selectedSiswa.nama}</b>?
+                  Anda yakin ingin menghapus data{" "}
+                  <b>{selectedSiswa.nama_siswa}</b>?
                 </p>
               )}
               <div className="w-56 mx-auto p-1 flex justify-between items-center mt-4">

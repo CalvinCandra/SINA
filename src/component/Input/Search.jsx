@@ -1,4 +1,5 @@
-export default function Search() {
+export default function Search(props) {
+  const { value, onChange } = props;
   return (
     <label className="input border rounded-lg border-border-grey">
       <svg
@@ -17,7 +18,13 @@ export default function Search() {
           <path d="m21 21-4.3-4.3"></path>
         </g>
       </svg>
-      <input type="search" required placeholder="Search" />
+      <input
+        type="search"
+        required
+        placeholder="Search"
+        value={value}
+        onChange={onChange}
+      />
     </label>
   );
 }

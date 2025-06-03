@@ -7,7 +7,7 @@ export default function getRole() {
 
   try {
     const decoded = jwtDecode(token);
-    return decoded.role; // pastikan `role` benar-benar ada di payload JWT kamu
+    return decoded.role;
   } catch (error) {
     console.error("Invalid token:", error);
     return null;

@@ -1,18 +1,34 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Calender from "../../../components/Calender/Calender";
 import Search from "../../../../component/Input/Search";
 import ButtonHref from "../../../../component/Button/ButtonHref";
 import {
-  PlusCircleIcon,
   TrashIcon,
   DocumentMagnifyingGlassIcon,
 } from "@heroicons/react/16/solid";
 import DataKelas from "../../../../data/Kelas/DataKelas";
+import axios from "axios";
+import baseUrl from "../../../../utils/config/baseUrl";
 
 export default function Jadwal() {
+  const [setKelas, setdataKelas] = useState([]);
+  const token = sessionStorage.getItem("session");
+
   useEffect(() => {
-    localStorage.removeItem("jadwalList");
-    console.log(localStorage.getItem("jadwalList")); // Cek setelah dihapus
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${baseUrl.apiUrl}/admin/kelas`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.status == 200 || response.status == 201) {
+          setdataKelas(response.data);
+        }
+      } catch (error) {}
+    };
+
+    fetchData();
   }, []);
 
   return (
@@ -35,7 +51,7 @@ export default function Jadwal() {
 
         {/* Table */}
         <div className="overflow-x-auto w-full">
-          {DataKelas && DataKelas.length > 0 ? (
+          {setKelas && setKelas.length > 0 ? (
             <table className="table w-full">
               <thead>
                 <tr className="border-b border-t border-border-grey">
@@ -46,10 +62,10 @@ export default function Jadwal() {
                 </tr>
               </thead>
               <tbody>
-                {DataKelas.map((data, index) => (
+                {setKelas.map((data, index) => (
                   <tr
                     className="border-b border-t border-border-grey"
-                    key={data.id}
+                    key={data.kelas_id}
                   >
                     <td className="whitespace-nowrap">{index + 1}</td>
                     <td className="whitespace-nowrap">{data.nama_kelas}</td>
@@ -57,13 +73,11 @@ export default function Jadwal() {
                     <td>
                       <div className="flex flex-row items-center">
                         <ButtonHref
-                          href={`/dashboard/akademik/jadwal-kelas/${encodeURIComponent(
-                            data.nama_kelas
-                          )}/${encodeURIComponent(`Tingkat ${data.tingkat}`)}`}
+                          href={`/dashboard/akademik/jadwal-kelas/${data.kelas_id}`}
                           variant="update"
                           text={
                             <span className="flex items-center mr-6 text-base">
-                              <DocumentMagnifyingGlassIcon className="w-5 h-5 text-blue-600 mr-2" />
+                              <DocumentMagnifyingGlassIcon className="w-5 h-5 text-sky-500 mr-2" />
                               Data Jadwal
                             </span>
                           }
@@ -85,8 +99,8 @@ export default function Jadwal() {
               </tbody>
             </table>
           ) : (
-            <div className="flex flex-col items-center justify-center w-full h-full">
-              <h2 className="text-lg font-semibold">Tidak ada data</h2>
+            <div className="italic text-gray-400 mt-5 text-center">
+              Data Kelas Belum Ada
             </div>
           )}
         </div>

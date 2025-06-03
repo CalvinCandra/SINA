@@ -1,57 +1,13 @@
-import { useState, useEffect } from "react";
 import FieldInput from "../../../component/Input/FieldInput";
 import ButtonHref from "../../../component/Button/ButtonHref";
 import Textarea from "../../../component/Input/Textarea";
-import { useParams } from "react-router-dom";
-import axios from "axios";
 import baseUrl from "../../../utils/config/baseUrl";
 import Toast from "../../../component/Toast/Toast";
+import { formatToDateInput } from "../../../utils/helper/dateFormat";
+import { useDetailSiswa } from "../../../hooks/Siswa/DetailSiswa";
 
 export default function DetailSiswa() {
-  const { kelas_id, nis } = useParams();
-  const [siswa, setdataSiswa] = useState([]);
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastVariant, setToastVariant] = useState("");
-
-  const token = sessionStorage.getItem("session");
-
-  //konver tgl dari misalnya 2012-12-11T17:00:00.000Z menjadi 11/12/2019
-  const formatDateToInput = (tanggalString) => {
-    if (!tanggalString) return "";
-
-    const date = new Date(tanggalString);
-
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-
-    return `${year}-${month}-${day}`;
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `${baseUrl.apiUrl}/admin/siswa/${nis}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (response.status == 200) {
-          setdataSiswa(response.data);
-        }
-      } catch (error) {
-        console.log(error);
-        setToastMessage("Gagal ambil data");
-        setToastVariant("error");
-      }
-    };
-
-    fetchData();
-  }, [nis]);
+  const { kelas_id, siswa, toastMessage, toastVariant } = useDetailSiswa();
 
   return (
     <div className="lg:py-5">
@@ -71,11 +27,7 @@ export default function DetailSiswa() {
           <div className="flex flex-col justify-center items-center">
             <div className="p-1 w-60 h-64 my-3 overflow-hidden">
               <img
-                src={
-                  siswa.foto_profil
-                    ? `${baseUrl.apiUrlImage}/Upload/profile_image/${siswa.foto_profil}`
-                    : "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
-                }
+                src={`${baseUrl.apiUrlImageSiswa}/Upload/profile_image/${siswa.foto_profil}`}
                 id="ImagePreview"
                 className="w-full h-full object-object rounded"
               ></img>
@@ -140,7 +92,7 @@ export default function DetailSiswa() {
               <FieldInput
                 type="date"
                 text=<span>Tanggal Lahir</span>
-                value={formatDateToInput(siswa.tanggal_lahir)}
+                value={formatToDateInput(siswa.tanggal_lahir)}
                 variant="biasa_text_sm_disabled"
                 readonly
               ></FieldInput>
@@ -217,7 +169,7 @@ export default function DetailSiswa() {
               <FieldInput
                 type="date"
                 text=<span>Tanggal Lahir</span>
-                value={formatDateToInput(siswa.ayah_tanggal_lahir)}
+                value={formatToDateInput(siswa.ayah_tanggal_lahir)}
                 variant="biasa_text_sm_disabled"
                 readonly
               ></FieldInput>
@@ -294,7 +246,7 @@ export default function DetailSiswa() {
               <FieldInput
                 type="date"
                 text=<span>Tanggal Lahir</span>
-                value={formatDateToInput(siswa.ibu_tanggal_lahir)}
+                value={formatToDateInput(siswa.ibu_tanggal_lahir)}
                 variant="biasa_text_sm_disabled"
                 readonly
               ></FieldInput>
@@ -375,7 +327,7 @@ export default function DetailSiswa() {
                 readonly
                 value={
                   siswa.wali_tanggal_lahir
-                    ? formatDateToInput(siswa.wali_tanggal_lahir)
+                    ? formatToDateInput(siswa.wali_tanggal_lahir)
                     : ""
                 }
                 variant="biasa_text_sm_disabled"

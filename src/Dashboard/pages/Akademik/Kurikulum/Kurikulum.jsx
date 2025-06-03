@@ -1,4 +1,3 @@
-import React from "react";
 import Calender from "../../../components/Calender/Calender";
 import ButtonHref from "../../../../component/Button/ButtonHref";
 import Search from "../../../../component/Input/Search";
@@ -8,157 +7,29 @@ import {
   DocumentMagnifyingGlassIcon,
 } from "@heroicons/react/16/solid";
 import Button from "../../../../component/Button/Button";
-import { useState, useEffect } from "react";
 import Toast from "../../../../component/Toast/Toast";
 import Loading from "../../../../component/Loading/Loading";
-import baseUrl from "../../../../utils/config/baseUrl";
-import axios from "axios";
+import { formatTanggalLengkap } from "../../../../utils/helper/dateFormat";
+import { useKurikulum } from "../../../../hooks/Kurikulum/Kurikulum";
 
 export default function Kurikulum() {
-  // simpan data
-  const [selectedKurikulum, setSelectedKurikulum] = useState(null);
-  const [dataKurikulum, setdataKurikulum] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastVariant, setToastVariant] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const dataPerPage = 5;
-
-  // get token
-  const token = sessionStorage.getItem("session");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(`${baseUrl.apiUrl}/admin/kurikulum`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.status === 200) {
-          setdataKurikulum(response.data);
-          // console.log(response);
-        }
-      } catch (error) {
-        console.error("Gagal mengambil data:", error);
-        setToastMessage("Gagal mengambil data");
-        setToastVariant("error");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    // Tampilkan toast bila tambah atau update berhasil
-    const invalidStatus = localStorage.getItem("kurikulumInvalid");
-    const addedStatus = localStorage.getItem("kurikulumAdded");
-    const updateStatus = localStorage.getItem("kurikulumUpdate");
-    const deleteStatus = localStorage.getItem("kurikulumDelete");
-
-    if (invalidStatus === "error") {
-      setToastMessage("Data Kurikulum Tidak ditemukan");
-      setToastVariant("error");
-      localStorage.removeItem("kurikulumInvalid");
-    }
-
-    if (addedStatus === "success") {
-      setToastMessage("Data Kurikulum berhasil ditambahkan");
-      setToastVariant("success");
-      localStorage.removeItem("kurikulumAdded");
-    }
-
-    if (updateStatus === "success") {
-      setToastMessage("Data Kurikulum berhasil diupdate");
-      setToastVariant("success");
-      localStorage.removeItem("kurikulumUpdate");
-    }
-
-    if (deleteStatus === "success") {
-      setToastMessage("Data Kurikulum berhasil dihapus");
-      setToastVariant("success");
-      localStorage.removeItem("kurikulumDelete");
-    }
-
-    fetchData();
-  }, []);
-
-  // fomat datetime
-  const formatTanggalLengkap = (tanggalISO) => {
-    const tanggal = new Date(tanggalISO);
-
-    const bulanMap = [
-      "Januari",
-      "Februari",
-      "Maret",
-      "April",
-      "Mei",
-      "Juni",
-      "Juli",
-      "Agustus",
-      "September",
-      "Oktober",
-      "November",
-      "Desember",
-    ];
-
-    const hari = tanggal.getDate();
-    const bulan = bulanMap[tanggal.getMonth()];
-    const tahun = tanggal.getFullYear();
-
-    return `${hari} ${bulan} ${tahun}`;
-  };
-
-  // Pagination
-  const indexOfLastData = currentPage * dataPerPage;
-  const indexOfFirstData = indexOfLastData - dataPerPage;
-  const currentData = dataKurikulum
-    .sort((a, b) => b.id - a.id)
-    .slice(indexOfFirstData, indexOfLastData);
-  const totalPages = Math.ceil(dataKurikulum.length / dataPerPage);
-
-  // Hapus
-  const handleDeleteKurikulum = async (e) => {
-    e.preventDefault();
-    if (!selectedKurikulum) return;
-
-    setIsLoading(true); // Set loading state
-
-    try {
-      await axios.delete(
-        `${baseUrl.apiUrl}/admin/kurikulum/${selectedKurikulum.kurikulum_id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      // reset
-      setToastMessage("");
-      setToastVariant("");
-
-      // Simulasi delay untuk loading
-      setTimeout(() => {
-        setIsLoading(false); // Reset loading state
-        setToastMessage("Kurikulum berhasil dihapus");
-        setToastVariant("success");
-        // Hapus data dari state tanpa perlu fetch ulang
-        setdataKurikulum((prevData) =>
-          prevData.filter(
-            (item) => item.kurikulum_id !== selectedKurikulum.kurikulum_id
-          )
-        );
-        document.getElementById("my_modal_3").close();
-      }, 1000);
-    } catch (error) {
-      console.error("Gagal menghapus data:", error);
-      setToastMessage("Gagal menghapus data");
-      setToastVariant("error");
-      document.getElementById("my_modal_3").close();
-    }
-  };
-
+  const {
+    isLoading,
+    toastMessage,
+    toastVariant,
+    indexOfFirstData,
+    indexOfLastData,
+    dataKurikulum,
+    selectedKurikulum,
+    setSelectedKurikulum,
+    totalPages,
+    currentData,
+    currentPage,
+    handleDeleteKurikulum,
+    setCurrentPage,
+    setSearchQuery,
+    searchQuery,
+  } = useKurikulum();
   return (
     <div className="lg:py-5">
       {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
@@ -177,7 +48,11 @@ export default function Kurikulum() {
               variant="tambah"
             ></ButtonHref>
           </div>
-          <Search className="bg-white"></Search>
+          <Search
+            className="bg-white"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          ></Search>
         </div>
 
         <hr className="border-border-grey border"></hr>

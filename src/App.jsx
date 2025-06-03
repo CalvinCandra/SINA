@@ -109,15 +109,15 @@ function App() {
         {/* Jadwal Pelajaran */}
         <Route path="akademik/jadwal" element={<Jadwal />} />
         <Route
-          path="akademik/jadwal-kelas/:nama_kelas/:tingkat"
+          path="akademik/jadwal-kelas/:kelas_id"
           element={<JadwalKelas />}
         />
         <Route
-          path="akademik/jadwal-kelas/:nama_kelas/:tingkat/tambah"
+          path="akademik/jadwal-kelas/:kelas_id/tambah"
           element={<TambahJadwalKelas />}
         />
         <Route
-          path="akademik/jadwal-kelas/:nama_kelas/:tingkat/update/:id"
+          path="akademik/jadwal-kelas/:kelas_id/update/:jadwal_id"
           element={<EditJadwalKelas />}
         />
 
