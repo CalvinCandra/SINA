@@ -40,8 +40,8 @@ import EditJadwalKelas from "./Dashboard/pages/Akademik/Jadwal/EditJadwalKelas";
 import AbsenGuru from "./Dashboard/pages/Guru/AbsenGuru/AbsenGuru";
 import AbsenkelasSiswa from "./Dashboard/pages/Siswa/AbsenSiswa/AbsenKelasSiswa";
 import AbsenSiswaPage from "./Dashboard/pages/Siswa/AbsenSiswa/AbsenSiswaPage";
-import Krs from "./Dashboard/pages/Akademik/KRS/Krs";
-import KrsSiswa from "./Dashboard/pages/Akademik/KRS/KrsSiswa";
+import Rapot from "./Dashboard/pages/Akademik/Rapot/Rapot";
+import RapotSiswa from "./Dashboard/pages/Akademik/Rapot/RapotSiswa";
 import ErrorPage from "./pages/Errors";
 
 function App() {
@@ -121,12 +121,9 @@ function App() {
           element={<EditJadwalKelas />}
         />
 
-        {/* Krs */}
-        <Route path="akademik/krs" element={<Krs />} />
-        <Route
-          path="akademik/krs/:nama_kelas/:tingkat"
-          element={<KrsSiswa />}
-        />
+        {/* Rapot */}
+        <Route path="akademik/rapot" element={<Rapot />} />
+        <Route path="akademik/rapot/:kelas_id" element={<RapotSiswa />} />
 
         {/* Guru */}
         {/* Data Guru */}

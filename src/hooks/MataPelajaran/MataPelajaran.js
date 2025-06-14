@@ -75,7 +75,7 @@ export const useMataPelajaran = () => {
     }
 
     fetchData();
-  }, []);
+  }, [token]);
 
   // Hapus
   const handleDeletePelajaran = async (e) => {

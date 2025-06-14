@@ -36,6 +36,7 @@ export const useGuru = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const response = await axios.get(`${baseUrl.apiUrl}/admin/guru`, {
           headers: {
             Authorization: `Beazer ${token}`,
@@ -49,6 +50,8 @@ export const useGuru = () => {
         console.error("Gagal mengambil data:", error);
         setToastMessage("Gagal mengambil data");
         setToastVariant("error");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -76,7 +79,7 @@ export const useGuru = () => {
     }
 
     fetchData();
-  }, []);
+  }, [token]);
 
   const handleDeleteGuru = async (e) => {
     e.preventDefault();

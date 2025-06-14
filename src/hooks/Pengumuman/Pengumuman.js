@@ -42,11 +42,8 @@ export const usePengumuman = () => {
           },
         });
 
-        console.log(response);
-
         if (response.status === 200) {
           setdataBerita(response.data);
-          // console.log(response);
         }
       } catch (error) {
         console.error("Gagal mengambil data:", error);
@@ -81,7 +78,7 @@ export const usePengumuman = () => {
     }
 
     fetchData();
-  }, []);
+  }, [token]);
 
   // Hapus
   const handleDeleteBerita = async (e) => {

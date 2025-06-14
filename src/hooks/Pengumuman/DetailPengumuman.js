@@ -11,6 +11,7 @@ export const useDetailPengumuman = () => {
   const [deskirpsi, setDeskripsi] = useState("");
   const [kategori, setKategori] = useState("");
   const [username, setUsername] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
   const [tgl, setTgl] = useState("");
@@ -20,6 +21,7 @@ export const useDetailPengumuman = () => {
   useEffect(() => {
     const fetchData = async (e) => {
       try {
+        setIsLoading(true);
         const response = await axios.get(
           `${baseUrl.apiUrl}/admin/berita/${id}`,
           {
@@ -43,6 +45,8 @@ export const useDetailPengumuman = () => {
         console.error("Gagal mengambil data:", error);
         setToastMessage("Gagal mengambil data");
         setToastVariant("error");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -58,5 +62,6 @@ export const useDetailPengumuman = () => {
     kategori,
     username,
     tgl,
+    isLoading,
   };
 };

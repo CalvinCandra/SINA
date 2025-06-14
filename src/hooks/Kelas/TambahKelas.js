@@ -59,15 +59,6 @@ export const useTambahKelas = () => {
     ],
   };
 
-  const handleJenjangChange = (e) => {
-    setJenjang(e.target.value);
-    setTingkat("");
-  };
-
-  const handleTingkatChange = (e) => {
-    setTingkat(e.target.value);
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -200,7 +191,9 @@ export const useTambahKelas = () => {
 
   return {
     jenjang,
+    setJenjang,
     tingkat,
+    setTingkat,
     walikelas,
     setWaliKelas,
     tahun,
@@ -212,8 +205,6 @@ export const useTambahKelas = () => {
     WaliKelasOption,
     jenjangOptions,
     tingkatOptionsMap,
-    handleJenjangChange,
-    handleTingkatChange,
     handleSubmit,
     namakelas,
     setNamaKelas,

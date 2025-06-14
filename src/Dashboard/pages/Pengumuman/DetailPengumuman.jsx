@@ -13,6 +13,7 @@ export default function DetailPengumuman() {
     kategori,
     username,
     tgl,
+    isLoading,
   } = useDetailPengumuman();
 
   return (

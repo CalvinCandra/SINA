@@ -1,9 +1,9 @@
 import axios from "axios";
-import baseUrl from "../../utils/config/baseUrl";
 import { useEffect, useState } from "react";
+import baseUrl from "../../utils/config/baseUrl";
 
-export const useSiswaKelas = () => {
-  const [kelas, setDataKelas] = useState([]);
+export const useRapotKelas = () => {
+  const [dataKelas, setdataKelas] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
@@ -13,18 +13,18 @@ export const useSiswaKelas = () => {
     const fecthData = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(`${baseUrl.apiUrl}/admin/kelas`, {
+        const respones = await axios.get(`${baseUrl.apiUrl}/admin/kelas`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        if (response.status == 200) {
-          setDataKelas(response.data);
+        if (respones.status == 200 || respones.status == 201) {
+          setdataKelas(respones.data);
         }
       } catch (error) {
         console.log(error);
-        setToastMessage(`Gagal Mengambil Data`);
+        setToastMessage("Gagal Ambil Data");
         setToastVariant("error");
       } finally {
         setIsLoading(false);
@@ -35,7 +35,7 @@ export const useSiswaKelas = () => {
   }, [token]);
 
   return {
-    kelas,
+    dataKelas,
     toastMessage,
     toastVariant,
     isLoading,

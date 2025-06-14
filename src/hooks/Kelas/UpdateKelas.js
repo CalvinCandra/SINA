@@ -62,18 +62,10 @@ export const useUpdateKelas = () => {
     )}`,
   }));
 
-  const handleJenjangChange = (e) => {
-    setJenjang(e.target.value);
-    setTingkat("");
-  };
-
-  const handleTingkatChange = (e) => {
-    setTingkat(e.target.value);
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         // get guru
         const responseGuru = await axios.get(`${baseUrl.apiUrl}/admin/guru`, {
           headers: {
@@ -116,7 +108,13 @@ export const useUpdateKelas = () => {
           setJenjang(responseKelas.data.jenjang);
           setTahunAkademik(responseKelas.data.tahun_akademik_id);
         }
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+        setToastMessage("Gagal Ambil Error");
+        setToastVariant("error");
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchData();
@@ -220,7 +218,9 @@ export const useUpdateKelas = () => {
 
   return {
     jenjang,
+    setJenjang,
     tingkat,
+    setTingkat,
     walikelas,
     setWaliKelas,
     tahun,
@@ -232,8 +232,6 @@ export const useUpdateKelas = () => {
     WaliKelasOption,
     jenjangOptions,
     tingkatOptionsMap,
-    handleJenjangChange,
-    handleTingkatChange,
     handleSubmit,
     namakelas,
     setNamaKelas,

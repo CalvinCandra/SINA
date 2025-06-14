@@ -36,6 +36,7 @@ export const useTahunAkademik = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const response = await axios.get(
           `${baseUrl.apiUrl}/admin/tahunakademik`,
           {
@@ -48,7 +49,13 @@ export const useTahunAkademik = () => {
         if (response.status == 200 || response.status == 201) {
           setdataTahun(response.data);
         }
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+        setToastMessage("Gagal Ambil Data");
+        setToastVariant("error");
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     // Tampilkan toast bila tambah atau update berhasil
@@ -75,7 +82,7 @@ export const useTahunAkademik = () => {
     }
 
     fetchData();
-  }, []);
+  }, [token]);
 
   // Hapus
   const handleDeleteTahun = async (e) => {

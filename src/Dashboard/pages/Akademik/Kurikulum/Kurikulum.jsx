@@ -59,19 +59,37 @@ export default function Kurikulum() {
 
         {/* Table */}
         <div className="overflow-x-auto w-full">
-          {currentData && currentData.length > 0 ? (
-            <table className="table w-full">
-              <thead>
-                <tr className="border-b border-t border-border-grey">
-                  <th>No</th>
-                  <th>Nama Kurikulum</th>
-                  <th>Deskripsi</th>
-                  <th>Dibuat</th>
-                  <th>Aksi</th>
+          <table className="table w-full">
+            <thead>
+              <tr className="border-b border-t border-border-grey">
+                <th>No</th>
+                <th>Nama Kurikulum</th>
+                <th>Deskripsi</th>
+                <th>Dibuat</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr>
+                  <td
+                    colSpan="5"
+                    className="text-base italic text-gray-400 mt-5 text-center py-4"
+                  >
+                    Loading...
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {currentData.map((data, index) => (
+              ) : currentData.length == 0 && currentData == 0 ? (
+                <tr>
+                  <td
+                    colSpan="5"
+                    className="text-base italic text-gray-400 mt-5 text-center py-4"
+                  >
+                    Data Kurikulum Belum Ada.
+                  </td>
+                </tr>
+              ) : (
+                currentData.map((data, index) => (
                   <tr
                     className="border-b border-t border-border-grey"
                     key={data.kurikulum_id}
@@ -89,39 +107,37 @@ export default function Kurikulum() {
                         <button
                           className="border-0 cursor-pointer"
                           onClick={() => {
-                            setSelectedKurikulum(data); // simpan data ke state
+                            setSelectedKurikulum(data);
                             document.getElementById("my_modal_4").showModal();
                           }}
                         >
-                          <DocumentMagnifyingGlassIcon className="w-5 h-5 text-sky-500"></DocumentMagnifyingGlassIcon>
+                          <DocumentMagnifyingGlassIcon className="w-5 h-5 text-sky-500" />
                         </button>
                         |
                         <ButtonHref
                           href={`/dashboard/akademik/kurikulum/update/${data.kurikulum_id}`}
                           variant="update"
-                          text=<PencilSquareIcon className="w-5 h-5 text-amber-300"></PencilSquareIcon>
-                        ></ButtonHref>
+                          text={
+                            <PencilSquareIcon className="w-5 h-5 text-amber-300" />
+                          }
+                        />
                         |
                         <button
                           className="border-0 cursor-pointer"
                           onClick={() => {
-                            setSelectedKurikulum(data); // simpan data ke state
+                            setSelectedKurikulum(data);
                             document.getElementById("my_modal_3").showModal();
                           }}
                         >
-                          <TrashIcon className="w-5 h-5 text-red-500"></TrashIcon>
+                          <TrashIcon className="w-5 h-5 text-red-500" />
                         </button>
                       </div>
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <div className="italic text-gray-400 mt-5 text-center">
-              Data Kurikulum Belum Ada
-            </div>
-          )}
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
 

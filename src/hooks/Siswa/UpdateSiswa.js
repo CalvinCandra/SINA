@@ -91,6 +91,7 @@ export const useUpdateSiswa = () => {
   useEffect(() => {
     const fecthData = async () => {
       try {
+        setIsLoading(true);
         const response = await axios.get(
           `${baseUrl.apiUrl}/admin/siswa/${nis}`,
           {
@@ -142,6 +143,8 @@ export const useUpdateSiswa = () => {
         console.log(error);
         setToastMessage("gagal ambil data");
         setToastVariant("error");
+      } finally {
+        setIsLoading(false);
       }
     };
 

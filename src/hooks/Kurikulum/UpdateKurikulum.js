@@ -16,6 +16,7 @@ export const useUpdateKurikulum = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const response = await axios.get(
           `${baseUrl.apiUrl}/admin/kurikulum/${id}`,
           {
@@ -30,10 +31,11 @@ export const useUpdateKurikulum = () => {
           setDeskripsi(response.data.deskripsi);
         }
       } catch (error) {
-        setIsLoading(false);
         console.error("Gagal mengambil data:", error);
         setToastMessage("Data tidak ditemukan");
         setToastVariant("error");
+      } finally {
+        setIsLoading(false);
       }
     };
 

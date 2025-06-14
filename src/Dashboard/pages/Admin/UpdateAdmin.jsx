@@ -32,7 +32,10 @@ export default function UpdateAdmin() {
 
         <hr className="border-border-grey border" />
 
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit}
+          className={`${isLoading ? "pointer-events-none opacity-50" : ""}`}
+        >
           <div className="flex flex-col justify-center items-center">
             <div className="p-1 w-full lg:w-60 h-64 my-3 overflow-hidden">
               <img

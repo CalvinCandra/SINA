@@ -1,36 +1,29 @@
 import axios from "axios";
 import baseUrl from "../../utils/config/baseUrl";
-import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-export const useDetailSiswa = () => {
-  const { kelas_id, nis } = useParams();
-  const [siswa, setdataSiswa] = useState([]);
+export const useJadwalKelas = () => {
+  const [dataKelas, setdataKelas] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
-
   const token = sessionStorage.getItem("session");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(
-          `${baseUrl.apiUrl}/admin/siswa/${nis}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (response.status == 200) {
-          setdataSiswa(response.data);
+        const response = await axios.get(`${baseUrl.apiUrl}/admin/kelas`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.status == 200 || response.status == 201) {
+          setdataKelas(response.data);
         }
       } catch (error) {
         console.log(error);
-        setToastMessage("Gagal ambil data");
+        setToastMessage("Gagal Ambil Data");
         setToastVariant("error");
       } finally {
         setIsLoading(false);
@@ -38,14 +31,12 @@ export const useDetailSiswa = () => {
     };
 
     fetchData();
-  }, [nis]);
+  }, [token]);
 
   return {
-    kelas_id,
-    nis,
-    siswa,
+    dataKelas,
+    isLoading,
     toastMessage,
     toastVariant,
-    isLoading,
   };
 };

@@ -1,38 +1,17 @@
-import { useState, useEffect } from "react";
 import Calender from "../../../components/Calender/Calender";
-import Search from "../../../../component/Input/Search";
 import ButtonHref from "../../../../component/Button/ButtonHref";
 import {
   TrashIcon,
   DocumentMagnifyingGlassIcon,
 } from "@heroicons/react/16/solid";
-import DataKelas from "../../../../data/Kelas/DataKelas";
-import axios from "axios";
-import baseUrl from "../../../../utils/config/baseUrl";
+import { useJadwalKelas } from "../../../../hooks/Jadwal/JadwalKelas";
+import Toast from "../../../../component/Toast/Toast";
 
 export default function Jadwal() {
-  const [setKelas, setdataKelas] = useState([]);
-  const token = sessionStorage.getItem("session");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${baseUrl.apiUrl}/admin/kelas`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (response.status == 200 || response.status == 201) {
-          setdataKelas(response.data);
-        }
-      } catch (error) {}
-    };
-
-    fetchData();
-  }, []);
-
+  const { dataKelas, toastMessage, toastVariant, isLoading } = useJadwalKelas();
   return (
     <div className="lg:py-5">
+      {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
       <div className="flex flex-col lg:flex-row w-full justify-between items-center">
         <h2 className="text-2xl font-bold">Data Jadwal Pelajaran</h2>
         <Calender className="w-40 lg:w-full"></Calender>
@@ -44,25 +23,42 @@ export default function Jadwal() {
           <div className="lg:w-50 mb-6 lg:mb-0">
             <h2 className="text-lg font-semibold">Nama Kelas</h2>
           </div>
-          <Search className="bg-white"></Search>
         </div>
 
         <hr className="border-border-grey border"></hr>
 
         {/* Table */}
         <div className="overflow-x-auto w-full">
-          {setKelas && setKelas.length > 0 ? (
-            <table className="table w-full">
-              <thead>
-                <tr className="border-b border-t border-border-grey">
-                  <th>No</th>
-                  <th>Nama Kelas</th>
-                  <th>Tingkat</th>
-                  <th>Aksi</th>
+          <table className="table w-full">
+            <thead>
+              <tr className="border-b border-t border-border-grey">
+                <th>No</th>
+                <th>Nama Kelas</th>
+                <th>Tingkat</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr>
+                  <td
+                    colSpan="4"
+                    className="text-base italic text-gray-400 mt-5 text-center py-4"
+                  >
+                    Loading...
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {setKelas.map((data, index) => (
+              ) : dataKelas == 0 && dataKelas.length == 0 ? (
+                <tr>
+                  <td
+                    colSpan="4"
+                    className="text-base italic text-gray-400 mt-5 text-center py-4"
+                  >
+                    Data Kelas Belum Ada
+                  </td>
+                </tr>
+              ) : (
+                dataKelas.map((data, index) => (
                   <tr
                     className="border-b border-t border-border-grey"
                     key={data.kelas_id}
@@ -95,14 +91,10 @@ export default function Jadwal() {
                       </div>
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <div className="italic text-gray-400 mt-5 text-center">
-              Data Kelas Belum Ada
-            </div>
-          )}
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

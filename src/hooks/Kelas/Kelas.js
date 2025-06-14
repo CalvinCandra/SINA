@@ -35,13 +35,12 @@ export const useKelas = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const response = await axios.get(`${baseUrl.apiUrl}/admin/kelas`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-
-        console.log(response);
 
         if (response.status == 200 || response.status == 201) {
           setdatakelas(response.data);
@@ -50,6 +49,8 @@ export const useKelas = () => {
         console.error("Gagal mengambil data:", error);
         setToastMessage("Gagal mengambil data");
         setToastVariant("error");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -57,7 +58,6 @@ export const useKelas = () => {
     const invalidStatus = localStorage.getItem("kelasInvalid");
     const addedStatus = localStorage.getItem("kelasAdded");
     const updateStatus = localStorage.getItem("kelasUpdate");
-    const deleteStatus = localStorage.getItem("kelasDelete");
 
     if (invalidStatus === "error") {
       setToastMessage("Kelas tidak ditemukan");
@@ -77,14 +77,8 @@ export const useKelas = () => {
       localStorage.removeItem("kelasUpdate");
     }
 
-    if (deleteStatus === "success") {
-      setToastMessage("Kelas berhasil dihapus");
-      setToastVariant("success");
-      localStorage.removeItem("kelasDelete");
-    }
-
     fetchData();
-  }, []);
+  }, [token]);
 
   const handleDeleteKelas = async (e) => {
     e.preventDefault();

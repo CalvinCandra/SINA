@@ -49,6 +49,7 @@ export const useUpdate = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const response = await axios.get(
           `${baseUrl.apiUrl}/admin/admin2/${id}`,
           {
@@ -64,9 +65,12 @@ export const useUpdate = () => {
           setGambar(response.data.foto_profil);
         }
       } catch (error) {
+        setIsLoading(false);
         console.error("Gagal mengambil data:", error);
         setToastMessage("Gagal mengambil data");
         setToastVariant("error");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -95,8 +99,6 @@ export const useUpdate = () => {
       formData.append("username", namaAdmin);
       formData.append("email", emailAdmin);
       formData.append("foto_profile", Gambar);
-
-      console.log(Gambar);
 
       const response = await axios.put(
         `${baseUrl.apiUrl}/admin/admin2/${id}`,
