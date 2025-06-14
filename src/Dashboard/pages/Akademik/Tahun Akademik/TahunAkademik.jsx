@@ -62,20 +62,38 @@ export default function TahunAkademik() {
 
         {/* Table */}
         <div className="overflow-x-auto w-full">
-          {currentData && currentData.length > 0 ? (
-            <table className="table w-full">
-              <thead>
-                <tr className="border-b border-t border-border-grey">
-                  <th>No</th>
-                  <th>Nama Kurikulum</th>
-                  <th>Tahun Mulai</th>
-                  <th>Tahun Berakhir</th>
-                  <th>Status</th>
-                  <th>Aksi</th>
+          <table className="table w-full">
+            <thead>
+              <tr className="border-b border-t border-border-grey">
+                <th>No</th>
+                <th>Nama Kurikulum</th>
+                <th>Tahun Mulai</th>
+                <th>Tahun Berakhir</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr>
+                  <td
+                    colSpan="6"
+                    className="text-base italic text-gray-400 mt-5 text-center py-4"
+                  >
+                    Loading...
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {currentData.map((data, index) => (
+              ) : currentData == 0 && currentData.length == 0 ? (
+                <tr>
+                  <td
+                    colSpan="6"
+                    className="text-base italic text-gray-400 mt-5 text-center py-4"
+                  >
+                    Data Tahun Akademik Belum Ada
+                  </td>
+                </tr>
+              ) : (
+                currentData.map((data, index) => (
                   <tr
                     className="border-b border-t border-border-grey"
                     key={data.tahun_akademik_id}
@@ -117,14 +135,10 @@ export default function TahunAkademik() {
                       </div>
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <div className="italic text-gray-400 mt-5 text-center">
-              Data Tahun Kurikulum Belum Ada
-            </div>
-          )}
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
 

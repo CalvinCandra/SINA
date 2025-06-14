@@ -35,7 +35,10 @@ export default function UpdateSiswa() {
 
         <hr className="border-border-grey border"></hr>
 
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit}
+          className={`${isLoading ? "pointer-events-none opacity-50" : ""}`}
+        >
           {/* Gambar */}
           <div className="flex flex-col justify-center items-center">
             <div className="p-1 w-60 h-64 my-3 overflow-hidden">

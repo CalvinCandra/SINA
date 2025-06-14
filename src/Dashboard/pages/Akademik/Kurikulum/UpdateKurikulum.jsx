@@ -29,7 +29,10 @@ export default function UpdateKurikulum() {
         <hr className="border-border-grey border"></hr>
 
         {/* Form */}
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit}
+          className={`${isLoading ? "pointer-events-none opacity-50" : ""}`}
+        >
           {/* Input Field */}
           <div className="w-full mt-5">
             <FieldInput

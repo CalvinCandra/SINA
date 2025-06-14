@@ -52,6 +52,7 @@ export const useUpdatePengumuman = () => {
   useEffect(() => {
     const fetchData = async (e) => {
       try {
+        setIsLoading(true);
         const response = await axios.get(
           `${baseUrl.apiUrl}/admin/berita/${id}`,
           {
@@ -61,20 +62,20 @@ export const useUpdatePengumuman = () => {
           }
         );
 
-        console.log(response.data);
-
         if (response.status == 200 || response.status == 201) {
           setDeskripsi(response.data.isi);
           setJudul(response.data.judul);
           setGambar(response.data.foto);
           setKategori(response.data.tipe);
-          const namaFile = response.data.foto.split("/").pop(); // Ambil nama file dari path
+          const namaFile = response.data.foto.split("/").pop();
           setFileName(namaFile);
         }
       } catch (error) {
         console.error("Gagal mengambil data:", error);
         setToastMessage("Gagal mengambil data");
         setToastVariant("error");
+      } finally {
+        setIsLoading(false);
       }
     };
 

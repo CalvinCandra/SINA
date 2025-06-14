@@ -85,23 +85,41 @@ export default function DataSiswaPage() {
           <hr className="border-border-grey border" />
 
           <div className="overflow-x-auto w-full">
-            {currentData && currentData.length > 0 ? (
-              <table className="table w-full">
-                <thead>
-                  <tr className="border-b border-t border-border-grey">
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>NISN</th>
-                    <th>NIS</th>
-                    <th>Jenis Kelamin</th>
-                    <th>Aksi</th>
+            <table className="table w-full">
+              <thead>
+                <tr className="border-b border-t border-border-grey">
+                  <th>No</th>
+                  <th>Nama</th>
+                  <th>NISN</th>
+                  <th>NIS</th>
+                  <th>Jenis Kelamin</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {isLoading ? (
+                  <tr>
+                    <td
+                      colSpan="6"
+                      className="text-base italic text-gray-400 mt-5 text-center"
+                    >
+                      Loading...
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {currentData.map((data, index) => (
+                ) : currentData.length == 0 && currentData == 0 ? (
+                  <tr>
+                    <td
+                      colSpan="6"
+                      className="text-base italic text-gray-400 mt-5 text-center"
+                    >
+                      Data Siswa Belum Ada
+                    </td>
+                  </tr>
+                ) : (
+                  currentData.map((data, index) => (
                     <tr
                       className="border-b border-t border-border-grey"
-                      key={data.nis}
+                      key={index + 1}
                     >
                       <td>{index + 1}</td>
                       <td className="whitespace-nowrap">
@@ -153,14 +171,10 @@ export default function DataSiswaPage() {
                         </div>
                       </td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <div className="italic text-gray-400 mt-5 text-center">
-                Data Siswa Belum Ada
-              </div>
-            )}
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
 

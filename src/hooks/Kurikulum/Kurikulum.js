@@ -56,7 +56,6 @@ export const useKurikulum = () => {
     const invalidStatus = localStorage.getItem("kurikulumInvalid");
     const addedStatus = localStorage.getItem("kurikulumAdded");
     const updateStatus = localStorage.getItem("kurikulumUpdate");
-    const deleteStatus = localStorage.getItem("kurikulumDelete");
 
     if (invalidStatus === "error") {
       setToastMessage("Data Kurikulum Tidak ditemukan");
@@ -76,20 +75,14 @@ export const useKurikulum = () => {
       localStorage.removeItem("kurikulumUpdate");
     }
 
-    if (deleteStatus === "success") {
-      setToastMessage("Data Kurikulum berhasil dihapus");
-      setToastVariant("success");
-      localStorage.removeItem("kurikulumDelete");
-    }
-
     fetchData();
-  }, []);
+  }, [token]);
 
   const handleDeleteKurikulum = async (e) => {
     e.preventDefault();
     if (!selectedKurikulum) return;
 
-    setIsLoading(true); // Set loading state
+    setIsLoading(true);
 
     try {
       await axios.delete(

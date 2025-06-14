@@ -10,7 +10,9 @@ import { useUpdateKelas } from "../../../hooks/Kelas/UpdateKelas";
 export default function UpdateKelas() {
   const {
     jenjang,
+    setJenjang,
     tingkat,
+    setTingkat,
     walikelas,
     setWaliKelas,
     tahun,
@@ -22,8 +24,6 @@ export default function UpdateKelas() {
     WaliKelasOption,
     jenjangOptions,
     tingkatOptionsMap,
-    handleJenjangChange,
-    handleTingkatChange,
     handleSubmit,
     namakelas,
     setNamaKelas,
@@ -40,7 +40,10 @@ export default function UpdateKelas() {
         <hr className="border-border-grey border"></hr>
 
         {/* Form */}
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit}
+          className={`${isLoading ? "pointer-events-none opacity-50" : ""}`}
+        >
           {/* Input Field */}
           <div className="w-full flex flex-col lg:flex-row justify-between mt-2">
             <div className="w-full lg:w-[34%]">
@@ -61,7 +64,10 @@ export default function UpdateKelas() {
                   <DinamisSelect
                     text="Jenjang Pendidikan"
                     value={jenjang}
-                    onChange={handleJenjangChange}
+                    onChange={(e) => {
+                      setJenjang(e.target.value);
+                      setTingkat("");
+                    }}
                     option={jenjangOptions}
                   />
                 </div>
@@ -69,8 +75,8 @@ export default function UpdateKelas() {
                   <DinamisSelect
                     text="Tingkat"
                     value={tingkat}
-                    onChange={handleTingkatChange}
-                    option={tingkatOptionsMap[jenjang] || []}
+                    onChange={(e) => setTingkat(e.target.value)}
+                    option={tingkatOptionsMap[jenjang?.toLowerCase()] || []}
                     disabled={!jenjang} // disable jika jenjang belum dipilih
                   />
                 </div>

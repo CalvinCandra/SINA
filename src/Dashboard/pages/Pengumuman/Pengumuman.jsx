@@ -63,19 +63,37 @@ export default function Pengumuman() {
 
         {/* Table */}
         <div className="overflow-x-auto w-full">
-          {currentData && currentData.length > 0 ? (
-            <table className="table w-full">
-              <thead>
-                <tr className="border-b border-t border-border-grey font-semibold">
-                  <th>No</th>
-                  <th>Judul</th>
-                  <th>Dibuat Oleh</th>
-                  <th>Tanggal diunggah</th>
-                  <th>Aksi</th>
+          <table className="table w-full">
+            <thead>
+              <tr className="border-b border-t border-border-grey font-semibold">
+                <th>No</th>
+                <th>Judul</th>
+                <th>Dibuat Oleh</th>
+                <th>Tanggal diunggah</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr>
+                  <td
+                    colSpan="6"
+                    className="text-base italic text-gray-400 mt-5 text-center py-4"
+                  >
+                    Loading...
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {currentData.map((data, index) => (
+              ) : currentData.length == 0 && currentData == 0 ? (
+                <tr>
+                  <td
+                    colSpan="6"
+                    className="text-base italic text-gray-400 mt-5 text-center py-4"
+                  >
+                    Data Informasi Belum Ada
+                  </td>
+                </tr>
+              ) : (
+                currentData.map((data, index) => (
                   <tr
                     className="border-b border-t border-border-grey"
                     key={data.berita_id}
@@ -112,14 +130,10 @@ export default function Pengumuman() {
                       </div>
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <div className="italic text-gray-400 mt-5 text-center">
-              Data Berita Belum Ada
-            </div>
-          )}
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
 

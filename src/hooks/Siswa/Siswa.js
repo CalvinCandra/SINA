@@ -37,6 +37,7 @@ export const useSiswa = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const response = await axios.get(
           `${baseUrl.apiUrl}/admin/siswa_kelas/${kelas_id}`,
           {
@@ -54,6 +55,8 @@ export const useSiswa = () => {
         console.log(error);
         setToastMessage("Gagal ambil data");
         setToastVariant("error");
+      } finally {
+        setIsLoading(false);
       }
     };
 

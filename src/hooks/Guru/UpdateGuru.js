@@ -66,6 +66,7 @@ export const useUpdateGuru = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const response = await axios.get(`${baseUrl.apiUrl}/admin/guru/${id}`, {
           headers: {
             Authorization: `Beazer ${token}`,
@@ -90,6 +91,8 @@ export const useUpdateGuru = () => {
         console.error("Gagal mengambil data:", error);
         setToastMessage("Gagal mengambil data");
         setToastVariant("error");
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchData();

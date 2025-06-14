@@ -36,6 +36,7 @@ export const useUpdateTahunAkademik = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const responseTahun = await axios.get(
           `${baseUrl.apiUrl}/admin/tahunakademik/${id}`,
           {
@@ -67,7 +68,13 @@ export const useUpdateTahunAkademik = () => {
         ) {
           setdataKurikulum(responseKurikulum.data);
         }
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+        setToastMessage("Gagal Ambil Data");
+        setToastVariant("error");
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchData();

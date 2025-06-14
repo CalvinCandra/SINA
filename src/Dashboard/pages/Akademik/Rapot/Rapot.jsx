@@ -1,20 +1,17 @@
-import { useEffect } from "react";
 import Calender from "../../../components/Calender/Calender";
 import ButtonHref from "../../../../component/Button/ButtonHref";
 import Search from "../../../../component/Input/Search";
 import { DocumentMagnifyingGlassIcon } from "@heroicons/react/16/solid";
-import DataKelas from "../../../../data/Kelas/DataKelas";
+import Toast from "../../../../component/Toast/Toast";
+import { useRapotKelas } from "../../../../hooks/Rapot/RapotKelas";
 
 export default function Krs() {
-  useEffect(() => {
-    localStorage.removeItem("krsList");
-    console.log(localStorage.getItem("krsList")); // Cek setelah dihapus
-  }, []);
-
+  const { dataKelas, toastMessage, toastVariant, isLoading } = useRapotKelas();
   return (
     <div className="lg:py-5">
+      {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
       <div className="flex flex-col lg:flex-row w-full justify-between items-center">
-        <h2 className="text-2xl font-semibold">KRS</h2>
+        <h2 className="text-2xl font-semibold">Rapot</h2>
         <Calender className="w-40 lg:w-full"></Calender>
       </div>
 
@@ -31,21 +28,39 @@ export default function Krs() {
 
         {/* Table */}
         <div className="overflow-x-auto w-full">
-          {DataKelas && DataKelas.length > 0 ? (
-            <table className="table w-full">
-              <thead>
-                <tr className="border-b border-t border-border-grey">
-                  <th>No</th>
-                  <th>Nama Kelas</th>
-                  <th>Tingkat</th>
-                  <th>Aksi</th>
+          <table className="table w-full">
+            <thead>
+              <tr className="border-b border-t border-border-grey">
+                <th>No</th>
+                <th>Nama Kelas</th>
+                <th>Tingkat</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr>
+                  <td
+                    colSpan="4"
+                    className="italic text-gray-400 mt-5 text-center py-4"
+                  >
+                    Loading...
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {DataKelas.map((data, index) => (
+              ) : dataKelas == 0 && dataKelas.length == 0 ? (
+                <tr>
+                  <td
+                    colSpan="4"
+                    className="italic text-gray-400 mt-5 text-center py-4"
+                  >
+                    Data Kelas Belum Ada
+                  </td>
+                </tr>
+              ) : (
+                dataKelas.map((data, index) => (
                   <tr
                     className="border-b border-t border-border-grey"
-                    key={data.id}
+                    key={data.kelas_id}
                   >
                     <td className="whitespace-nowrap">{index + 1}</td>
                     <td className="whitespace-nowrap">{data.nama_kelas}</td>
@@ -53,9 +68,7 @@ export default function Krs() {
                     <td>
                       <div className="flex items-center lg:flex-row">
                         <ButtonHref
-                          href={`/dashboard/akademik/krs/${encodeURIComponent(
-                            data.nama_kelas
-                          )}/${encodeURIComponent(`Tingkat ${data.tingkat}`)}`}
+                          href={`/dashboard/akademik/rapot/${data.kelas_id}`}
                           text=<span className="flex items-center">
                             <DocumentMagnifyingGlassIcon className="lg:w-5 lg:h-5 w-6 h-6 me-2 text-sky-500"></DocumentMagnifyingGlassIcon>
                             <span className="whitespace-nowrap">
@@ -66,14 +79,10 @@ export default function Krs() {
                       </div>
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <div className="italic text-gray-400 mt-5 text-center">
-              Data Kelas Belum Ada
-            </div>
-          )}
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

@@ -29,7 +29,6 @@ export const useUpdateMataPelajaran = () => {
         setNamaMapel(response.data.nama_mapel);
         setKkm(response.data.kkm);
       } catch (error) {
-        setIsLoading(false);
         console.error("Gagal mengambil data:", error);
         setToastMessage("Data tidak ditemukan");
         setToastVariant("error");

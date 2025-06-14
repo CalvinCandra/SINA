@@ -34,7 +34,7 @@ function Sidebar() {
   const isMataPelajaranActive = path.startsWith(
     "/dashboard/akademik/mata-pelajaran"
   );
-  const isKrsActive = path.startsWith("/dashboard/akademik/krs");
+  const isRapotActive = path.startsWith("/dashboard/akademik/rapot");
   const isGuruActive = path.startsWith("/dashboard/guru"); //untuk dropdown
   const isDataGuruActive =
     path === "/dashboard/guru" ||
@@ -47,42 +47,10 @@ function Sidebar() {
   // useEffect untuk menghapus localStorage saat berpindah dari halaman
   useEffect(() => {
     // Jika berpindah dari halaman
-    if (!isKelasActive) {
-      localStorage.removeItem("kelasList");
-    }
-  }, [isKelasActive]); // Memantau perubahan path
-
-  // useEffect untuk menghapus localStorage saat berpindah dari halaman
-  useEffect(() => {
-    // Jika berpindah dari halaman
-    if (!isTahunAkademikActive) {
-      localStorage.removeItem("tahunList");
-    }
-  }, [isTahunAkademikActive]); // Memantau perubahan path
-
-  // useEffect untuk menghapus localStorage saat berpindah dari halaman
-  useEffect(() => {
-    // Jika berpindah dari halaman
-    if (!isSiswaActive) {
-      localStorage.removeItem("siswaList");
-    }
-  }, [isSiswaActive]); // Memantau perubahan path
-
-  // useEffect untuk menghapus localStorage saat berpindah dari halaman
-  useEffect(() => {
-    // Jika berpindah dari halaman
     if (!isJadwalActive) {
       localStorage.removeItem("jadwalList");
     }
   }, [isJadwalActive]); // Memantau perubahan path
-
-  // useEffect untuk menghapus localStorage saat berpindah dari halaman
-  useEffect(() => {
-    // Jika berpindah dari halaman
-    if (!isKrsActive) {
-      localStorage.removeItem("krsList");
-    }
-  }, [isKrsActive]); // Memantau perubahan path
 
   return (
     <div className="drawer-side z-30 shadow-black shadow-md font-semibold">
@@ -141,6 +109,48 @@ function Sidebar() {
             </Link>
           </li>
         )}
+
+        {/* Guru Dropdown */}
+        <li className="mb-3">
+          <details open={isGuruActive}>
+            <summary
+              className={`flex items-center cursor-pointer py-2 rounded-sm ${
+                isGuruActive ? "bg-biru-active text-white" : ""
+              }`}
+            >
+              <UserGroupIcon className="w-6 h-6 me-1" />
+              <span>Guru</span>
+            </summary>
+            <ul className="pl-6 mt-2 text-sm">
+              {/* sub menu */}
+              <li className="mb-2">
+                <Link
+                  to="/dashboard/guru"
+                  className={`block py-1 ${
+                    isDataGuruActive && !isAbsenGuruActive
+                      ? "text-black font-semibold"
+                      : "text-gray-500"
+                  }`}
+                >
+                  Data Guru
+                </Link>
+              </li>
+              {/* sub menu */}
+              <li className="mb-2">
+                <Link
+                  to="/dashboard/guru/absen"
+                  className={`block py-1 ${
+                    isAbsenGuruActive && !isDataGuruActive
+                      ? "text-black font-semibold"
+                      : "text-gray-500"
+                  }`}
+                >
+                  Absen Guru
+                </Link>
+              </li>
+            </ul>
+          </details>
+        </li>
 
         {/* Kelas */}
         <li
@@ -239,54 +249,12 @@ function Sidebar() {
               {/* sub menu */}
               <li className="mb-2">
                 <Link
-                  to="/dashboard/akademik/krs"
+                  to="/dashboard/akademik/rapot"
                   className={`block py-1 ${
-                    isKrsActive ? "text-black font-semibold" : "text-gray-500"
+                    isRapotActive ? "text-black font-semibold" : "text-gray-500"
                   }`}
                 >
-                  KRS
-                </Link>
-              </li>
-            </ul>
-          </details>
-        </li>
-
-        {/* Guru Dropdown */}
-        <li className="mb-3">
-          <details open={isGuruActive}>
-            <summary
-              className={`flex items-center cursor-pointer py-2 rounded-sm ${
-                isGuruActive ? "bg-biru-active text-white" : ""
-              }`}
-            >
-              <UserGroupIcon className="w-6 h-6 me-1" />
-              <span>Guru</span>
-            </summary>
-            <ul className="pl-6 mt-2 text-sm">
-              {/* sub menu */}
-              <li className="mb-2">
-                <Link
-                  to="/dashboard/guru"
-                  className={`block py-1 ${
-                    isDataGuruActive && !isAbsenGuruActive
-                      ? "text-black font-semibold"
-                      : "text-gray-500"
-                  }`}
-                >
-                  Data Guru
-                </Link>
-              </li>
-              {/* sub menu */}
-              <li className="mb-2">
-                <Link
-                  to="/dashboard/guru/absen"
-                  className={`block py-1 ${
-                    isAbsenGuruActive && !isDataGuruActive
-                      ? "text-black font-semibold"
-                      : "text-gray-500"
-                  }`}
-                >
-                  Absen Guru
+                  Rapot
                 </Link>
               </li>
             </ul>

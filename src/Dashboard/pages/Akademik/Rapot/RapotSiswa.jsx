@@ -1,69 +1,42 @@
-import { useEffect, useState } from "react";
 import Calender from "../../../components/Calender/Calender";
 import ButtonHref from "../../../../component/Button/ButtonHref";
 import Search from "../../../../component/Input/Search";
-import DataSiswa from "../../../../data/Siswa/DataSiswa";
 import { DocumentMagnifyingGlassIcon } from "@heroicons/react/16/solid";
 import { ArrowLeftCircleIcon } from "@heroicons/react/24/solid";
-import { useParams } from "react-router-dom";
+import { useRapotSiswa } from "../../../../hooks/Rapot/RapotSiswa";
+import baseUrl from "../../../../utils/config/baseUrl";
+import Toast from "../../../../component/Toast/Toast";
 
 export default function DataSiswaPage() {
-  const kelas = useParams(); // Ambil kelas dan tingkat dari URL
-  const [dataKrs, setdataKrs] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const dataPerPage = 5;
-
-  useEffect(() => {
-    const fetchData = () => {
-      const storedData = localStorage.getItem("krsList");
-      const key = `${decodeURIComponent(kelas.nama_kelas)} ${decodeURIComponent(
-        kelas.tingkat
-      )}`;
-
-      let finalData = [];
-
-      if (!storedData || storedData === "undefined") {
-        const newData = DataSiswa[key] || [];
-        localStorage.setItem("krsList", JSON.stringify({ [key]: newData }));
-        finalData = newData;
-      } else {
-        try {
-          const parsed = JSON.parse(storedData);
-          finalData = parsed[key] || [];
-        } catch (e) {
-          console.error("Data rusak:", e);
-        }
-      }
-
-      setdataKrs(finalData);
-    };
-
-    // Memanggil fetchData untuk mendapatkan data siswa
-    fetchData();
-  }, [kelas]);
-
-  // Pagination
-  const indexOfLastData = currentPage * dataPerPage;
-  const indexOfFirstData = indexOfLastData - dataPerPage;
-  const currentData = dataKrs
-    .sort((a, b) => b.id - a.id)
-    .slice(indexOfFirstData, indexOfLastData);
-  const totalPages = Math.ceil(dataKrs.length / dataPerPage);
-
+  const {
+    dataKelas,
+    dataSiswa,
+    indexOfLastData,
+    indexOfFirstData,
+    currentData,
+    currentPage,
+    setCurrentPage,
+    searchQuery,
+    setSearchQuery,
+    totalPages,
+    toastMessage,
+    toastVariant,
+    isLoading,
+  } = useRapotSiswa();
   return (
     <>
       <div className="lg:py-5">
+        {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
         <div className="flex flex-col lg:flex-row w-full lg:justify-between items-center">
           <div className="flex items-center">
             <div className="me-3">
               <ButtonHref
                 text=<ArrowLeftCircleIcon className="w-6 h-6 "></ArrowLeftCircleIcon>
-                href="/dashboard/akademik/krs"
+                href="/dashboard/akademik/rapot"
               />
             </div>
             <h2 className="text-2xl font-semibold mb-3 lg:mb-0">
-              Data Siswa {decodeURIComponent(kelas.nama_kelas)}{" "}
-              {decodeURIComponent(kelas.tingkat)}
+              Data Siswa {dataKelas.nama_kelas} Tingkat {dataKelas.tingkat}
             </h2>
           </div>
           <Calender className="w-40 lg:w-full"></Calender>
@@ -71,29 +44,54 @@ export default function DataSiswaPage() {
 
         <div className="w-full p-5 rounded-md bg-white mt-5">
           <div className="w-full flex flex-col lg:flex-row justify-between items-center mb-5">
-            <Search className="bg-white" />
+            <Search
+              className="bg-white"
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+            />
           </div>
 
           <hr className="border-border-grey border" />
 
           <div className="overflow-x-auto w-full">
-            {currentData && currentData.length > 0 ? (
-              <table className="table w-full">
-                <thead>
-                  <tr className="border-b border-t border-border-grey">
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>NISN</th>
-                    <th>NIS</th>
-                    <th>Jenis Kelamin</th>
-                    <th>Aksi</th>
+            <table className="table w-full">
+              <thead>
+                <tr className="border-b border-t border-border-grey">
+                  <th>No</th>
+                  <th>Nama</th>
+                  <th>NISN</th>
+                  <th>NIS</th>
+                  <th>Jenis Kelamin</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {isLoading ? (
+                  <tr>
+                    <td
+                      colSpan="6"
+                      className="italic text-gray-400 mt-5 text-center py-4"
+                    >
+                      Loading...
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {currentData.map((data, index) => (
+                ) : currentData == 0 && currentData.length == 0 ? (
+                  <tr>
+                    <td
+                      colSpan="4"
+                      className="italic text-gray-400 mt-5 text-center py-4"
+                    >
+                      Data Siswa Belum Ada
+                    </td>
+                  </tr>
+                ) : (
+                  currentData.map((data, index) => (
                     <tr
                       className="border-b border-t border-border-grey"
-                      key={data.id}
+                      key={index + 1}
                     >
                       <td>{indexOfFirstData + index + 1}</td>
                       <td className="whitespace-nowrap">
@@ -101,22 +99,21 @@ export default function DataSiswaPage() {
                           <div className="avatar">
                             <div className="mask mask-circle w-12 h-12">
                               <img
-                                src={
-                                  data.image ||
-                                  "https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
-                                }
+                                src={`${baseUrl.apiUrlImageSiswa}/Upload/profile_image/${data.foto_profil}`}
                                 alt="Avatar"
                               />
                             </div>
                           </div>
                           <div>
-                            <div className="font-bold">{data.nama}</div>
+                            <div className="font-bold">{data.nama_siswa}</div>
                           </div>
                         </div>
                       </td>
                       <td className="whitespace-nowrap">{data.nisn}</td>
                       <td className="whitespace-nowrap">{data.nis}</td>
-                      <td className="whitespace-nowrap">{data.kelamin}</td>
+                      <td className="whitespace-nowrap capitalize">
+                        {data.jenis_kelamin}
+                      </td>
                       <td>
                         <div className="flex items-center justify-between w-14">
                           <a
@@ -131,14 +128,10 @@ export default function DataSiswaPage() {
                         </div>
                       </td>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <div className="italic text-gray-400 mt-5 text-center">
-                Data Siswa Belum Ada
-              </div>
-            )}
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -146,12 +139,11 @@ export default function DataSiswaPage() {
         <div className="flex flex-col lg:flex-row justify-between items-center w-full my-4">
           <p className="text-sm mb-3 lg:mb-0">
             Menampilkan Data {indexOfFirstData + 1} -{" "}
-            {indexOfLastData > dataKrs.length
-              ? dataKrs.length
+            {indexOfLastData > dataSiswa.length
+              ? dataSiswa.length
               : indexOfLastData}{" "}
-            dari {dataKrs.length} Data Siswa{" "}
-            {decodeURIComponent(kelas.nama_kelas)}{" "}
-            {decodeURIComponent(kelas.tingkat)}
+            dari {dataSiswa.length} Data Siswa {dataKelas.nama_kelas} Tingkat{" "}
+            {dataKelas.tingkat}
           </p>
           <div className="join">
             {[...Array(totalPages)].map((_, index) => (
