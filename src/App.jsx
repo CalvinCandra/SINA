@@ -43,6 +43,7 @@ import AbsenSiswaPage from "./Dashboard/pages/Siswa/AbsenSiswa/AbsenSiswaPage";
 import Rapot from "./Dashboard/pages/Akademik/Rapot/Rapot";
 import RapotSiswa from "./Dashboard/pages/Akademik/Rapot/RapotSiswa";
 import ErrorPage from "./pages/Errors";
+import DetailKurikulum from "./Dashboard/pages/Akademik/Kurikulum/DetailKurikulum";
 
 function App() {
   return (
@@ -82,6 +83,10 @@ function App() {
         <Route
           path="akademik/kurikulum/update/:id"
           element={<UpdateKurikulum />}
+        />
+        <Route
+          path="akademik/kurikulum/detail/:id"
+          element={<DetailKurikulum />}
         />
 
         {/* Tahun Akademik */}

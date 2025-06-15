@@ -41,7 +41,6 @@ export const useKurikulum = () => {
 
         if (response.status === 200) {
           setdataKurikulum(response.data);
-          // console.log(response);
         }
       } catch (error) {
         console.error("Gagal mengambil data:", error);

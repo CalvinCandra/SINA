@@ -10,8 +10,39 @@ export const useUpdateKurikulum = () => {
   const [deskripsi, setDeskripsi] = useState("");
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
+  const [dataMapel, setDataMapel] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedMapel, setSelectedMapel] = useState([]);
+  const [jenjang, setJenjang] = useState("");
+  const [tingkat, setTingkat] = useState("");
   const token = sessionStorage.getItem("session");
+
+  const jenjangOptions = [
+    { value: "sd", label: "SD" },
+    { value: "smp", label: "SMP" },
+    { value: "sma", label: "SMA" },
+  ];
+
+  const tingkatOptionsMap = {
+    sd: [
+      { value: "I", label: "I" },
+      { value: "II", label: "II" },
+      { value: "III", label: "III" },
+      { value: "IV", label: "IV" },
+      { value: "V", label: "V" },
+      { value: "VI", label: "VI" },
+    ],
+    smp: [
+      { value: "VII", label: "VII" },
+      { value: "VIII", label: "VIII" },
+      { value: "IX", label: "IX" },
+    ],
+    sma: [
+      { value: "X", label: "X" },
+      { value: "XI", label: "XI" },
+      { value: "XII", label: "XII" },
+    ],
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,9 +57,31 @@ export const useUpdateKurikulum = () => {
           }
         );
 
+        const responseMapel = await axios.get(`${baseUrl.apiUrl}/admin/mapel`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        console.log(response);
+
         if (response.status == 200 || response.status == 201) {
           setNamaKurikulum(response.data.nama_kurikulum);
           setDeskripsi(response.data.deskripsi);
+          setJenjang(response.data.jenjang);
+          setTingkat(response.data.tingkat);
+
+          // Set selectedMapel berdasarkan data mapel_list dari response
+          if (response.data.mapel_list && response.data.mapel_list.length > 0) {
+            const mapelIds = response.data.mapel_list.map(
+              (mapel) => mapel.mapel_id
+            );
+            setSelectedMapel(mapelIds);
+          }
+        }
+
+        if (responseMapel.status == 200) {
+          setDataMapel(responseMapel.data);
         }
       } catch (error) {
         console.error("Gagal mengambil data:", error);
@@ -65,6 +118,9 @@ export const useUpdateKurikulum = () => {
         {
           nama_kurikulum: namaKurikulum,
           deskripsi: deskripsi,
+          jenjang: jenjang,
+          tingkat: tingkat,
+          mapel_list: selectedMapel.map((mapelId) => ({ mapel_id: mapelId })),
         },
         {
           headers: {
@@ -113,5 +169,15 @@ export const useUpdateKurikulum = () => {
     toastMessage,
     toastVariant,
     handleSubmit,
+    dataMapel,
+    setDataMapel,
+    selectedMapel,
+    setSelectedMapel,
+    jenjang,
+    setJenjang,
+    tingkat,
+    setTingkat,
+    jenjangOptions,
+    tingkatOptionsMap,
   };
 };
