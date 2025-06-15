@@ -104,15 +104,12 @@ export default function Kurikulum() {
                     </td>
                     <td>
                       <div className="flex items-center justify-evenly w-20">
-                        <button
-                          className="border-0 cursor-pointer"
-                          onClick={() => {
-                            setSelectedKurikulum(data);
-                            document.getElementById("my_modal_4").showModal();
-                          }}
-                        >
-                          <DocumentMagnifyingGlassIcon className="w-5 h-5 text-sky-500" />
-                        </button>
+                        <ButtonHref
+                          href={`/dashboard/akademik/kurikulum/detail/${data.kurikulum_id}`}
+                          text={
+                            <DocumentMagnifyingGlassIcon className="w-5 h-5 text-sky-500" />
+                          }
+                        />
                         |
                         <ButtonHref
                           href={`/dashboard/akademik/kurikulum/update/${data.kurikulum_id}`}

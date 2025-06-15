@@ -5,6 +5,7 @@ import Textarea from "../../../../component/Input/Textarea";
 import Loading from "../../../../component/Loading/Loading";
 import Toast from "../../../../component/Toast/Toast";
 import { useTambahKurikulum } from "../../../../hooks/Kurikulum/TambahKurikulum";
+import DinamisSelect from "../../../../component/Input/DinamisSelect";
 
 export default function TambahKurikulum() {
   const {
@@ -16,6 +17,15 @@ export default function TambahKurikulum() {
     toastMessage,
     toastVariant,
     handleSubmit,
+    dataMapel,
+    selectedMapel,
+    setSelectedMapel,
+    jenjang,
+    setJenjang,
+    tingkat,
+    setTingkat,
+    jenjangOptions,
+    tingkatOptionsMap,
   } = useTambahKurikulum();
   return (
     <div className="lg:py-5 min-h-screen lg:min-h-0">
@@ -54,6 +64,69 @@ export default function TambahKurikulum() {
               onChange={(e) => setDeskripsi(e.target.value)}
             ></Textarea>
           </div>
+
+          <div className="w-full mt-5">
+            <div className="flex flex-col lg:flex-row w-full justify-between gap-5">
+              <div className="w-full lg:w-1/2">
+                <DinamisSelect
+                  text="Jenjang Pendidikan"
+                  value={jenjang}
+                  onChange={(e) => setJenjang(e.target.value)}
+                  option={jenjangOptions}
+                />
+              </div>
+              <div className="w-full lg:w-1/2">
+                <DinamisSelect
+                  text="Tingkat"
+                  value={tingkat}
+                  onChange={(e) => setTingkat(e.target.value)}
+                  option={tingkatOptionsMap[jenjang] || []}
+                  disabled={!jenjang} // disable jika jenjang belum dipilih
+                />
+              </div>
+            </div>
+          </div>
+
+          {isLoading ? (
+            <div className="w-full mt-5 italic text-gray-400 font-semibold">
+              Loading ...
+            </div>
+          ) : dataMapel == 0 && dataMapel.length == 0 ? (
+            <div className="w-full mt-5 italic text-gray-400 font-semibold">
+              Data Mapel Belum Ada
+            </div>
+          ) : (
+            <div className="w-full mt-5">
+              <span className="text-sm font-semibold">
+                Mata Pelajaran <span className="text-red-500">*</span>
+              </span>
+              {dataMapel.map((item, index) => (
+                <div
+                  className="flex items-center gap-4 gap-y-10"
+                  key={index + 1}
+                >
+                  <input
+                    type="checkbox"
+                    className="cursor-pointer my-3"
+                    value={item.mapel_id}
+                    checked={selectedMapel.includes(item.mapel_id)}
+                    onChange={(e) => {
+                      const id = item.mapel_id;
+                      if (e.target.checked) {
+                        setSelectedMapel([...selectedMapel, id]);
+                      } else {
+                        setSelectedMapel(
+                          selectedMapel.filter((itemId) => itemId !== id)
+                        );
+                      }
+                    }}
+                  />
+
+                  <label className="text-sm">{item.nama_mapel}</label>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Button */}
           <div className="flex justify-end items-center mt-5">
