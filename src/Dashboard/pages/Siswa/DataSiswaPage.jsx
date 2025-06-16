@@ -15,22 +15,22 @@ import { useSiswa } from "../../../hooks/Siswa/Siswa";
 
 export default function DataSiswaPage() {
   const {
+    dataKelas,
+    dataSiswa,
+    selectedSiswa,
+    setSelectedSiswa,
+    currentData,
     isLoading,
     toastMessage,
     toastVariant,
-    dataKelas,
-    indexOfFirstData,
-    indexOfLastData,
-    currentData,
-    currentPage,
     searchQuery,
     setSearchQuery,
-    selectedSiswa,
-    setSelectedSiswa,
-    totalPages,
-    handleDeleteSiswa,
-    dataSiswa,
+    currentPage,
     setCurrentPage,
+    totalPages,
+    indexOfFirstData,
+    indexOfLastData,
+    handleDeleteSiswa,
   } = useSiswa();
 
   return (
@@ -106,7 +106,7 @@ export default function DataSiswaPage() {
                       Loading...
                     </td>
                   </tr>
-                ) : currentData.length == 0 && currentData == 0 ? (
+                ) : currentData.length == 0 ? (
                   <tr>
                     <td
                       colSpan="6"

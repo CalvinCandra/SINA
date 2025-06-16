@@ -6,54 +6,43 @@ export const usePengumuman = () => {
   // simpan data pengumuman
   const [selectedBerita, setSelectedBerita] = useState(null);
   const [dataBerita, setdataBerita] = useState([]);
+  const [currentData, setCurrentData] = useState([]);
+
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
+
+  const dataPerPage = 10;
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const dataPerPage = 10;
+  const indexOfLastData = currentPage * dataPerPage;
+  const indexOfFirstData = indexOfLastData - dataPerPage;
+  const totalPages = Math.ceil(currentData.length / dataPerPage);
   // get token
   const token = sessionStorage.getItem("session");
 
-  // Filter data berdasarkan search query
-  const filteredData = dataBerita.filter((berita) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      berita.judul?.toLowerCase().includes(query) ||
-      berita.username?.toLowerCase().includes(query)
-    );
-  });
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(`${baseUrl.apiUrl}/admin/berita`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-  // Pagination
-  const indexOfLastData = currentPage * dataPerPage;
-  const indexOfFirstData = indexOfLastData - dataPerPage;
-  const currentData = filteredData
-    .sort((a, b) => b.id - a.id)
-    .slice(indexOfFirstData, indexOfLastData);
-  const totalPages = Math.ceil(filteredData.length / dataPerPage);
+      if (response.status === 200) {
+        setdataBerita(response.data);
+      }
+    } catch (error) {
+      console.error("Gagal mengambil data:", error);
+      setToastMessage("Gagal mengambil data");
+      setToastVariant("error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(`${baseUrl.apiUrl}/admin/berita`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.status === 200) {
-          setdataBerita(response.data);
-        }
-      } catch (error) {
-        console.error("Gagal mengambil data:", error);
-        setToastMessage("Gagal mengambil data");
-        setToastVariant("error");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     // Tampilkan toast bila tambah atau update berhasil
     const invalidStatus = localStorage.getItem("informasiInvalid");
     const addedStatus = localStorage.getItem("informasiAdded");
@@ -79,6 +68,16 @@ export const usePengumuman = () => {
 
     fetchData();
   }, [token]);
+
+  // Pagination and Serach
+  useEffect(() => {
+    const filtered = dataBerita
+      .filter((item) =>
+        item.judul.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    setCurrentData(filtered.slice(indexOfFirstData, indexOfLastData));
+  }, [dataBerita, searchQuery, currentPage]);
 
   // Hapus
   const handleDeleteBerita = async (e) => {
@@ -121,20 +120,20 @@ export const usePengumuman = () => {
   };
 
   return {
+    selectedBerita,
+    setSelectedBerita,
+    dataBerita,
+    currentData,
     isLoading,
     toastMessage,
     toastVariant,
-    selectedBerita,
-    setSelectedBerita,
     searchQuery,
     setSearchQuery,
     currentPage,
     setCurrentPage,
-    currentData,
     totalPages,
-    dataBerita,
-    handleDeleteBerita,
     indexOfFirstData,
     indexOfLastData,
+    handleDeleteBerita,
   };
 };

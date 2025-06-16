@@ -9,21 +9,21 @@ import { useMataPelajaran } from "../../../../hooks/MataPelajaran/MataPelajaran"
 
 export default function MataPelajaran() {
   const {
+    selectedPelajaran,
+    setSelectedPelajaran,
+    dataPelajaran,
+    currentData,
     isLoading,
     toastMessage,
     toastVariant,
-    selectedPelajaran,
-    setSelectedPelajaran,
-    indexOfFirstData,
-    indexOfLastData,
-    currentPage,
-    currentData,
-    totalPages,
-    dataPelajaran,
-    handleDeletePelajaran,
-    setCurrentPage,
     searchQuery,
     setSearchQuery,
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    indexOfFirstData,
+    indexOfLastData,
+    handleDeletePelajaran,
   } = useMataPelajaran();
   return (
     <div className="lg:py-5">
@@ -73,7 +73,7 @@ export default function MataPelajaran() {
                     Loading...
                   </td>
                 </tr>
-              ) : currentData == 0 && currentData.length == 0 ? (
+              ) : currentData.length == 0 ? (
                 <tr>
                   <td
                     colSpan="4"

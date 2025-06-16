@@ -14,21 +14,21 @@ import { useKurikulum } from "../../../../hooks/Kurikulum/Kurikulum";
 
 export default function Kurikulum() {
   const {
+    selectedKurikulum,
+    setSelectedKurikulum,
+    dataKurikulum,
+    currentData,
     isLoading,
     toastMessage,
     toastVariant,
-    indexOfFirstData,
-    indexOfLastData,
-    dataKurikulum,
-    selectedKurikulum,
-    setSelectedKurikulum,
-    totalPages,
-    currentData,
-    currentPage,
-    handleDeleteKurikulum,
-    setCurrentPage,
     setSearchQuery,
     searchQuery,
+    currentPage,
+    setCurrentPage,
+    indexOfFirstData,
+    indexOfLastData,
+    totalPages,
+    handleDeleteKurikulum,
   } = useKurikulum();
   return (
     <div className="lg:py-5">
@@ -79,7 +79,7 @@ export default function Kurikulum() {
                     Loading...
                   </td>
                 </tr>
-              ) : currentData.length == 0 && currentData == 0 ? (
+              ) : currentData.length == 0 ? (
                 <tr>
                   <td
                     colSpan="5"

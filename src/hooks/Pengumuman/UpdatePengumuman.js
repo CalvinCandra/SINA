@@ -22,6 +22,36 @@ export const useUpdatePengumuman = () => {
     { value: "pengumuman", label: "Pengumuman" },
   ];
 
+  const fetchData = async (e) => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(`${baseUrl.apiUrl}/admin/berita/${id}`, {
+        headers: {
+          Authorization: `Beazer ${token}`,
+        },
+      });
+
+      if (response.status == 200 || response.status == 201) {
+        setDeskripsi(response.data.isi);
+        setJudul(response.data.judul);
+        setGambar(response.data.foto);
+        setKategori(response.data.tipe);
+        const namaFile = response.data.foto.split("/").pop();
+        setFileName(namaFile);
+      }
+    } catch (error) {
+      console.error("Gagal mengambil data:", error);
+      setToastMessage("Gagal mengambil data");
+      setToastVariant("error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [id]);
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -48,39 +78,6 @@ export const useUpdatePengumuman = () => {
       reader.readAsDataURL(file);
     }
   };
-
-  useEffect(() => {
-    const fetchData = async (e) => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(
-          `${baseUrl.apiUrl}/admin/berita/${id}`,
-          {
-            headers: {
-              Authorization: `Beazer ${token}`,
-            },
-          }
-        );
-
-        if (response.status == 200 || response.status == 201) {
-          setDeskripsi(response.data.isi);
-          setJudul(response.data.judul);
-          setGambar(response.data.foto);
-          setKategori(response.data.tipe);
-          const namaFile = response.data.foto.split("/").pop();
-          setFileName(namaFile);
-        }
-      } catch (error) {
-        console.error("Gagal mengambil data:", error);
-        setToastMessage("Gagal mengambil data");
-        setToastVariant("error");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

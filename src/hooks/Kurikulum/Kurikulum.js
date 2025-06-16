@@ -6,51 +6,45 @@ export const useKurikulum = () => {
   // simpan data
   const [selectedKurikulum, setSelectedKurikulum] = useState(null);
   const [dataKurikulum, setdataKurikulum] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [currentData, setCurrentData] = useState([]);
+
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
+
+  const dataPerPage = 10;
+  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const dataPerPage = 5;
+  const indexOfLastData = currentPage * dataPerPage;
+  const indexOfFirstData = indexOfLastData - dataPerPage;
+  const totalPages = Math.ceil(currentData.length / dataPerPage);
+
   // get token
   const token = sessionStorage.getItem("session");
 
-  // Filter data berdasarkan search query
-  const filteredData = dataKurikulum.filter((kurikulum) => {
-    const query = searchQuery.toLowerCase();
-    return kurikulum.nama_kurikulum?.toLowerCase().includes(query);
-  });
+  // fetch data
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(`${baseUrl.apiUrl}/admin/kurikulum`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-  // Pagination
-  const indexOfLastData = currentPage * dataPerPage;
-  const indexOfFirstData = indexOfLastData - dataPerPage;
-  const currentData = filteredData
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-    .slice(indexOfFirstData, indexOfLastData);
-  const totalPages = Math.ceil(filteredData.length / dataPerPage);
+      if (response.status === 200) {
+        setdataKurikulum(response.data);
+      }
+    } catch (error) {
+      console.error("Gagal mengambil data:", error);
+      setToastMessage("Gagal mengambil data");
+      setToastVariant("error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(`${baseUrl.apiUrl}/admin/kurikulum`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.status === 200) {
-          setdataKurikulum(response.data);
-        }
-      } catch (error) {
-        console.error("Gagal mengambil data:", error);
-        setToastMessage("Gagal mengambil data");
-        setToastVariant("error");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     // Tampilkan toast bila tambah atau update berhasil
     const invalidStatus = localStorage.getItem("kurikulumInvalid");
     const addedStatus = localStorage.getItem("kurikulumAdded");
@@ -76,6 +70,16 @@ export const useKurikulum = () => {
 
     fetchData();
   }, [token]);
+
+  // Pagination and Serach
+  useEffect(() => {
+    const filtered = dataKurikulum
+      .filter((item) =>
+        item.nama_kurikulum.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    setCurrentData(filtered.slice(indexOfFirstData, indexOfLastData));
+  }, [dataKurikulum, searchQuery, currentPage]);
 
   const handleDeleteKurikulum = async (e) => {
     e.preventDefault();
@@ -119,20 +123,20 @@ export const useKurikulum = () => {
   };
 
   return {
+    selectedKurikulum,
+    setSelectedKurikulum,
+    dataKurikulum,
+    currentData,
     isLoading,
     toastMessage,
     toastVariant,
-    indexOfFirstData,
-    indexOfLastData,
-    dataKurikulum,
-    selectedKurikulum,
-    setSelectedKurikulum,
-    totalPages,
-    currentData,
-    currentPage,
-    handleDeleteKurikulum,
-    setCurrentPage,
     setSearchQuery,
     searchQuery,
+    currentPage,
+    setCurrentPage,
+    indexOfFirstData,
+    indexOfLastData,
+    totalPages,
+    handleDeleteKurikulum,
   };
 };

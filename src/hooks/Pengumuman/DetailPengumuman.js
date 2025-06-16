@@ -18,38 +18,35 @@ export const useDetailPengumuman = () => {
   // token
   const token = sessionStorage.getItem("session");
 
-  useEffect(() => {
-    const fetchData = async (e) => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(
-          `${baseUrl.apiUrl}/admin/berita/${id}`,
-          {
-            headers: {
-              Authorization: `Beazer ${token}`,
-            },
-          }
-        );
+  const fetchData = async (e) => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(`${baseUrl.apiUrl}/admin/berita/${id}`, {
+        headers: {
+          Authorization: `Beazer ${token}`,
+        },
+      });
 
-        console.log(response.data);
+      console.log(response.data);
 
-        if (response.status == 200 || response.status == 201) {
-          setDeskripsi(response.data.isi);
-          setJudul(response.data.judul);
-          setGambar(response.data.foto);
-          setUsername(response.data.username);
-          setKategori(response.data.tipe);
-          setTgl(formatTanggalLengkap(response.data.created_at));
-        }
-      } catch (error) {
-        console.error("Gagal mengambil data:", error);
-        setToastMessage("Gagal mengambil data");
-        setToastVariant("error");
-      } finally {
-        setIsLoading(false);
+      if (response.status == 200 || response.status == 201) {
+        setDeskripsi(response.data.isi);
+        setJudul(response.data.judul);
+        setGambar(response.data.foto);
+        setUsername(response.data.username);
+        setKategori(response.data.tipe);
+        setTgl(formatTanggalLengkap(response.data.created_at));
       }
-    };
+    } catch (error) {
+      console.error("Gagal mengambil data:", error);
+      setToastMessage("Gagal mengambil data");
+      setToastVariant("error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, [id]);
 

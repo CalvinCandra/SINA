@@ -38,14 +38,17 @@ export const useTambahJadwal = () => {
         });
 
         // Mapel
-        const responseMapel = await axios.get(`${baseUrl.apiUrl}/admin/mapel`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const responseMapel = await axios.get(
+          `${baseUrl.apiUrl}/admin/mapel-kelas/${kelas_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (responseGuru.status == 200 && responseMapel.status == 200) {
-          setMapel(responseMapel.data);
+          setMapel(responseMapel.data.data.mapel);
           setGuru(responseGuru.data);
         }
       } catch (error) {

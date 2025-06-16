@@ -5,52 +5,45 @@ import baseUrl from "../../utils/config/baseUrl";
 export const useMataPelajaran = () => {
   const [selectedPelajaran, setSelectedPelajaran] = useState(null);
   const [dataPelajaran, setdataPelajaran] = useState([]);
+  const [currentData, setCurrentData] = useState([]);
+
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
+
+  const dataPerPage = 10;
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const dataPerPage = 5;
+  const indexOfLastData = currentPage * dataPerPage;
+  const indexOfFirstData = indexOfLastData - dataPerPage;
+  const totalPages = Math.ceil(currentData.length / dataPerPage);
+
   // get token
   const token = sessionStorage.getItem("session");
 
-  // Filter data berdasarkan search query
-  const filteredData = dataPelajaran.filter((pelajaran) => {
-    const query = searchQuery.toLowerCase();
-    return pelajaran.nama_mapel?.toLowerCase().includes(query);
-  });
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(`${baseUrl.apiUrl}/admin/mapel`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-  // Pagination
-  const indexOfLastData = currentPage * dataPerPage;
-  const indexOfFirstData = indexOfLastData - dataPerPage;
-  const currentData = filteredData
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-    .slice(indexOfFirstData, indexOfLastData);
-  const totalPages = Math.ceil(filteredData.length / dataPerPage);
+      if (response.status === 200) {
+        setdataPelajaran(response.data);
+        console.log(response);
+      }
+    } catch (error) {
+      console.error("Gagal mengambil data pelajaran:", error);
+      setToastMessage("Gagal mengambil data pelajaran");
+      setToastVariant("error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(`${baseUrl.apiUrl}/admin/mapel`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.status === 200) {
-          setdataPelajaran(response.data);
-          console.log(response);
-        }
-      } catch (error) {
-        console.error("Gagal mengambil data pelajaran:", error);
-        setToastMessage("Gagal mengambil data pelajaran");
-        setToastVariant("error");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     // Tampilkan toast bila tambah atau update berhasil
     const invalidStatus = localStorage.getItem("pelajaranInvalid");
     const addedStatus = localStorage.getItem("pelajaranAdded");
@@ -76,6 +69,16 @@ export const useMataPelajaran = () => {
 
     fetchData();
   }, [token]);
+
+  // Pagination and Serach
+  useEffect(() => {
+    const filtered = dataPelajaran
+      .filter((item) =>
+        item.nama_mapel.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    setCurrentData(filtered.slice(indexOfFirstData, indexOfLastData));
+  }, [dataPelajaran, searchQuery, currentPage]);
 
   // Hapus
   const handleDeletePelajaran = async (e) => {
@@ -120,20 +123,20 @@ export const useMataPelajaran = () => {
   };
 
   return {
+    selectedPelajaran,
+    setSelectedPelajaran,
+    dataPelajaran,
+    currentData,
     isLoading,
     toastMessage,
     toastVariant,
-    selectedPelajaran,
-    setSelectedPelajaran,
-    indexOfFirstData,
-    indexOfLastData,
-    currentPage,
-    currentData,
-    totalPages,
-    dataPelajaran,
-    handleDeletePelajaran,
-    setCurrentPage,
     searchQuery,
     setSearchQuery,
+    currentPage,
+    setCurrentPage,
+    totalPages,
+    indexOfFirstData,
+    indexOfLastData,
+    handleDeletePelajaran,
   };
 };

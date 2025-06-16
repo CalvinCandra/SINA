@@ -5,61 +5,50 @@ import baseUrl from "../../utils/config/baseUrl";
 
 export const useSiswa = () => {
   const { kelas_id } = useParams();
-  const [isLoading, setIsLoading] = useState(false);
   const [dataSiswa, setdataSiswa] = useState([]);
   const [dataKelas, setdataKelas] = useState([]);
   const [selectedSiswa, setSelectedSiswa] = useState(null);
+  const [currentData, setCurrentData] = useState([]);
+
+  const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+
+  const dataPerPage = 10;
   const [searchQuery, setSearchQuery] = useState("");
-  const dataPerPage = 5;
-  const token = sessionStorage.getItem("session");
-
-  // Filter data berdasarkan search query
-  const filteredData = dataSiswa.filter((siswa) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      siswa.nama_siswa?.toLowerCase().includes(query) ||
-      siswa.nis?.toLowerCase().includes(query) ||
-      siswa.nisn?.toLowerCase().includes(query)
-    );
-  });
-
-  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
   const indexOfLastData = currentPage * dataPerPage;
   const indexOfFirstData = indexOfLastData - dataPerPage;
-  const currentData = filteredData
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-    .slice(indexOfFirstData, indexOfLastData);
-  const totalPages = Math.ceil(filteredData.length / dataPerPage);
+  const totalPages = Math.ceil(currentData.length / dataPerPage);
+
+  const token = sessionStorage.getItem("session");
+
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(
+        `${baseUrl.apiUrl}/admin/siswa_kelas/${kelas_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status == 200) {
+        setdataSiswa(response.data.siswa);
+        setdataKelas(response.data.kelas_info);
+      }
+    } catch (error) {
+      console.log(error);
+      setToastMessage("Gagal ambil data");
+      setToastVariant("error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(
-          `${baseUrl.apiUrl}/admin/siswa_kelas/${kelas_id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (response.status == 200) {
-          setdataSiswa(response.data.siswa);
-          setdataKelas(response.data.kelas_info);
-        }
-      } catch (error) {
-        console.log(error);
-        setToastMessage("Gagal ambil data");
-        setToastVariant("error");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     // Tampilkan toast bila tambah atau update berhasil
     const invalidStatus = localStorage.getItem("siswaInvalid");
     const addedStatus = localStorage.getItem("siswaAdded");
@@ -86,6 +75,19 @@ export const useSiswa = () => {
     fetchData();
   }, [kelas_id]);
 
+  // Pagination and Serach
+  useEffect(() => {
+    const filtered = dataSiswa
+      .filter(
+        (item) =>
+          item.nama_siswa.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.nis.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.nisn.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    setCurrentData(filtered.slice(indexOfFirstData, indexOfLastData));
+  }, [dataSiswa, searchQuery, currentPage]);
+
   const handleDeleteSiswa = async (e) => {
     e.preventDefault();
 
@@ -104,15 +106,16 @@ export const useSiswa = () => {
       setToastMessage("");
       setToastVariant("");
 
+      // Hapus data dari state tanpa perlu fetch ulang
+      setdataSiswa((prevData) =>
+        prevData.filter((item) => item.nis !== selectedSiswa.nis)
+      );
+
       // Simulasi delay untuk loading
       setTimeout(() => {
         setIsLoading(false); // Reset loading state
         setToastMessage("Siswa berhasil dihapus");
         setToastVariant("success");
-        // Hapus data dari state tanpa perlu fetch ulang
-        setdataSiswa((prevData) =>
-          prevData.filter((item) => item.nis !== selectedSiswa.nis)
-        );
         document.getElementById("my_modal_3").close();
       }, 1000);
     } catch (error) {
@@ -124,21 +127,21 @@ export const useSiswa = () => {
   };
 
   return {
+    dataKelas,
+    dataSiswa,
+    selectedSiswa,
+    setSelectedSiswa,
+    currentData,
     isLoading,
     toastMessage,
     toastVariant,
-    dataKelas,
-    indexOfFirstData,
-    indexOfLastData,
-    currentData,
-    currentPage,
     searchQuery,
     setSearchQuery,
-    selectedSiswa,
-    setSelectedSiswa,
-    totalPages,
-    handleDeleteSiswa,
-    dataSiswa,
+    currentPage,
     setCurrentPage,
+    totalPages,
+    indexOfFirstData,
+    indexOfLastData,
+    handleDeleteSiswa,
   };
 };

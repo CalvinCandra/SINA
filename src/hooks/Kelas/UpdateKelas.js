@@ -62,61 +62,61 @@ export const useUpdateKelas = () => {
     )}`,
   }));
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        // get guru
-        const responseGuru = await axios.get(`${baseUrl.apiUrl}/admin/guru`, {
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      // get guru
+      const responseGuru = await axios.get(`${baseUrl.apiUrl}/admin/guru`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // get tahun
+      const responseTahun = await axios.get(
+        `${baseUrl.apiUrl}/admin/tahunakademik`,
+        {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        });
-
-        // get tahun
-        const responseTahun = await axios.get(
-          `${baseUrl.apiUrl}/admin/tahunakademik`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        // get kelas
-        const responseKelas = await axios.get(
-          `${baseUrl.apiUrl}/admin/kelas/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (responseGuru.status == 200) {
-          setGuru(responseGuru.data);
         }
+      );
 
-        if (responseTahun.status == 200) {
-          setAkademik(responseTahun.data);
+      // get kelas
+      const responseKelas = await axios.get(
+        `${baseUrl.apiUrl}/admin/kelas/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
+      );
 
-        if (responseKelas.status == 200) {
-          setNamaKelas(responseKelas.data.nama_kelas);
-          setWaliKelas(responseKelas.data.guru_nip);
-          setTingkat(responseKelas.data.tingkat);
-          setJenjang(responseKelas.data.jenjang);
-          setTahunAkademik(responseKelas.data.tahun_akademik_id);
-        }
-      } catch (error) {
-        console.log(error);
-        setToastMessage("Gagal Ambil Error");
-        setToastVariant("error");
-      } finally {
-        setIsLoading(false);
+      if (responseGuru.status == 200) {
+        setGuru(responseGuru.data);
       }
-    };
 
+      if (responseTahun.status == 200) {
+        setAkademik(responseTahun.data);
+      }
+
+      if (responseKelas.status == 200) {
+        setNamaKelas(responseKelas.data.nama_kelas);
+        setWaliKelas(responseKelas.data.guru_nip);
+        setTingkat(responseKelas.data.tingkat);
+        setJenjang(responseKelas.data.jenjang);
+        setTahunAkademik(responseKelas.data.tahun_akademik_id);
+      }
+    } catch (error) {
+      console.log(error);
+      setToastMessage("Gagal Ambil Error");
+      setToastVariant("error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, [id]);
 

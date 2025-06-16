@@ -13,21 +13,21 @@ import {
 
 export default function Kelas() {
   const {
-    isLoading,
-    toastMessage,
-    toastVariant,
-    selectedKelas,
-    setSelectedKelas,
     dataKelas,
+    currentData,
     searchQuery,
     setSearchQuery,
-    currentData,
     currentPage,
     setCurrentPage,
     totalPages,
-    handleDeleteKelas,
     indexOfFirstData,
     indexOfLastData,
+    selectedKelas,
+    setSelectedKelas,
+    isLoading,
+    toastMessage,
+    toastVariant,
+    handleDeleteKelas,
   } = useKelas();
 
   return (
@@ -36,16 +36,6 @@ export default function Kelas() {
       <div className="flex flex-col lg:flex-row w-full justify-between items-center">
         <div className="flex items-center">
           <h2 className="text-2xl font-semibold me-2">Data Kelas</h2>
-          {/* <select className="select bg-white border border-border-grey w-30 rounded-lg">
-            <option disabled={true} selected>
-              -- Pilih --
-            </option>
-            {tahunoptions.map((item, index) => (
-              <option key={index} value={item.value}>
-                {item.label}
-              </option>
-            ))}
-          </select> */}
         </div>
         <Calender className="w-40 lg:w-full"></Calender>
       </div>
@@ -95,7 +85,7 @@ export default function Kelas() {
                     Loading...
                   </td>
                 </tr>
-              ) : currentData.length == 0 && currentData == 0 ? (
+              ) : currentData.length == 0 ? (
                 <tr>
                   <td
                     colSpan="6"

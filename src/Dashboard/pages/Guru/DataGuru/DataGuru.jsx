@@ -15,21 +15,21 @@ import { useGuru } from "../../../../hooks/Guru/Guru";
 
 export default function DataGuru() {
   const {
+    dataGuru,
+    selectedGuru,
+    setSelectedGuru,
+    currentData,
     isLoading,
     toastMessage,
     toastVariant,
+    searchQuery,
+    setSearchQuery,
+    currentPage,
+    setCurrentPage,
     indexOfFirstData,
     indexOfLastData,
-    currentData,
-    currentPage,
-    dataGuru,
     totalPages,
     handleDeleteGuru,
-    setCurrentPage,
-    setSelectedGuru,
-    selectedGuru,
-    setSearchQuery,
-    searchQuery,
   } = useGuru();
 
   return (
@@ -85,7 +85,7 @@ export default function DataGuru() {
                     Loading...
                   </td>
                 </tr>
-              ) : currentData == 0 && currentData.length == 0 ? (
+              ) : currentData.length == 0 ? (
                 <tr>
                   <td
                     colSpan="6"

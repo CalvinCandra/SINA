@@ -159,7 +159,7 @@ export default function JadwalKelas() {
               {selectedJadwal && (
                 <p className="text-center my-2">
                   Anda yakin ingin menghapus data jadwal pelajaran{" "}
-                  <b>{selectedJadwal.nama_mapel}</b>?
+                  <b>{selectedJadwal.nama_mapel}</b> ?
                 </p>
               )}
               <div className="w-56 mx-auto p-1 flex justify-between items-center mt-4">

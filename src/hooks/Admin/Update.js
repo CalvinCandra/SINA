@@ -46,34 +46,32 @@ export const useUpdate = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(
-          `${baseUrl.apiUrl}/admin/admin2/${id}`,
-          {
-            headers: {
-              Authorization: `Beazer ${token}`,
-            },
-          }
-        );
+  // get data by id
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(`${baseUrl.apiUrl}/admin/admin2/${id}`, {
+        headers: {
+          Authorization: `Beazer ${token}`,
+        },
+      });
 
-        if (response.status == 200 || response.status == 201) {
-          setNamaAdmin(response.data.username);
-          setEmailAdmin(response.data.email);
-          setGambar(response.data.foto_profil);
-        }
-      } catch (error) {
-        setIsLoading(false);
-        console.error("Gagal mengambil data:", error);
-        setToastMessage("Gagal mengambil data");
-        setToastVariant("error");
-      } finally {
-        setIsLoading(false);
+      if (response.status == 200 || response.status == 201) {
+        setNamaAdmin(response.data.username);
+        setEmailAdmin(response.data.email);
+        setGambar(response.data.foto_profil);
       }
-    };
+    } catch (error) {
+      setIsLoading(false);
+      console.error("Gagal mengambil data:", error);
+      setToastMessage("Gagal mengambil data");
+      setToastVariant("error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, [id]);
 

@@ -14,21 +14,21 @@ import { formatTanggalLengkap } from "../../../utils/helper/dateFormat";
 
 export default function Pengumuman() {
   const {
+    selectedBerita,
+    setSelectedBerita,
+    dataBerita,
+    currentData,
     isLoading,
     toastMessage,
     toastVariant,
-    selectedBerita,
-    setSelectedBerita,
     searchQuery,
     setSearchQuery,
     currentPage,
     setCurrentPage,
-    currentData,
     totalPages,
-    dataBerita,
-    handleDeleteBerita,
     indexOfFirstData,
     indexOfLastData,
+    handleDeleteBerita,
   } = usePengumuman();
 
   return (
@@ -83,7 +83,7 @@ export default function Pengumuman() {
                     Loading...
                   </td>
                 </tr>
-              ) : currentData.length == 0 && currentData == 0 ? (
+              ) : currentData.length == 0 ? (
                 <tr>
                   <td
                     colSpan="6"

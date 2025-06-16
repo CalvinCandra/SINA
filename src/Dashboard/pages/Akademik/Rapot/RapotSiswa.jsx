@@ -11,17 +11,17 @@ export default function DataSiswaPage() {
   const {
     dataKelas,
     dataSiswa,
-    indexOfLastData,
-    indexOfFirstData,
     currentData,
+    isLoading,
+    toastMessage,
+    toastVariant,
     currentPage,
     setCurrentPage,
     searchQuery,
     setSearchQuery,
     totalPages,
-    toastMessage,
-    toastVariant,
-    isLoading,
+    indexOfLastData,
+    indexOfFirstData,
   } = useRapotSiswa();
   return (
     <>
@@ -78,7 +78,7 @@ export default function DataSiswaPage() {
                       Loading...
                     </td>
                   </tr>
-                ) : currentData == 0 && currentData.length == 0 ? (
+                ) : currentData.length == 0 ? (
                   <tr>
                     <td
                       colSpan="4"
