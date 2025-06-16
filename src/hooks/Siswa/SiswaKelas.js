@@ -9,28 +9,28 @@ export const useSiswaKelas = () => {
   const [toastVariant, setToastVariant] = useState("");
   const token = sessionStorage.getItem("session");
 
-  useEffect(() => {
-    const fecthData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(`${baseUrl.apiUrl}/admin/kelas`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+  const fecthData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(`${baseUrl.apiUrl}/admin/kelas`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-        if (response.status == 200) {
-          setDataKelas(response.data);
-        }
-      } catch (error) {
-        console.log(error);
-        setToastMessage(`Gagal Mengambil Data`);
-        setToastVariant("error");
-      } finally {
-        setIsLoading(false);
+      if (response.status == 200) {
+        setDataKelas(response.data);
       }
-    };
+    } catch (error) {
+      console.log(error);
+      setToastMessage(`Gagal Mengambil Data`);
+      setToastVariant("error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fecthData();
   }, [token]);
 

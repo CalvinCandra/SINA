@@ -63,38 +63,38 @@ export const useUpdateGuru = () => {
     },
   ];
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(`${baseUrl.apiUrl}/admin/guru/${id}`, {
-          headers: {
-            Authorization: `Beazer ${token}`,
-          },
-        });
+  // get data berdasarkan id
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(`${baseUrl.apiUrl}/admin/guru/${id}`, {
+        headers: {
+          Authorization: `Beazer ${token}`,
+        },
+      });
 
-        if (response.status == 200 || response.status == 201) {
-          setNamaGuru(response.data.nama_guru || "");
-          setNipGuru(response.data.nip || "");
-          setEmailGuru(response.data.email || "");
-          setGambar(response.data.foto_profil || null);
-          setTelp(response.data.no_telepon || "");
-          setTempatLahir(response.data.tempat_lahir_guru || "");
-          setTglLahir(
-            formatToDateInput(response.data.tanggal_lahir_guru) || ""
-          );
-          setKelamin(response.data.jenis_kelamin_guru || "");
-          setAgama(response.data.agama_guru || "");
-          setAlamat(response.data.alamat || "");
-        }
-      } catch (error) {
-        console.error("Gagal mengambil data:", error);
-        setToastMessage("Gagal mengambil data");
-        setToastVariant("error");
-      } finally {
-        setIsLoading(false);
+      if (response.status == 200 || response.status == 201) {
+        setNamaGuru(response.data.nama_guru || "");
+        setNipGuru(response.data.nip || "");
+        setEmailGuru(response.data.email || "");
+        setGambar(response.data.foto_profil || null);
+        setTelp(response.data.no_telepon || "");
+        setTempatLahir(response.data.tempat_lahir_guru || "");
+        setTglLahir(formatToDateInput(response.data.tanggal_lahir_guru) || "");
+        setKelamin(response.data.jenis_kelamin_guru || "");
+        setAgama(response.data.agama_guru || "");
+        setAlamat(response.data.alamat || "");
       }
-    };
+    } catch (error) {
+      console.error("Gagal mengambil data:", error);
+      setToastMessage("Gagal mengambil data");
+      setToastVariant("error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, [id]);
 

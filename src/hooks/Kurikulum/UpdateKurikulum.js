@@ -44,54 +44,54 @@ export const useUpdateKurikulum = () => {
     ],
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(
-          `${baseUrl.apiUrl}/admin/kurikulum/${id}`,
-          {
-            headers: {
-              Authorization: `Beazer ${token}`,
-            },
-          }
-        );
-
-        const responseMapel = await axios.get(`${baseUrl.apiUrl}/admin/mapel`, {
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(
+        `${baseUrl.apiUrl}/admin/kurikulum/${id}`,
+        {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Beazer ${token}`,
           },
-        });
-
-        console.log(response);
-
-        if (response.status == 200 || response.status == 201) {
-          setNamaKurikulum(response.data.nama_kurikulum);
-          setDeskripsi(response.data.deskripsi);
-          setJenjang(response.data.jenjang);
-          setTingkat(response.data.tingkat);
-
-          // Set selectedMapel berdasarkan data mapel_list dari response
-          if (response.data.mapel_list && response.data.mapel_list.length > 0) {
-            const mapelIds = response.data.mapel_list.map(
-              (mapel) => mapel.mapel_id
-            );
-            setSelectedMapel(mapelIds);
-          }
         }
+      );
 
-        if (responseMapel.status == 200) {
-          setDataMapel(responseMapel.data);
+      const responseMapel = await axios.get(`${baseUrl.apiUrl}/admin/mapel`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log(response);
+
+      if (response.status == 200 || response.status == 201) {
+        setNamaKurikulum(response.data.nama_kurikulum);
+        setDeskripsi(response.data.deskripsi);
+        setJenjang(response.data.jenjang);
+        setTingkat(response.data.tingkat);
+
+        // Set selectedMapel berdasarkan data mapel_list dari response
+        if (response.data.mapel_list && response.data.mapel_list.length > 0) {
+          const mapelIds = response.data.mapel_list.map(
+            (mapel) => mapel.mapel_id
+          );
+          setSelectedMapel(mapelIds);
         }
-      } catch (error) {
-        console.error("Gagal mengambil data:", error);
-        setToastMessage("Data tidak ditemukan");
-        setToastVariant("error");
-      } finally {
-        setIsLoading(false);
       }
-    };
 
+      if (responseMapel.status == 200) {
+        setDataMapel(responseMapel.data);
+      }
+    } catch (error) {
+      console.error("Gagal mengambil data:", error);
+      setToastMessage("Data tidak ditemukan");
+      setToastVariant("error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, [id]);
 

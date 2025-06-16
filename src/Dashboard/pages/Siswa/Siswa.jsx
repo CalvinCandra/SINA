@@ -52,7 +52,7 @@ export default function Siswa() {
                     Loading...
                   </td>
                 </tr>
-              ) : kelas.length == 0 && kelas == 0 ? (
+              ) : kelas.length == 0 ? (
                 <tr>
                   <td
                     colSpan="6"
@@ -79,22 +79,22 @@ export default function Siswa() {
                       <div className="flex items-center lg:flex-row">
                         <ButtonHref
                           href={`/dashboard/siswa/${data.kelas_id}`}
-                          text=<span className="flex items-center">
-                            <DocumentMagnifyingGlassIcon className="lg:w-5 lg:h-5 w-6 h-6 me-2 text-sky-500"></DocumentMagnifyingGlassIcon>
+                          text=<span className="flex items-center gap-2 hover:underline">
+                            <DocumentMagnifyingGlassIcon className="lg:w-5 lg:h-5 w-6 h-6 text-sky-500"></DocumentMagnifyingGlassIcon>
                             <span className="whitespace-nowrap">
                               Data Siswa
                             </span>
                           </span>
                         ></ButtonHref>
 
-                        <button className="border-0 cursor-pointer ms-5">
+                        {/* <button className="border-0 cursor-pointer ms-5">
                           <div className="flex items-center w-full">
                             <TrashIcon className="w-5 h-5 me-2 text-red-500"></TrashIcon>
                             <span className="whitespace-nowrap">
                               Hapus Semua Data Siswa
                             </span>
                           </div>
-                        </button>
+                        </button> */}
                       </div>
                     </td>
                   </tr>

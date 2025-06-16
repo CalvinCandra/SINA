@@ -4,57 +4,46 @@ import axios from "axios";
 
 export const useGuru = () => {
   // state
-  const [isLoading, setIsLoading] = useState(false);
   const [dataGuru, setdataGuru] = useState([]);
   const [selectedGuru, setSelectedGuru] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [currentData, setCurrentData] = useState([]);
+
+  const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+
   const dataPerPage = 10;
-  const token = sessionStorage.getItem("session");
-
-  // Filter data berdasarkan search query
-  const filteredData = dataGuru.filter((guru) => {
-    const query = searchQuery.toLowerCase();
-    return (
-      guru.nama_guru?.toLowerCase().includes(query) ||
-      guru.email?.toLowerCase().includes(query) ||
-      guru.nip?.toLowerCase().includes(query)
-    );
-  });
-
-  // Pagination logic
-  const sortedData = filteredData.sort(
-    (a, b) => new Date(b.created_at) - new Date(a.created_at)
-  );
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const indexOfLastData = currentPage * dataPerPage;
   const indexOfFirstData = indexOfLastData - dataPerPage;
-  const currentData = sortedData.slice(indexOfFirstData, indexOfLastData);
-  const totalPages = Math.ceil(filteredData.length / dataPerPage);
+  const totalPages = Math.ceil(currentData.length / dataPerPage);
+
+  const token = sessionStorage.getItem("session");
+
+  // get data guru
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(`${baseUrl.apiUrl}/admin/guru`, {
+        headers: {
+          Authorization: `Beazer ${token}`,
+        },
+      });
+
+      if (response.status == 200 || response.status == 201) {
+        setdataGuru(response.data);
+      }
+    } catch (error) {
+      console.error("Gagal mengambil data:", error);
+      setToastMessage("Gagal mengambil data");
+      setToastVariant("error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(`${baseUrl.apiUrl}/admin/guru`, {
-          headers: {
-            Authorization: `Beazer ${token}`,
-          },
-        });
-
-        if (response.status == 200 || response.status == 201) {
-          setdataGuru(response.data);
-        }
-      } catch (error) {
-        console.error("Gagal mengambil data:", error);
-        setToastMessage("Gagal mengambil data");
-        setToastVariant("error");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     // Tampilkan toast bila tambah atau update berhasil
     const invalidStatus = localStorage.getItem("guruInvalid");
     const addedStatus = localStorage.getItem("guruAdded");
@@ -80,6 +69,19 @@ export const useGuru = () => {
 
     fetchData();
   }, [token]);
+
+  // Pagination and Serach
+  useEffect(() => {
+    const filtered = dataGuru
+      .filter(
+        (item) =>
+          item.nama_guru.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.nip.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    setCurrentData(filtered.slice(indexOfFirstData, indexOfLastData));
+  }, [dataGuru, searchQuery, currentPage]);
 
   const handleDeleteGuru = async (e) => {
     e.preventDefault();
@@ -120,20 +122,20 @@ export const useGuru = () => {
   };
 
   return {
+    dataGuru,
+    selectedGuru,
+    setSelectedGuru,
+    currentData,
     isLoading,
     toastMessage,
     toastVariant,
+    searchQuery,
+    setSearchQuery,
+    currentPage,
+    setCurrentPage,
     indexOfFirstData,
     indexOfLastData,
-    currentData,
-    currentPage,
-    dataGuru,
-    searchQuery,
     totalPages,
     handleDeleteGuru,
-    setCurrentPage,
-    setSelectedGuru,
-    selectedGuru,
-    setSearchQuery,
   };
 };

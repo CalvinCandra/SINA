@@ -13,30 +13,30 @@ export const useUpdateMataPelajaran = () => {
   const [isLoading, setIsLoading] = useState(false);
   const token = sessionStorage.getItem("session");
 
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(
+        `${baseUrl.apiUrl}/admin/mapel/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setNamaMapel(response.data.nama_mapel);
+      setKkm(response.data.kkm);
+    } catch (error) {
+      console.error("Gagal mengambil data:", error);
+      setToastMessage("Data tidak ditemukan");
+      setToastVariant("error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(
-          `${baseUrl.apiUrl}/admin/mapel/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        setNamaMapel(response.data.nama_mapel);
-        setKkm(response.data.kkm);
-      } catch (error) {
-        console.error("Gagal mengambil data:", error);
-        setToastMessage("Data tidak ditemukan");
-        setToastVariant("error");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchData();
   }, [id]);
 

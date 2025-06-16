@@ -4,6 +4,7 @@ import Search from "../../../../component/Input/Search";
 import { DocumentMagnifyingGlassIcon } from "@heroicons/react/16/solid";
 import Toast from "../../../../component/Toast/Toast";
 import { useRapotKelas } from "../../../../hooks/Rapot/RapotKelas";
+import { formatTahun } from "../../../../utils/helper/dateFormat";
 
 export default function Krs() {
   const { dataKelas, toastMessage, toastVariant, isLoading } = useRapotKelas();
@@ -34,6 +35,8 @@ export default function Krs() {
                 <th>No</th>
                 <th>Nama Kelas</th>
                 <th>Tingkat</th>
+                <th>Wali Kelas</th>
+                <th>Tahun Akademik</th>
                 <th>Aksi</th>
               </tr>
             </thead>
@@ -47,7 +50,7 @@ export default function Krs() {
                     Loading...
                   </td>
                 </tr>
-              ) : dataKelas == 0 && dataKelas.length == 0 ? (
+              ) : dataKelas.length == 0 ? (
                 <tr>
                   <td
                     colSpan="4"
@@ -65,12 +68,17 @@ export default function Krs() {
                     <td className="whitespace-nowrap">{index + 1}</td>
                     <td className="whitespace-nowrap">{data.nama_kelas}</td>
                     <td className="whitespace-nowrap">{data.tingkat}</td>
+                    <td className="whitespace-nowrap">{data.nama_guru}</td>
+                    <td className="whitespace-nowrap">
+                      {formatTahun(data.tahun_mulai)} -{" "}
+                      {formatTahun(data.tahun_berakhir)}
+                    </td>
                     <td>
                       <div className="flex items-center lg:flex-row">
                         <ButtonHref
                           href={`/dashboard/akademik/rapot/${data.kelas_id}`}
-                          text=<span className="flex items-center">
-                            <DocumentMagnifyingGlassIcon className="lg:w-5 lg:h-5 w-6 h-6 me-2 text-sky-500"></DocumentMagnifyingGlassIcon>
+                          text=<span className="flex items-center gap-2 hover:underline">
+                            <DocumentMagnifyingGlassIcon className="w-5 h-5 text-sky-500"></DocumentMagnifyingGlassIcon>
                             <span className="whitespace-nowrap">
                               Data Siswa
                             </span>

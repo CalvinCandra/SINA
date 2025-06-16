@@ -28,66 +28,67 @@ export const useUpdateJadwal = () => {
   const token = sessionStorage.getItem("session");
 
   // Get Mapel dan Guru
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        // Guru
-        const responseGuru = await axios.get(`${baseUrl.apiUrl}/admin/guru`, {
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      // Guru
+      const responseGuru = await axios.get(`${baseUrl.apiUrl}/admin/guru`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Mapel
+      const responseMapel = await axios.get(`${baseUrl.apiUrl}/admin/mapel`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // Mapel
+      const responseJadwal = await axios.get(
+        `${baseUrl.apiUrl}/admin/jadwaldetail/${jadwal_id}`,
+        {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        });
-
-        // Mapel
-        const responseMapel = await axios.get(`${baseUrl.apiUrl}/admin/mapel`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        // Mapel
-        const responseJadwal = await axios.get(
-          `${baseUrl.apiUrl}/admin/jadwaldetail/${jadwal_id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (
-          responseGuru.status == 200 &&
-          responseMapel.status == 200 &&
-          responseJadwal.status == 200
-        ) {
-          // option
-          setMapel(responseMapel.data);
-          setGuru(responseGuru.data);
-
-          // data
-          setSelectedGuru(responseJadwal.data.nip);
-          setSelectedMapel(responseJadwal.data.mapel_id);
-          setJadwalList([
-            {
-              hari: String(responseJadwal.data.hari),
-              jam_ke: String(responseJadwal.data.jam_ke),
-              start: String(responseJadwal.data.start_time),
-              finish: String(responseJadwal.data.finish_time),
-              ruangan: String(responseJadwal.data.ruangan),
-            },
-          ]);
-          setMasterID(responseJadwal.data.master_jadwal_id);
         }
-      } catch (error) {
-        setIsLoading(false);
-        console.log(error);
-        setToastMessage("Gagal Ambil Data Guru atau Mapel atau Jadwal");
-        setToastVariant("error");
-      } finally {
-        setIsLoading(false);
+      );
+
+      if (
+        responseGuru.status == 200 &&
+        responseMapel.status == 200 &&
+        responseJadwal.status == 200
+      ) {
+        // option
+        setMapel(responseMapel.data);
+        setGuru(responseGuru.data);
+
+        // data
+        setSelectedGuru(responseJadwal.data.nip);
+        setSelectedMapel(responseJadwal.data.mapel_id);
+        setJadwalList([
+          {
+            hari: String(responseJadwal.data.hari),
+            jam_ke: String(responseJadwal.data.jam_ke),
+            start: String(responseJadwal.data.start_time),
+            finish: String(responseJadwal.data.finish_time),
+            ruangan: String(responseJadwal.data.ruangan),
+          },
+        ]);
+        setMasterID(responseJadwal.data.master_jadwal_id);
       }
-    };
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+      setToastMessage("Gagal Ambil Data Guru atau Mapel atau Jadwal");
+      setToastVariant("error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, [jadwal_id]);
 

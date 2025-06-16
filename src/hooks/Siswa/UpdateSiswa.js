@@ -88,66 +88,61 @@ export const useUpdateSiswa = () => {
     },
   ];
 
-  useEffect(() => {
-    const fecthData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(
-          `${baseUrl.apiUrl}/admin/siswa/${nis}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+  const fecthData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(`${baseUrl.apiUrl}/admin/siswa/${nis}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-        if (response.status == 200) {
-          setGambar(response.data.foto_profil);
-          setNamaSiswa(response.data.nama_siswa);
-          setEmailSiswa(response.data.email);
-          setNisSiswa(response.data.nis);
-          setNisnSiswa(response.data.nisn);
-          settempatLahirSiswa(response.data.tempat_lahir);
-          settglLahirSiswa(formatToDateInput(response.data.tanggal_lahir));
-          setAgamaSiswa(response.data.agama);
-          setkelaminSiswa(response.data.jenis_kelamin);
-          setAlamatSiswa(response.data.alamat);
-          setTelpSiswa(response.data.no_telepon);
-          setNamaAyah(response.data.ayah_nama);
-          setNikAyah(response.data.ayah_nik);
-          settempatLahirAyah(response.data.ayah_tempat_lahir);
-          settglLahirAyah(formatToDateInput(response.data.ayah_tanggal_lahir));
-          setPekerjaanAyah(response.data.ayah_pekerjaan);
-          setTelpAyah(response.data.ayah_no_telepon);
-          setAlamatAyah(response.data.ayah_alamat);
-          setNamaIbu(response.data.ibu_nama);
-          setNikIbu(response.data.ibu_nik);
-          settempatLahirIbu(response.data.ibu_tempat_lahir);
-          settglLahirIbu(formatToDateInput(response.data.ibu_tanggal_lahir));
-          setPekerjaanIbu(response.data.ibu_pekerjaan);
-          setTelpIbu(response.data.ibu_no_telepon);
-          setAlamatIbu(response.data.ibu_alamat);
-          setNamaWali(response.data.wali_nama);
-          setNikWali(response.data.wali_nik);
-          settempatLahirWali(response.data.wali_tempat_lahir);
-          if (response.data.wali_tanggal_lahir) {
-            settglLahirWali(
-              formatToDateInput(response.data.wali_tanggal_lahir)
-            );
-          }
-          setPekerjaanWali(response.data.wali_pekerjaan);
-          setTelpWali(response.data.wali_no_telepon);
-          setAlamatWali(response.data.wali_alamat);
+      if (response.status == 200) {
+        setGambar(response.data.foto_profil);
+        setNamaSiswa(response.data.nama_siswa);
+        setEmailSiswa(response.data.email);
+        setNisSiswa(response.data.nis);
+        setNisnSiswa(response.data.nisn);
+        settempatLahirSiswa(response.data.tempat_lahir);
+        settglLahirSiswa(formatToDateInput(response.data.tanggal_lahir));
+        setAgamaSiswa(response.data.agama);
+        setkelaminSiswa(response.data.jenis_kelamin);
+        setAlamatSiswa(response.data.alamat);
+        setTelpSiswa(response.data.no_telepon);
+        setNamaAyah(response.data.ayah_nama);
+        setNikAyah(response.data.ayah_nik);
+        settempatLahirAyah(response.data.ayah_tempat_lahir);
+        settglLahirAyah(formatToDateInput(response.data.ayah_tanggal_lahir));
+        setPekerjaanAyah(response.data.ayah_pekerjaan);
+        setTelpAyah(response.data.ayah_no_telepon);
+        setAlamatAyah(response.data.ayah_alamat);
+        setNamaIbu(response.data.ibu_nama);
+        setNikIbu(response.data.ibu_nik);
+        settempatLahirIbu(response.data.ibu_tempat_lahir);
+        settglLahirIbu(formatToDateInput(response.data.ibu_tanggal_lahir));
+        setPekerjaanIbu(response.data.ibu_pekerjaan);
+        setTelpIbu(response.data.ibu_no_telepon);
+        setAlamatIbu(response.data.ibu_alamat);
+        setNamaWali(response.data.wali_nama);
+        setNikWali(response.data.wali_nik);
+        settempatLahirWali(response.data.wali_tempat_lahir);
+        if (response.data.wali_tanggal_lahir) {
+          settglLahirWali(formatToDateInput(response.data.wali_tanggal_lahir));
         }
-      } catch (error) {
-        console.log(error);
-        setToastMessage("gagal ambil data");
-        setToastVariant("error");
-      } finally {
-        setIsLoading(false);
+        setPekerjaanWali(response.data.wali_pekerjaan);
+        setTelpWali(response.data.wali_no_telepon);
+        setAlamatWali(response.data.wali_alamat);
       }
-    };
+    } catch (error) {
+      console.log(error);
+      setToastMessage("gagal ambil data");
+      setToastVariant("error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fecthData();
   }, [nis]);
 

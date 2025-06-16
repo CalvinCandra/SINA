@@ -36,17 +36,17 @@ export default function DetailKurikulum() {
             </div>
           ) : (
             <div className="w-full mt-8">
-              <div className="w-full my-5 text-base">
+              <div className="w-full my-5 text-base border-b pb-2 border-gray-300">
                 <label className="mb-2 font-bold">Nama Kurikulum</label>
                 <h2 className="">{namaKurikulum}</h2>
               </div>
 
-              <div className="w-full my-5 text-base">
+              <div className="w-full my-5 text-base border-b pb-2 border-gray-300">
                 <label className="mb-2 font-bold">Deskripsi Kurikulum</label>
                 <p className="">{deskirpsi}</p>
               </div>
 
-              <div className="w-full my-5 text-base">
+              <div className="w-full my-5 text-base border-b pb-2 border-gray-300">
                 <label className="mb-2 font-bold">Detail Pendidikan</label>
                 <p className="">
                   Jenjang <span className="uppercase"> {jenjang}</span> Tingkat{" "}
@@ -54,7 +54,7 @@ export default function DetailKurikulum() {
                 </p>
               </div>
 
-              <div className="w-full my-5 text-base">
+              <div className="w-full my-5 text-base border-b pb-2 border-gray-300">
                 <label className="mb-2 font-bold">Mata Pelajaran</label>
                 {mapel.map((item, index) => (
                   <p className="my-1">
@@ -70,7 +70,7 @@ export default function DetailKurikulum() {
         <div className="flex justify-end items-center mt-10">
           <div className="">
             <ButtonHref
-              text="Keluar"
+              text="Kembali"
               variant="cancel"
               href="/dashboard/akademik/kurikulum"
             ></ButtonHref>

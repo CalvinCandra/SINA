@@ -11,20 +11,20 @@ import { formatTanggalLengkap } from "../../../utils/helper/dateFormat";
 
 export default function Admin() {
   const {
-    isLoading,
-    currentData,
+    dataAdmin,
     selectedAdmin,
+    setSelectedAdmin,
+    currentData,
+    isLoading,
     toastMessage,
     toastVariant,
-    searchQuery,
-    currentPage,
-    totalPages,
     indexOfFirstData,
     indexOfLastData,
-    dataAdmin,
+    totalPages,
+    searchQuery,
     setSearchQuery,
+    currentPage,
     setCurrentPage,
-    setSelectedAdmin,
     handleDeleteAdmin,
   } = useAdmin();
 
@@ -80,7 +80,7 @@ export default function Admin() {
                       Loading...
                     </td>
                   </tr>
-                ) : currentData == 0 && currentData.length == 0 ? (
+                ) : currentData.length == 0 ? (
                   <tr>
                     <td
                       colSpan="5"
