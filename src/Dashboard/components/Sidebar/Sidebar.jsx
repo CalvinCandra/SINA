@@ -42,15 +42,15 @@ function Sidebar() {
     path.startsWith("/dashboard/guru/update/");
   const isAbsenGuruActive = path === "/dashboard/guru/absen";
   const isSiswaActive = path.startsWith("/dashboard/siswa");
+  const isDataSiswaActive =
+    path === "/dashboard/siswa" ||
+    /^\/dashboard\/siswa\/[0-9]+$/.test(path) ||
+    /^\/dashboard\/siswa(\/\d+)?(\/(tambah|update|detail\/\d+))?$/.test(path) ||
+    /^\/dashboard\/siswa\/\d+\/tambahExcel$/.test(path);
+  const isAbsenSiswaActive =
+    path === "/dashboard/siswa/absen" ||
+    /^\/dashboard\/siswa\/absen\/[0-9]+$/.test(path);
   const isPengumumanActive = path.startsWith("/dashboard/pengumuman");
-
-  // useEffect untuk menghapus localStorage saat berpindah dari halaman
-  useEffect(() => {
-    // Jika berpindah dari halaman
-    if (!isJadwalActive) {
-      localStorage.removeItem("jadwalList");
-    }
-  }, [isJadwalActive]); // Memantau perubahan path
 
   return (
     <div className="drawer-side z-30 shadow-black shadow-md font-semibold">
@@ -182,6 +182,48 @@ function Sidebar() {
           </Link>
         </li>
 
+        {/* Siswa Dropdown */}
+        <li className="mb-3">
+          <details open={isSiswaActive}>
+            <summary
+              className={`flex items-center cursor-pointer py-2 ${
+                isSiswaActive ? "bg-biru-active text-white  rounded-sm" : ""
+              }`}
+            >
+              <UserGroupIcon className="w-6 h-6 me-1" />
+              <span>Siswa</span>
+            </summary>
+            <ul className="pl-6 mt-2 text-sm">
+              {/* sub menu */}
+              <li className="mb-2">
+                <Link
+                  to="/dashboard/siswa"
+                  className={`block py-1 ${
+                    isDataSiswaActive && !isAbsenSiswaActive
+                      ? "text-black font-semibold"
+                      : "text-gray-500"
+                  }`}
+                >
+                  Data Siswa
+                </Link>
+              </li>
+              {/* sub menu */}
+              <li className="mb-2">
+                <Link
+                  to="/dashboard/siswa/absen"
+                  className={`block py-1 ${
+                    isAbsenSiswaActive && !isDataSiswaActive
+                      ? "text-black font-semibold"
+                      : "text-gray-500"
+                  }`}
+                >
+                  Absen Siswa
+                </Link>
+              </li>
+            </ul>
+          </details>
+        </li>
+
         {/* Akademik Dropdown */}
         <li className="mb-3">
           <details open={isAkademikActive}>
@@ -255,46 +297,6 @@ function Sidebar() {
                   }`}
                 >
                   Rapot
-                </Link>
-              </li>
-            </ul>
-          </details>
-        </li>
-
-        {/* Siswa Dropdown */}
-        <li className="mb-3">
-          <details open={isSiswaActive}>
-            <summary
-              className={`flex items-center cursor-pointer py-2 ${
-                isSiswaActive ? "bg-biru-active text-white  rounded-sm" : ""
-              }`}
-            >
-              <UserGroupIcon className="w-6 h-6 me-1" />
-              <span>Siswa</span>
-            </summary>
-            <ul className="pl-6 mt-2 text-sm">
-              {/* sub menu */}
-              <li className="mb-2">
-                <Link
-                  to="/dashboard/siswa"
-                  className={`block py-1 ${
-                    isSiswaActive ? "text-black font-semibold" : "text-gray-500"
-                  }`}
-                >
-                  Data Siswa
-                </Link>
-              </li>
-              {/* sub menu */}
-              <li className="mb-2">
-                <Link
-                  to="/dashboard/siswa/absen"
-                  className={`block py-1 ${
-                    path === "/dashboard/siswa/absen"
-                      ? "text-black font-semibold"
-                      : "text-gray-500"
-                  }`}
-                >
-                  Absen Siswa
                 </Link>
               </li>
             </ul>

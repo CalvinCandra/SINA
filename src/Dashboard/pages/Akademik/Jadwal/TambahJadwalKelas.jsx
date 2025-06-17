@@ -12,6 +12,7 @@ export default function TambahJadwalKelas() {
     isLoading,
     toastMessage,
     toastVariant,
+    sesiOptions,
     tambahFormHari,
     GuruOption,
     MapelOption,
@@ -67,20 +68,23 @@ export default function TambahJadwalKelas() {
                 }}
               />
               <div className="w-full">
-                <FieldInput
-                  text={
-                    <span>
-                      Sesi <span className="text-red-500">*</span>
-                    </span>
-                  }
-                  type="text"
+                <SelectField
+                  text="Sesi"
+                  option={sesiOptions.map((opt) => ({
+                    value: opt.value,
+                    label: opt.label,
+                  }))}
                   value={item.jam_ke}
                   onChange={(e) => {
+                    const selected = sesiOptions.find(
+                      (opt) => opt.value === e.target.value
+                    );
                     const newList = [...jadwalList];
-                    newList[index].jam_ke = e.target.value;
+                    newList[index].jam_ke = selected.value;
+                    newList[index].start = selected.start;
+                    newList[index].finish = selected.finish;
                     setJadwalList(newList);
                   }}
-                  variant="biasa_text_sm"
                 />
               </div>
               <div className="flex flex-col md:flex-row gap-10">
@@ -93,12 +97,8 @@ export default function TambahJadwalKelas() {
                     }
                     type="time"
                     value={item.start}
-                    onChange={(e) => {
-                      const newList = [...jadwalList];
-                      newList[index].start = e.target.value;
-                      setJadwalList(newList);
-                    }}
-                    variant="biasa_text_sm"
+                    readonly
+                    variant="biasa_text_sm_disabled"
                   />
                 </div>
                 <div className="w-full md:w-1/2">
@@ -110,12 +110,8 @@ export default function TambahJadwalKelas() {
                     }
                     type="time"
                     value={item.finish}
-                    onChange={(e) => {
-                      const newList = [...jadwalList];
-                      newList[index].finish = e.target.value;
-                      setJadwalList(newList);
-                    }}
-                    variant="biasa_text_sm"
+                    readonly
+                    variant="biasa_text_sm_disabled"
                   />
                 </div>
               </div>

@@ -7,6 +7,7 @@ import Loading from "../../../component/Loading/Loading";
 import Toast from "../../../component/Toast/Toast";
 import FieldInput from "../../../component/Input/FieldInput";
 import { useTambahSiswa } from "../../../hooks/Siswa/TambahSiswa";
+import SelectPekerjaan from "../../../component/Input/SelectPekerjaan";
 
 export default function TambahSiswa() {
   const {
@@ -229,14 +230,12 @@ export default function TambahSiswa() {
           {/* Input Field Baris 3*/}
           <div className="w-full flex flex-col lg:flex-row justify-between">
             <div className="w-full lg:w-1/2 lg:me-1">
-              <FieldInput
-                text=<span>
-                  Pekerjaan <span className="text-red-500">*</span>
-                </span>
+              <SelectPekerjaan
+                label="Pekerjaan Ayah"
                 value={form.ayah.pekerjaanAyah}
-                onChange={(e) => form.ayah.setPekerjaanAyah(e.target.value)}
-                variant="biasa_text_sm"
-              ></FieldInput>
+                onChange={(val) => form.ayah.setPekerjaanAyah(val)}
+                required
+              />
             </div>
 
             <div className="w-full lg:w-1/2 lg:ms-1">
@@ -319,14 +318,12 @@ export default function TambahSiswa() {
           {/* Input Field Baris 3*/}
           <div className="w-full flex flex-col lg:flex-row justify-between">
             <div className="w-full lg:w-1/2 lg:me-1">
-              <FieldInput
-                text=<span>
-                  Pekerjaan <span className="text-red-500">*</span>
-                </span>
+              <SelectPekerjaan
+                label="Pekerjaan Ibu"
                 value={form.ibu.pekerjaanIbu}
-                onChange={(e) => form.ibu.setPekerjaanIbu(e.target.value)}
-                variant="biasa_text_sm"
-              ></FieldInput>
+                onChange={(val) => form.ibu.setPekerjaanIbu(val)}
+                required
+              />
             </div>
 
             <div className="w-full lg:w-1/2 lg:ms-1">

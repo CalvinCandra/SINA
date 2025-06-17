@@ -37,7 +37,7 @@ export default function FieldInput(props) {
           name={name}
           {...(value !== undefined ? { value, onChange } : { defaultValue })}
           className={`border border-border-grey rounded-lg input w-full text-gray-600 ${
-            readonly ? "cursor-not-allowed bg-gray-100" : ""
+            readonly ? "cursor-not-allowed bg-gray-200" : ""
           }`}
           placeholder="Type here..."
           readOnly={readonly}

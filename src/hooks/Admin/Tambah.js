@@ -3,6 +3,7 @@ import baseUrl from "../../utils/config/baseUrl";
 import axios from "axios";
 import { useState } from "react";
 import ImageImport from "../../data/ImageImport";
+import { getDefaultImageAsFile } from "../../utils/helper/defaultImage";
 
 export const useTambah = () => {
   // state
@@ -17,13 +18,6 @@ export const useTambah = () => {
   const [toastVariant, setToastVariant] = useState("");
   // get token
   const token = sessionStorage.getItem("session");
-
-  //   translate img
-  const getDefaultImageAsFile = async () => {
-    const response = await fetch(defaultImage);
-    const blob = await response.blob();
-    return new File([blob], "default.jpg", { type: blob.type });
-  };
 
   // preview gambar
   const handleImageChange = (e) => {
@@ -85,9 +79,10 @@ export const useTambah = () => {
       formData.append("username", namaAdmin);
       formData.append("email", emailAdmin);
 
+      // Gambar default
       let finalGambar = Gambar;
       if (!finalGambar) {
-        finalGambar = await getDefaultImageAsFile();
+        finalGambar = await getDefaultImageAsFile(defaultGambar);
       }
 
       formData.append("foto_profile", finalGambar);

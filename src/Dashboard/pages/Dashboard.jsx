@@ -1,4 +1,3 @@
-import React from "react";
 import {
   UserGroupIcon,
   InformationCircleIcon,
@@ -6,26 +5,17 @@ import {
 import Grafik from "../components/Chart/Grafik";
 import Calender from "../components/Calender/Calender";
 import Toast from "../../component/Toast/Toast";
-import { useState } from "react";
+import { useHighlight } from "../../hooks/Highlight/Highlight";
 
 export default function Dashboard() {
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastVariant, setToastVariant] = useState("");
-
-  const statusLogin = localStorage.getItem("login");
-  const statusUdpdate = localStorage.getItem("profile");
-
-  if (statusLogin == "success") {
-    setToastMessage("Berhasil Login");
-    setToastVariant("success");
-    localStorage.removeItem("login");
-  }
-
-  if (statusUdpdate == "success") {
-    setToastMessage("Berhasil Update Profile");
-    setToastVariant("success");
-    localStorage.removeItem("profile");
-  }
+  const {
+    dataCountAdmin,
+    dataCountGuru,
+    dataCountPengumuman,
+    dataCountSiswa,
+    toastMessage,
+    toastVariant,
+  } = useHighlight();
   return (
     <div className="lg:py-5">
       {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
@@ -39,7 +29,7 @@ export default function Dashboard() {
           <h3 className="font-medium text-sm mb-10">Siswa Keseluruhan</h3>
           <div className="flex items-center justify-between">
             <UserGroupIcon className="w-9 h-9"></UserGroupIcon>
-            <p className="font-semibold text-xl">1950</p>
+            <p className="font-semibold text-xl">{dataCountSiswa}</p>
           </div>
         </div>
 
@@ -47,7 +37,7 @@ export default function Dashboard() {
           <h3 className="font-medium text-sm mb-10">Guru Keseluruhan</h3>
           <div className="flex items-center justify-between">
             <UserGroupIcon className="w-9 h-9"></UserGroupIcon>
-            <p className="font-semibold text-xl">95</p>
+            <p className="font-semibold text-xl">{dataCountGuru}</p>
           </div>
         </div>
 
@@ -55,7 +45,7 @@ export default function Dashboard() {
           <h3 className="font-medium text-sm mb-10">Admin / Staf</h3>
           <div className="flex items-center justify-between">
             <UserGroupIcon className="w-9 h-9"></UserGroupIcon>
-            <p className="font-semibold text-xl">4</p>
+            <p className="font-semibold text-xl">{dataCountAdmin}</p>
           </div>
         </div>
 
@@ -63,7 +53,7 @@ export default function Dashboard() {
           <h3 className="font-medium text-sm mb-10">Pengumuman</h3>
           <div className="flex items-center justify-between">
             <InformationCircleIcon className="w-9 h-9"></InformationCircleIcon>
-            <p className="font-semibold text-xl">3</p>
+            <p className="font-semibold text-xl">{dataCountPengumuman}</p>
           </div>
         </div>
       </div>

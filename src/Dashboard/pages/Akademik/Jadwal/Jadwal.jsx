@@ -47,6 +47,7 @@ export default function Jadwal() {
                 <th>Nama Kelas</th>
                 <th>Tingkat</th>
                 <th>Wali Kelas</th>
+                <th>Kurikulum</th>
                 <th>Tahun Akademik</th>
                 <th>Aksi</th>
               </tr>
@@ -55,7 +56,7 @@ export default function Jadwal() {
               {isLoading ? (
                 <tr>
                   <td
-                    colSpan="4"
+                    colSpan="5"
                     className="text-base italic text-gray-400 mt-5 text-center py-4"
                   >
                     Loading...
@@ -64,7 +65,7 @@ export default function Jadwal() {
               ) : dataKelas.length == 0 ? (
                 <tr>
                   <td
-                    colSpan="4"
+                    colSpan="5"
                     className="text-base italic text-gray-400 mt-5 text-center py-4"
                   >
                     Data Kelas Belum Ada
@@ -79,7 +80,10 @@ export default function Jadwal() {
                     <td className="whitespace-nowrap">{index + 1}</td>
                     <td className="whitespace-nowrap">{data.nama_kelas}</td>
                     <td className="whitespace-nowrap">{data.tingkat}</td>
-                    <td className="whitespace-nowrap">{data.nama_guru}</td>
+                    <td className="whitespace-nowrap">
+                      {data.nama_guru || `Belum Ada`}
+                    </td>
+                    <td className="whitespace-nowrap">{data.nama_kurikulum}</td>
                     <td className="whitespace-nowrap">
                       {formatTahun(data.tahun_mulai)} -{" "}
                       {formatTahun(data.tahun_berakhir)}

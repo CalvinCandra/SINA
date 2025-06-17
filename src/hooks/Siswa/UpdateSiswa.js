@@ -3,11 +3,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import baseUrl from "../../utils/config/baseUrl";
 import { formatToDateInput } from "../../utils/helper/dateFormat";
+import ImageImport from "../../data/ImageImport";
 
 export const useUpdateSiswa = () => {
   const { kelas_id, nis } = useParams();
   const navigate = useNavigate();
   const [preview, setPreview] = useState();
+  const defaultGambar = ImageImport.defaultGambar;
   //variabel siswa
   const [namaSiswa, setNamaSiswa] = useState("");
   const [emailSiswa, setEmailSiswa] = useState("");
@@ -98,7 +100,11 @@ export const useUpdateSiswa = () => {
       });
 
       if (response.status == 200) {
-        setGambar(response.data.foto_profil);
+        if (response.data.foto_profil) {
+          setGambar(response.data.foto_profil);
+        } else {
+          setPreview(defaultGambar);
+        }
         setNamaSiswa(response.data.nama_siswa);
         setEmailSiswa(response.data.email);
         setNisSiswa(response.data.nis);
@@ -220,7 +226,7 @@ export const useUpdateSiswa = () => {
     }
 
     // Validasi panjang NIS, NISN, dan NIK
-    if (nisSiswa.length !== 10 || nisnSiswa.length !== 10) {
+    if (nisnSiswa.length !== 10) {
       setTimeout(() => {
         setToastMessage("NIS dan NISN harus 10 digit");
         setToastVariant("error");
@@ -274,7 +280,10 @@ export const useUpdateSiswa = () => {
       formData.append("wali_no_telepon", telpWali);
 
       // Gambar default
-      const finalGambar = Gambar || (await getDefaultImageAsFile());
+      let finalGambar = Gambar;
+      if (!finalGambar) {
+        finalGambar = await getDefaultImageAsFile(defaultGambar);
+      }
       formData.append("foto_profil", finalGambar);
 
       const response = await axios.put(

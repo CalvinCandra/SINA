@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import baseUrl from "../../utils/config/baseUrl";
 import axios from "axios";
 
@@ -17,7 +17,6 @@ export const useGuru = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const indexOfLastData = currentPage * dataPerPage;
   const indexOfFirstData = indexOfLastData - dataPerPage;
-  const totalPages = Math.ceil(currentData.length / dataPerPage);
 
   const token = sessionStorage.getItem("session");
 
@@ -70,9 +69,9 @@ export const useGuru = () => {
     fetchData();
   }, [token]);
 
-  // Pagination and Serach
-  useEffect(() => {
-    const filtered = dataGuru
+  // Pagination filter
+  const filteredData = useMemo(() => {
+    return dataGuru
       .filter(
         (item) =>
           item.nama_guru.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -80,8 +79,15 @@ export const useGuru = () => {
           item.nip.toLowerCase().includes(searchQuery.toLowerCase())
       )
       .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    setCurrentData(filtered.slice(indexOfFirstData, indexOfLastData));
-  }, [dataGuru, searchQuery, currentPage]);
+  }, [dataGuru, searchQuery]);
+
+  // total pages
+  const totalPages = Math.ceil(filteredData.length / dataPerPage);
+
+  // Replace pagination effect jadi:
+  useEffect(() => {
+    setCurrentData(filteredData.slice(indexOfFirstData, indexOfLastData));
+  }, [filteredData, currentPage]);
 
   const handleDeleteGuru = async (e) => {
     e.preventDefault();

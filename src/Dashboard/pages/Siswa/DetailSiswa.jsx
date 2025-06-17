@@ -7,7 +7,8 @@ import { formatToDateInput } from "../../../utils/helper/dateFormat";
 import { useDetailSiswa } from "../../../hooks/Siswa/DetailSiswa";
 
 export default function DetailSiswa() {
-  const { kelas_id, siswa, toastMessage, toastVariant } = useDetailSiswa();
+  const { kelas_id, defaultGambar, siswa, toastMessage, toastVariant } =
+    useDetailSiswa();
 
   return (
     <div className="lg:py-5">
@@ -27,7 +28,11 @@ export default function DetailSiswa() {
           <div className="flex flex-col justify-center items-center">
             <div className="p-1 w-60 h-64 my-3 overflow-hidden">
               <img
-                src={`${baseUrl.apiUrlImageSiswa}/Upload/profile_image/${siswa.foto_profil}`}
+                src={
+                  siswa.foto_profil
+                    ? `${baseUrl.apiUrlImageSiswa}/Upload/profile_image/${siswa.foto_profil}`
+                    : defaultGambar
+                }
                 id="ImagePreview"
                 className="w-full h-full object-object rounded"
               ></img>
