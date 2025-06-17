@@ -76,6 +76,18 @@ export const useTambahJadwal = () => {
     ]);
   };
 
+  const sesiOptions = [
+    { value: "1", label: "1 (07.00 - 08.00)", start: "07:00", finish: "08:00" },
+    { value: "2", label: "2 (08.00 - 09.00)", start: "08:00", finish: "09:00" },
+    { value: "3", label: "3 (09.00 - 10.00)", start: "09:00", finish: "10:00" },
+    { value: "4", label: "4 (10.00 - 11.00)", start: "10:00", finish: "11:00" },
+    { value: "5", label: "5 (11.00 - 12.00)", start: "11:00", finish: "12:00" },
+    { value: "6", label: "6 (12.00 - 13.00)", start: "12:00", finish: "13:00" },
+    { value: "7", label: "7 (13.00 - 14.00)", start: "13:00", finish: "14:00" },
+    { value: "8", label: "8 (14.00 - 15.00)", start: "14:00", finish: "15:00" },
+    { value: "9", label: "9 (15.00 - 16.00)", start: "15:00", finish: "16:00" },
+  ];
+
   const GuruOption = Guru.map((item) => ({
     value: item.nip,
     label: item.nama_guru,
@@ -156,8 +168,8 @@ export const useTambahJadwal = () => {
       }
     } catch (error) {
       setIsLoading(false);
-      console.error(error);
-      setToastMessage("Gagal menyimpan jadwal");
+      console.error(error.response.data.massage);
+      setToastMessage(error?.response?.data?.message || "Gagal Tambah Jadwal");
       setToastVariant("error");
     }
   };
@@ -167,6 +179,7 @@ export const useTambahJadwal = () => {
     isLoading,
     toastMessage,
     toastVariant,
+    sesiOptions,
     tambahFormHari,
     GuruOption,
     MapelOption,

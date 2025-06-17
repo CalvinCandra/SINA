@@ -218,7 +218,10 @@ export const useTambahSiswa = () => {
       formData.append("wali_no_telepon", telpWali);
 
       // Gambar default
-      const finalGambar = gambar || (await getDefaultImageAsFile(defaultImage));
+      let finalGambar = gambar;
+      if (!finalGambar) {
+        finalGambar = await getDefaultImageAsFile(defaultImage);
+      }
       formData.append("foto_profil", finalGambar);
 
       const response = await axios.post(

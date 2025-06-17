@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import baseUrl from "../../utils/config/baseUrl";
 
 export const useMataPelajaran = () => {
@@ -16,7 +16,6 @@ export const useMataPelajaran = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const indexOfLastData = currentPage * dataPerPage;
   const indexOfFirstData = indexOfLastData - dataPerPage;
-  const totalPages = Math.ceil(currentData.length / dataPerPage);
 
   // get token
   const token = sessionStorage.getItem("session");
@@ -70,15 +69,22 @@ export const useMataPelajaran = () => {
     fetchData();
   }, [token]);
 
-  // Pagination and Serach
-  useEffect(() => {
-    const filtered = dataPelajaran
+  // Pagination filter
+  const filteredData = useMemo(() => {
+    return dataPelajaran
       .filter((item) =>
         item.nama_mapel.toLowerCase().includes(searchQuery.toLowerCase())
       )
       .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    setCurrentData(filtered.slice(indexOfFirstData, indexOfLastData));
-  }, [dataPelajaran, searchQuery, currentPage]);
+  }, [dataPelajaran, searchQuery]);
+
+  // total pages
+  const totalPages = Math.ceil(filteredData.length / dataPerPage);
+
+  // Replace pagination effect jadi:
+  useEffect(() => {
+    setCurrentData(filteredData.slice(indexOfFirstData, indexOfLastData));
+  }, [filteredData, currentPage]);
 
   // Hapus
   const handleDeletePelajaran = async (e) => {

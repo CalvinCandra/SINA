@@ -1,10 +1,12 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import baseUrl from "../../utils/config/baseUrl";
+import ImageImport from "../../data/ImageImport";
 
 export const useSiswa = () => {
   const { kelas_id } = useParams();
+  const defaultImage = ImageImport.defaultGambar;
   const [dataSiswa, setdataSiswa] = useState([]);
   const [dataKelas, setdataKelas] = useState([]);
   const [selectedSiswa, setSelectedSiswa] = useState(null);
@@ -19,7 +21,6 @@ export const useSiswa = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const indexOfLastData = currentPage * dataPerPage;
   const indexOfFirstData = indexOfLastData - dataPerPage;
-  const totalPages = Math.ceil(currentData.length / dataPerPage);
 
   const token = sessionStorage.getItem("session");
 
@@ -75,9 +76,9 @@ export const useSiswa = () => {
     fetchData();
   }, [kelas_id]);
 
-  // Pagination and Serach
-  useEffect(() => {
-    const filtered = dataSiswa
+  // Pagination filter
+  const filteredData = useMemo(() => {
+    return dataSiswa
       .filter(
         (item) =>
           item.nama_siswa.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -85,8 +86,15 @@ export const useSiswa = () => {
           item.nisn.toLowerCase().includes(searchQuery.toLowerCase())
       )
       .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    setCurrentData(filtered.slice(indexOfFirstData, indexOfLastData));
-  }, [dataSiswa, searchQuery, currentPage]);
+  }, [dataSiswa, searchQuery]);
+
+  // total pages
+  const totalPages = Math.ceil(filteredData.length / dataPerPage);
+
+  // Replace pagination effect jadi:
+  useEffect(() => {
+    setCurrentData(filteredData.slice(indexOfFirstData, indexOfLastData));
+  }, [filteredData, currentPage]);
 
   const handleDeleteSiswa = async (e) => {
     e.preventDefault();
@@ -127,6 +135,7 @@ export const useSiswa = () => {
   };
 
   return {
+    defaultImage,
     dataKelas,
     dataSiswa,
     selectedSiswa,

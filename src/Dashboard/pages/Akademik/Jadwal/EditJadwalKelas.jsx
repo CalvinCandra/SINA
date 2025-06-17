@@ -12,6 +12,7 @@ export default function EditJadwalKelas() {
     isLoading,
     toastMessage,
     toastVariant,
+    sesiOptions,
     GuruOption,
     MapelOption,
     hariOptions,
@@ -66,20 +67,26 @@ export default function EditJadwalKelas() {
                 }}
               />
               <div className="w-full">
-                <FieldInput
+                <SelectField
                   text={
                     <span>
                       Sesi <span className="text-red-500">*</span>
                     </span>
                   }
-                  type="text"
+                  option={sesiOptions}
                   value={item.jam_ke}
                   onChange={(e) => {
+                    const selectedValue = e.target.value;
+                    const selectedOption = sesiOptions.find(
+                      (opt) => opt.value === selectedValue
+                    );
+
                     const newList = [...jadwalList];
-                    newList[index].jam_ke = e.target.value;
+                    newList[index].jam_ke = selectedOption.value;
+                    newList[index].start = selectedOption.start;
+                    newList[index].finish = selectedOption.finish;
                     setJadwalList(newList);
                   }}
-                  variant="biasa_text_sm"
                 />
               </div>
               <div className="flex flex-col md:flex-row md:gap-10">
@@ -92,12 +99,8 @@ export default function EditJadwalKelas() {
                     }
                     type="time"
                     value={item.start}
-                    onChange={(e) => {
-                      const newList = [...jadwalList];
-                      newList[index].start = e.target.value;
-                      setJadwalList(newList);
-                    }}
-                    variant="biasa_text_sm"
+                    readonly
+                    variant="biasa_text_sm_disabled"
                   />
                 </div>
                 <div className="w-full md:w-1/2">
@@ -109,12 +112,8 @@ export default function EditJadwalKelas() {
                     }
                     type="time"
                     value={item.finish}
-                    onChange={(e) => {
-                      const newList = [...jadwalList];
-                      newList[index].finish = e.target.value;
-                      setJadwalList(newList);
-                    }}
-                    variant="biasa_text_sm"
+                    readonly
+                    variant="biasa_text_sm_disabled"
                   />
                 </div>
               </div>

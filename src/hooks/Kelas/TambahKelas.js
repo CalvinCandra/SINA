@@ -27,9 +27,9 @@ export const useTambahKelas = () => {
 
   const TahunAkademik = akademik.map((item) => ({
     value: `${item.tahun_akademik_id}`,
-    label: `${formatTahun(item.tahun_mulai)} - ${formatTahun(
-      item.tahun_berakhir
-    )}`,
+    label: `${item.nama_kurikulum} (${formatTahun(
+      item.tahun_mulai
+    )} - ${formatTahun(item.tahun_berakhir)})`,
   }));
 
   const jenjangOptions = [
@@ -76,6 +76,8 @@ export const useTambahKelas = () => {
             },
           }
         );
+
+        console.log(responseTahun);
 
         if (responseGuru.status == 200) {
           setGuru(responseGuru.data);

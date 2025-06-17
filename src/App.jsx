@@ -150,10 +150,7 @@ function App() {
         <Route path="siswa/:kelas_id/update/:nis" element={<UpdateSiswa />} />
         {/* Absen Siswa */}
         <Route path="siswa/absen/" element={<AbsenkelasSiswa />} />
-        <Route
-          path="siswa/absen/:nama_kelas/:tingkat"
-          element={<AbsenSiswaPage />}
-        />
+        <Route path="siswa/absen/:kelas_id" element={<AbsenSiswaPage />} />
 
         {/* Pengumuman */}
         <Route path="pengumuman" element={<Pengumuman />} />

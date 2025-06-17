@@ -4,6 +4,7 @@ export default function InputFile(props) {
     fungsi,
     variant = "standar",
     optional = "img",
+    accept = "img",
     filename = "No file chosen",
   } = props;
   const variants = {
@@ -14,7 +15,12 @@ export default function InputFile(props) {
   };
   const optionals = {
     img: "PNG, JPG, JPEG | Max size 5MB",
-    excel: "XLXS, XLS",
+    excel: "CSV, XLSX, XLS | Max size 10MB ",
+  };
+  const accepts = {
+    img: "image/jpg, image/png, image/jpeg",
+    excel:
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, text/csv",
   };
   return (
     <fieldset>
@@ -23,7 +29,7 @@ export default function InputFile(props) {
         <label className="relative inline-block shrink-0">
           <input
             type="file"
-            accept="image/jpg, image/png, image/jpeg"
+            accept={accepts[accept]}
             className="absolute inset-0 opacity-0 cursor-pointer"
             onChange={fungsi}
           />

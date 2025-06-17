@@ -58,7 +58,9 @@ export const useJadwal = () => {
           .filter((hari) => groupedByHari[hari])
           .map((hari) => ({
             hari: hari,
-            sesiList: groupedByHari[hari],
+            sesiList: groupedByHari[hari].sort(
+              (a, b) => Number(a.sesi) - Number(b.sesi)
+            ),
           }));
 
         setJadwalSiapTampil(jadwalArray);

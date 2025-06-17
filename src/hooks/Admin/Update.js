@@ -2,11 +2,14 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import baseUrl from "../../utils/config/baseUrl";
+import ImageImport from "../../data/ImageImport";
+import { getDefaultImageAsFile } from "../../utils/helper/defaultImage";
 
 export const useUpdate = () => {
   // state
   const navigate = useNavigate();
   const { id } = useParams();
+  const defaultGambar = ImageImport.defaultGambar;
   const [preview, setPreview] = useState("");
   const [Gambar, setGambar] = useState(null);
   const [namaAdmin, setNamaAdmin] = useState("");
@@ -96,6 +99,13 @@ export const useUpdate = () => {
       const formData = new FormData();
       formData.append("username", namaAdmin);
       formData.append("email", emailAdmin);
+
+      // Gambar default
+      let finalGambar = Gambar;
+      if (!finalGambar) {
+        finalGambar = await getDefaultImageAsFile(defaultGambar);
+      }
+
       formData.append("foto_profile", Gambar);
 
       const response = await axios.put(

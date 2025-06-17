@@ -1,6 +1,6 @@
 import axios from "axios";
 import baseUrl from "../../utils/config/baseUrl";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 
 export const useKurikulum = () => {
   // simpan data
@@ -17,7 +17,6 @@ export const useKurikulum = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const indexOfLastData = currentPage * dataPerPage;
   const indexOfFirstData = indexOfLastData - dataPerPage;
-  const totalPages = Math.ceil(currentData.length / dataPerPage);
 
   // get token
   const token = sessionStorage.getItem("session");
@@ -71,15 +70,22 @@ export const useKurikulum = () => {
     fetchData();
   }, [token]);
 
-  // Pagination and Serach
-  useEffect(() => {
-    const filtered = dataKurikulum
+  // Pagination filter
+  const filteredData = useMemo(() => {
+    return dataKurikulum
       .filter((item) =>
         item.nama_kurikulum.toLowerCase().includes(searchQuery.toLowerCase())
       )
       .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    setCurrentData(filtered.slice(indexOfFirstData, indexOfLastData));
-  }, [dataKurikulum, searchQuery, currentPage]);
+  }, [dataKurikulum, searchQuery]);
+
+  // total pages
+  const totalPages = Math.ceil(filteredData.length / dataPerPage);
+
+  // Replace pagination effect jadi:
+  useEffect(() => {
+    setCurrentData(filteredData.slice(indexOfFirstData, indexOfLastData));
+  }, [filteredData, currentPage]);
 
   const handleDeleteKurikulum = async (e) => {
     e.preventDefault();
