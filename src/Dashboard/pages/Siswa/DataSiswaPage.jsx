@@ -5,6 +5,7 @@ import {
   PencilSquareIcon,
   TrashIcon,
   DocumentMagnifyingGlassIcon,
+  PaperAirplaneIcon,
 } from "@heroicons/react/16/solid";
 import { ArrowLeftCircleIcon } from "@heroicons/react/24/solid";
 import Button from "../../../component/Button/Button";
@@ -32,6 +33,8 @@ export default function DataSiswaPage() {
     indexOfFirstData,
     indexOfLastData,
     handleDeleteSiswa,
+    handleSendMailSiswa,
+    handleSendMail,
   } = useSiswa();
 
   return (
@@ -56,21 +59,31 @@ export default function DataSiswaPage() {
         </div>
 
         <div className="w-full p-5 rounded-md bg-white mt-5">
-          <div className="w-full flex flex-col lg:flex-row justify-between items-center mb-5">
-            <div className="flex flex-col lg:flex-row items-center">
-              <div className="lg:w-40 mb-6 lg:mb-0">
+          <div className="w-full flex flex-col lg:flex-row lg:justify-between lg:items-center mb-5 gap-y-3">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:gap-2">
+              <div className="">
                 <ButtonHref
                   text="Tambah Siswa"
                   href={`/dashboard/siswa/${dataKelas.kelas_id}/tambah`}
                   variant="tambah"
                 />
               </div>
-              <div className="lg:w-56 mb-6 lg:mb-0">
+              <div className="mt-5 mb-4 lg:mt-0 lg:mb-0">
                 <ButtonHref
                   text="Tambah Siswa Via Excel"
                   href={`/dashboard/siswa/${dataKelas.kelas_id}/tambahExcel`}
                   variant="tambah"
                 />
+              </div>
+              <div className="">
+                <button
+                  className="lg:w-full px-3 bg-biru-primary text-sm hover:bg-biru-hover py-2 font-semibold text-white rounded cursor-pointer"
+                  onClick={() => {
+                    document.getElementById("my_modal_5").showModal();
+                  }}
+                >
+                  Kirim Semua Email
+                </button>
               </div>
             </div>
             <Search
@@ -150,7 +163,17 @@ export default function DataSiswaPage() {
                         {data.jenis_kelamin}
                       </td>
                       <td>
-                        <div className="flex items-center justify-between w-14">
+                        <div className="flex items-center justify-between w-14 gap-1.5">
+                          <button
+                            className="border-0 cursor-pointer"
+                            onClick={() => {
+                              setSelectedSiswa(data);
+                              document.getElementById("my_modal_4").showModal();
+                            }}
+                          >
+                            <PaperAirplaneIcon className="w-5 h-5 text-green-500" />
+                          </button>
+                          |
                           <ButtonHref
                             href={`/dashboard/siswa/${dataKelas.kelas_id}/detail/${data.nis}`}
                             text=<DocumentMagnifyingGlassIcon className="w-5 h-5 text-sky-500"></DocumentMagnifyingGlassIcon>
@@ -234,6 +257,74 @@ export default function DataSiswaPage() {
                   <div className="w-full">
                     <Button
                       text={isLoading ? <Loading /> : "Hapus Siswa"}
+                      variant="button_submit_dash"
+                      disabled={isLoading}
+                    />
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </dialog>
+
+        {/* Modal Konfirmasi Send Mail */}
+        <dialog id="my_modal_4" className="modal">
+          <div className="modal-box bg-white rounded-lg">
+            <form method="dialog">
+              <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                ✕
+              </button>
+            </form>
+            <div className="mt-5">
+              <h1 className="font-bold text-3xl text-center">Konfirmasi!</h1>
+              {selectedSiswa && (
+                <p className="text-center my-2">
+                  Anda yakin ingin mengirim email kepada {""}
+                  <b>{selectedSiswa.nama_siswa}</b>?
+                </p>
+              )}
+              <div className="w-56 mx-auto p-1 flex justify-between items-center mt-4">
+                <form method="dialog" className="w-full me-1">
+                  <Button variant="button_submit_cancel" text="Cancel" />
+                </form>
+                <form
+                  className="w-full ms-1"
+                  onSubmit={(e) => {
+                    handleSendMailSiswa(e, selectedSiswa.nis);
+                  }}
+                >
+                  <div className="w-full">
+                    <Button
+                      text={isLoading ? <Loading /> : "Kirim Email"}
+                      variant="button_submit_dash"
+                      disabled={isLoading}
+                    />
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </dialog>
+
+        {/* Modal Konfirmasi Send Mail All */}
+        <dialog id="my_modal_5" className="modal">
+          <div className="modal-box bg-white rounded-lg">
+            <form method="dialog">
+              <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                ✕
+              </button>
+            </form>
+            <div className="mt-5">
+              <h1 className="font-bold text-3xl text-center">Konfirmasi!</h1>
+              <p className="text-center my-2">Kirim Email Secara Bersamaan?</p>
+              <div className="w-56 mx-auto p-1 flex justify-between items-center mt-4">
+                <form method="dialog" className="w-full me-1">
+                  <Button variant="button_submit_cancel" text="Cancel" />
+                </form>
+                <form className="w-full ms-1" onSubmit={handleSendMail}>
+                  <div className="w-full">
+                    <Button
+                      text={isLoading ? <Loading /> : "Kirim Email"}
                       variant="button_submit_dash"
                       disabled={isLoading}
                     />

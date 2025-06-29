@@ -1,21 +1,19 @@
-import React from "react";
-
-const Grafik = () => {
+const Grafik = ({ title = "Rekap", data = {} }) => {
   const chartData = {
-    year: "1945",
-    title: "Siswa",
+    title,
     items: [
-      { label: "Hadir", value: 800, color: "#22c55e" }, // green-500
-      { label: "Izin", value: 20, color: "#f59e0b" }, // amber-500
-      { label: "Sakit", value: 1000, color: "#0ea5e9" }, // sky-500
-      { label: "Alpha", value: 45, color: "#ef4444" }, // red-500
+      { label: "Hadir", value: Number(data.hadir || 0), color: "#22c55e" },
+      { label: "Izin", value: Number(data.izin || 0), color: "#f59e0b" },
+      { label: "Sakit", value: Number(data.sakit || 0), color: "#0ea5e9" },
+      { label: "Alpa", value: Number(data.alpa || 0), color: "#ef4444" },
     ],
   };
 
   const total = chartData.items.reduce((sum, item) => sum + item.value, 0);
+
   const itemsWithPercentage = chartData.items.map((item) => ({
     ...item,
-    percentage: (item.value / total) * 100,
+    percentage: total > 0 ? (item.value / total) * 100 : 0,
   }));
 
   const gradientParts = [];
@@ -35,7 +33,6 @@ const Grafik = () => {
   return (
     <div className="p-6 w-full mx-auto">
       <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
-        {/* Donut Chart on the Left */}
         <div className="relative w-64 h-64 lg:w-72 lg:h-72">
           <div
             className="w-full h-full rounded-full"
@@ -49,8 +46,6 @@ const Grafik = () => {
             <span className="text-2xl font-bold text-black">{total}</span>
           </div>
         </div>
-
-        {/* Legend on the Right */}
         <div className="flex flex-col space-y-3">
           {itemsWithPercentage.map((item, index) => (
             <div key={index} className="flex items-center gap-x-2">

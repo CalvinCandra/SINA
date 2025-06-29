@@ -14,6 +14,8 @@ import {
 export default function Kelas() {
   const {
     dataKelas,
+    activeFilter,
+    setActiveFilter,
     currentData,
     searchQuery,
     setSearchQuery,
@@ -36,6 +38,17 @@ export default function Kelas() {
       <div className="flex flex-col lg:flex-row w-full justify-between items-center">
         <div className="flex items-center">
           <h2 className="text-2xl font-semibold me-2">Data Kelas</h2>
+          <select
+            className="select bg-white border border-border-grey w-30 rounded-lg"
+            value={activeFilter}
+            onChange={(e) => {
+              setActiveFilter(e.target.value);
+              setCurrentPage(1); // Reset ke halaman pertama saat ganti filter
+            }}
+          >
+            <option value="aktif">Kelas Aktif</option>
+            <option value="all">Semua Kelas</option>
+          </select>
         </div>
         <Calender className="w-40 lg:w-full"></Calender>
       </div>

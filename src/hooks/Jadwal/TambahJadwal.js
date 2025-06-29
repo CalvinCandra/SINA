@@ -31,11 +31,14 @@ export const useTambahJadwal = () => {
       try {
         setIsLoading(true);
         // Guru
-        const responseGuru = await axios.get(`${baseUrl.apiUrl}/admin/guru`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const responseGuru = await axios.get(
+          `${baseUrl.apiUrl}/admin/guru-tersedia/${kelas_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         // Mapel
         const responseMapel = await axios.get(
@@ -47,9 +50,11 @@ export const useTambahJadwal = () => {
           }
         );
 
+        console.log(responseGuru);
+
         if (responseGuru.status == 200 && responseMapel.status == 200) {
           setMapel(responseMapel.data.data.mapel);
-          setGuru(responseGuru.data);
+          setGuru(responseGuru.data.data);
         }
       } catch (error) {
         setIsLoading(false);
@@ -61,7 +66,7 @@ export const useTambahJadwal = () => {
       }
     };
     fetchData();
-  }, [token]);
+  }, [token, kelas_id]);
 
   const tambahFormHari = () => {
     setJadwalList([

@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 export const useUpdateTahunAkademik = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { tahun_akademik_id, kurikulum_id } = useParams();
   const [namaKurikulum, setNamaKurikulum] = useState("");
   const [TglMulai, setTglMulai] = useState("");
   const [TglAkhir, setTglAkhir] = useState("");
@@ -38,7 +38,7 @@ export const useUpdateTahunAkademik = () => {
       try {
         setIsLoading(true);
         const responseTahun = await axios.get(
-          `${baseUrl.apiUrl}/admin/tahunakademik/${id}`,
+          `${baseUrl.apiUrl}/admin/tahunakademik/${tahun_akademik_id}/${kurikulum_id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -78,7 +78,7 @@ export const useUpdateTahunAkademik = () => {
     };
 
     fetchData();
-  }, [id]);
+  }, [tahun_akademik_id, kurikulum_id]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -124,7 +124,7 @@ export const useUpdateTahunAkademik = () => {
 
     try {
       const response = await axios.put(
-        `${baseUrl.apiUrl}/admin/tahunakademik/${id}`,
+        `${baseUrl.apiUrl}/admin/tahunakademik/${tahun_akademik_id}/${kurikulum_id}`,
         {
           kurikulum_id: namaKurikulum,
           tahun_mulai: TglMulai,

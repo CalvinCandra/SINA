@@ -5,6 +5,7 @@ import {
   PencilSquareIcon,
   TrashIcon,
   DocumentMagnifyingGlassIcon,
+  PaperAirplaneIcon,
 } from "@heroicons/react/16/solid";
 import Button from "../../../../component/Button/Button";
 import Toast from "../../../../component/Toast/Toast";
@@ -30,6 +31,8 @@ export default function DataGuru() {
     indexOfLastData,
     totalPages,
     handleDeleteGuru,
+    handleSendMail,
+    handleSendMailGuru,
   } = useGuru();
 
   return (
@@ -42,13 +45,25 @@ export default function DataGuru() {
 
       <div className="w-full p-5 rounded-md bg-white mt-5">
         {/* Header Table */}
-        <div className="w-full flex flex-col lg:flex-row justify-between items-center mb-5">
-          <div className="lg:w-60 mb-6 lg:mb-0">
-            <ButtonHref
-              text="Tambah Guru"
-              href="/dashboard/guru/tambah"
-              variant="tambah"
-            ></ButtonHref>
+        <div className="w-full flex flex-col lg:flex-row lg:justify-between lg:items-center gap-y-3 mb-5">
+          <div className="flex items-center gap-2 lg:gap-0">
+            <div className="me-2">
+              <ButtonHref
+                text="Tambah Guru"
+                href="/dashboard/guru/tambah"
+                variant="tambah"
+              />
+            </div>
+            <div className="">
+              <button
+                className="lg:w-full px-3 bg-biru-primary text-sm hover:bg-biru-hover py-2 font-semibold text-white rounded cursor-pointer"
+                onClick={() => {
+                  document.getElementById("my_modal_6").showModal();
+                }}
+              >
+                Kirim Semua Email
+              </button>
+            </div>
           </div>
           <Search
             className="bg-white"
@@ -57,7 +72,7 @@ export default function DataGuru() {
               setSearchQuery(e.target.value);
               setCurrentPage(1);
             }}
-          ></Search>
+          />
         </div>
 
         <hr className="border-border-grey border"></hr>
@@ -129,7 +144,17 @@ export default function DataGuru() {
                       {formatTanggalLengkap(data.created_at)}
                     </td>
                     <td>
-                      <div className="flex items-center justify-evenly w-20">
+                      <div className="flex items-center justify-evenly w-20 gap-1.5">
+                        <button
+                          className="border-0 cursor-pointer"
+                          onClick={() => {
+                            setSelectedGuru(data);
+                            document.getElementById("my_modal_5").showModal();
+                          }}
+                        >
+                          <PaperAirplaneIcon className="w-5 h-5 text-green-500" />
+                        </button>
+                        |
                         <button
                           className="border-0 cursor-pointer"
                           onClick={() => {
@@ -294,6 +319,74 @@ export default function DataGuru() {
                     variant="button_submit_dash"
                     text={isLoading ? <Loading /> : "Hapus"}
                   ></Button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </dialog>
+
+      {/* Modal Send Mail*/}
+      <dialog id="my_modal_5" className="modal">
+        <div className="modal-box bg-white rounded-lg">
+          <form method="dialog">
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+              ✕
+            </button>
+          </form>
+          <div className="mt-5">
+            <h1 className="font-bold text-3xl text-center">Konfirmasi!</h1>
+            {selectedGuru && (
+              <p className="text-center my-2">
+                Anda yakin ingin mengirim email kepada {""}
+                <b>{selectedGuru.nama_guru}</b>?
+              </p>
+            )}
+            <div className="w-56 mx-auto p-1 flex justify-between items-center mt-4">
+              <form method="dialog" className="w-full me-1">
+                <Button variant="button_submit_cancel" text="Cancel" />
+              </form>
+              <form
+                className="w-full ms-1"
+                onSubmit={(e) => {
+                  handleSendMailGuru(e, selectedGuru.nip);
+                }}
+              >
+                <div className="w-full">
+                  <Button
+                    text={isLoading ? <Loading /> : "Kirim Email"}
+                    variant="button_submit_dash"
+                    disabled={isLoading}
+                  />
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </dialog>
+
+      {/* Modal Konfirmasi Send Mail All */}
+      <dialog id="my_modal_6" className="modal">
+        <div className="modal-box bg-white rounded-lg">
+          <form method="dialog">
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+              ✕
+            </button>
+          </form>
+          <div className="mt-5">
+            <h1 className="font-bold text-3xl text-center">Konfirmasi!</h1>
+            <p className="text-center my-2">Kirim Email Secara Bersamaan?</p>
+            <div className="w-56 mx-auto p-1 flex justify-between items-center mt-4">
+              <form method="dialog" className="w-full me-1">
+                <Button variant="button_submit_cancel" text="Cancel" />
+              </form>
+              <form className="w-full ms-1" onSubmit={handleSendMail}>
+                <div className="w-full">
+                  <Button
+                    text={isLoading ? <Loading /> : "Kirim Email"}
+                    variant="button_submit_dash"
+                    disabled={isLoading}
+                  />
                 </div>
               </form>
             </div>

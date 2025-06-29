@@ -96,7 +96,7 @@ function App() {
           element={<TambahTahun />}
         />
         <Route
-          path="akademik/tahun-akademik/update/:id"
+          path="akademik/tahun-akademik/update/:tahun_akademik_id/:kurikulum_id"
           element={<UpdateTahun />}
         />
 

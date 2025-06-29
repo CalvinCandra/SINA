@@ -2,8 +2,8 @@ import Calender from "../../../components/Calender/Calender";
 import Search from "../../../../component/Input/Search";
 import ButtonHref from "../../../../component/Button/ButtonHref";
 import { ArrowLeftCircleIcon } from "@heroicons/react/16/solid";
-import { useSiswa } from "../../../../hooks/Siswa/Siswa";
 import baseUrl from "../../../../utils/config/baseUrl";
+import { useAbsenSiswa } from "../../../../hooks/Siswa/Absen/AbsenSiswa";
 
 export default function AbsenSiswaPage() {
   const {
@@ -19,7 +19,7 @@ export default function AbsenSiswaPage() {
     totalPages,
     indexOfFirstData,
     indexOfLastData,
-  } = useSiswa();
+  } = useAbsenSiswa();
   return (
     <div className="lg:py-5">
       <div className="flex flex-col lg:flex-row w-full justify-between items-center">
@@ -117,10 +117,10 @@ export default function AbsenSiswaPage() {
                     </td>
                     <td className="whitespace-nowrap">{data.nisn}</td>
                     <td className="whitespace-nowrap">{data.nis}</td>
-                    <td className="">1</td>
-                    <td className="">0</td>
-                    <td className="">0</td>
-                    <td className="">0</td>
+                    <td className="text-green-500">{data.hadir}</td>
+                    <td className="text-sky-500">{data.izin}</td>
+                    <td className="text-amber-500">{data.sakit}</td>
+                    <td className="text-red-500">{data.alpa}</td>
                   </tr>
                 ))
               )}

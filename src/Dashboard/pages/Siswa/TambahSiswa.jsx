@@ -22,6 +22,10 @@ export default function TambahSiswa() {
     form,
     defaultImage,
     kelas_id,
+    nikError,
+    nisnError,
+    handleNISNChange,
+    handleNIKChange,
   } = useTambahSiswa();
 
   return (
@@ -55,7 +59,7 @@ export default function TambahSiswa() {
 
           {/* Input Field Siswa*/}
           {/* Input Field Baris 1*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between mt-5">
+          <div className="w-full flex flex-col lg:flex-row justify-between mt-5 lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>
@@ -79,7 +83,7 @@ export default function TambahSiswa() {
           </div>
 
           {/* Input Field Baris 2*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>
@@ -93,18 +97,28 @@ export default function TambahSiswa() {
 
             <div className="w-full lg:w-1/2 lg:ms-1">
               <FieldInput
-                text=<span>
-                  NISN <span className="text-red-500">*</span>
-                </span>
+                text={
+                  <span>
+                    NISN <span className="text-red-500">*</span>
+                  </span>
+                }
+                type="number"
                 value={form.siswa.nisnSiswa}
+                onChange={(e) => {
+                  const value = e.target.value.slice(0, 10);
+                  form.siswa.setNisnSiswa(value);
+                  handleNISNChange(value);
+                }}
                 variant="biasa_text_sm"
-                onChange={(e) => form.siswa.setNisnSiswa(e.target.value)}
-              ></FieldInput>
+              />
+              {nisnError && (
+                <span className="text-sm italic text-red-500">{nisnError}</span>
+              )}
             </div>
           </div>
 
           {/* Input Field Baris 3*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>
@@ -172,12 +186,12 @@ export default function TambahSiswa() {
           </div>
 
           {/* Input Field Ayah*/}
-          <div className="bg-biru-active mt-6 py-2 px-2">
+          <div className="bg-biru-active mt-6 py-2 px-2 lg:mb-4">
             <h1 className="font-semibold text-white text-lg">Ayah</h1>
           </div>
           {/* Input Field Baris 1*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between mt-3">
-            <div className="w-full lg:w-1/2 lg:me-1">
+          <div className="w-full flex flex-col lg:flex-row justify-between mt-3 lg:mb-4 gap-2">
+            <div className="w-full lg:w-1/3">
               <FieldInput
                 text=<span>
                   Nama Lengkap <span className="text-red-500">*</span>
@@ -188,21 +202,40 @@ export default function TambahSiswa() {
               ></FieldInput>
             </div>
 
-            <div className="w-full lg:w-1/2 lg:ms-1">
+            <div className="w-full lg:w-1/3">
               <FieldInput
+                text={
+                  <span>
+                    NIK <span className="text-red-500">*</span>
+                  </span>
+                }
                 type="number"
-                text=<span>
-                  NIK <span className="text-red-500">*</span>
-                </span>
                 value={form.ayah.nikAyah}
-                onChange={(e) => form.ayah.setNikAyah(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value.slice(0, 16);
+                  form.ayah.setNikAyah(value);
+                  handleNIKChange(value);
+                }}
+                variant="biasa_text_sm"
+              />
+              {nikError && (
+                <span className="text-sm italic text-red-500">{nikError}</span>
+              )}
+            </div>
+
+            <div className="w-full lg:w-1/3">
+              <FieldInput
+                type="email"
+                text=<span>Email</span>
+                value={form.ayah.emailAyah}
+                onChange={(e) => form.ayah.setEmailAyah(e.target.value)}
                 variant="biasa_text_sm"
               ></FieldInput>
             </div>
           </div>
 
           {/* Input Field Baris 2*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>
@@ -265,8 +298,8 @@ export default function TambahSiswa() {
             <h1 className="font-semibold text-white text-lg">Ibu</h1>
           </div>
           {/* Input Field Baris 1*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between mt-3">
-            <div className="w-full lg:w-1/2 lg:me-1">
+          <div className="w-full flex flex-col lg:flex-row justify-between mt-3 lg:mb-4 gap-2">
+            <div className="w-full lg:w-1/3">
               <FieldInput
                 text=<span>
                   Nama Lengkap <span className="text-red-500">*</span>
@@ -277,20 +310,40 @@ export default function TambahSiswa() {
               ></FieldInput>
             </div>
 
-            <div className="w-full lg:w-1/2 lg:ms-1">
+            <div className="w-full lg:w-1/3">
               <FieldInput
-                text=<span>
-                  Nik <span className="text-red-500">*</span>
-                </span>
+                text={
+                  <span>
+                    NIK <span className="text-red-500">*</span>
+                  </span>
+                }
+                type="number"
                 value={form.ibu.nikIbu}
-                onChange={(e) => form.ibu.setNikIbu(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value.slice(0, 16);
+                  form.ibu.setNikIbu(value);
+                  handleNIKChange(value);
+                }}
+                variant="biasa_text_sm"
+              />
+              {nikError && (
+                <span className="text-sm italic text-red-500">{nikError}</span>
+              )}
+            </div>
+
+            <div className="w-full lg:w-1/3">
+              <FieldInput
+                type="email"
+                text=<span>Email</span>
+                value={form.ibu.emailIbu}
+                onChange={(e) => form.ibu.setEmailIbu(e.target.value)}
                 variant="biasa_text_sm"
               ></FieldInput>
             </div>
           </div>
 
           {/* Input Field Baris 2*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>
@@ -353,8 +406,8 @@ export default function TambahSiswa() {
             <h1 className="font-semibold text-white text-lg">Wali</h1>
           </div>
           {/* Input Field Baris 1*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between mt-3">
-            <div className="w-full lg:w-1/2 lg:me-1">
+          <div className="w-full flex flex-col lg:flex-row justify-between mt-3 lg:mb-4 gap-2">
+            <div className="w-full lg:w-1/3">
               <FieldInput
                 text=<span>Nama Lengkap</span>
                 value={form.wali.namaWali}
@@ -363,18 +416,40 @@ export default function TambahSiswa() {
               ></FieldInput>
             </div>
 
-            <div className="w-full lg:w-1/2 lg:ms-1">
+            <div className="w-full lg:w-1/3">
               <FieldInput
-                text=<span> Nik</span>
+                text={
+                  <span>
+                    NIK <span className="text-red-500">*</span>
+                  </span>
+                }
+                type="number"
                 value={form.wali.nikWali}
-                onChange={(e) => form.wali.setNikWali(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value.slice(0, 16);
+                  form.wali.setNikWali(value);
+                  handleNIKChange(value);
+                }}
+                variant="biasa_text_sm"
+              />
+              {nikError && (
+                <span className="text-sm italic text-red-500">{nikError}</span>
+              )}
+            </div>
+
+            <div className="w-full lg:w-1/3">
+              <FieldInput
+                type="email"
+                text=<span>Email</span>
+                value={form.wali.emailWali}
+                onChange={(e) => form.wali.setEmailWali(e.target.value)}
                 variant="biasa_text_sm"
               ></FieldInput>
             </div>
           </div>
 
           {/* Input Field Baris 2*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>Tempat Lahir</span>
@@ -398,12 +473,12 @@ export default function TambahSiswa() {
           {/* Input Field Baris 3*/}
           <div className="w-full flex flex-col lg:flex-row justify-between">
             <div className="w-full lg:w-1/2 lg:me-1">
-              <FieldInput
-                text=<span>Pekerjaan</span>
+              <SelectPekerjaan
+                label="Pekerjaan Wali"
                 value={form.wali.pekerjaanWali}
-                onChange={(e) => form.wali.setPekerjaanWali(e.target.value)}
-                variant="biasa_text_sm"
-              ></FieldInput>
+                onChange={(val) => form.wali.setPekerjaanWali(val)}
+                required
+              />
             </div>
 
             <div className="w-full lg:w-1/2 lg:ms-1">

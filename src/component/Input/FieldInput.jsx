@@ -59,5 +59,5 @@ export default function FieldInput(props) {
       </>
     ),
   };
-  return <fieldset className="fieldset mb-4">{variants[variant]}</fieldset>;
+  return <fieldset className="fieldset">{variants[variant]}</fieldset>;
 }

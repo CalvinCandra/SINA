@@ -67,26 +67,26 @@ export default function LoginPage() {
         navigate("/dashboard");
       }, 2000);
     } catch (error) {
-        console.error("Error:", error);
-        // Menangani error yang dikirimkan oleh server
-        let errorMessage = "Login Gagal";
+      console.error("Error:", error);
+      // Menangani error yang dikirimkan oleh server
+      let errorMessage = "Login Gagal";
 
-        if (error.response && error.response.data.message) {
-          // Jika error dari server ada di response.data
-          if (error.response.data.message) {
-            errorMessage = error.response.data.message; // Tampilkan pesan dari server jika ada
-          }
-        } else {
-          // Jika error tidak ada response dari server
-          errorMessage = error.message;
+      if (error.response && error.response.data.message) {
+        // Jika error dari server ada di response.data
+        if (error.response.data.message) {
+          errorMessage = error.response.data.message; // Tampilkan pesan dari server jika ada
         }
+      } else {
+        // Jika error tidak ada response dari server
+        errorMessage = error.message;
+      }
 
-        setIsLoading(false); // jangan lupa set false
-        setTimeout(() => {
-          setToastMessage(`${errorMessage}`);
-          setToastVariant("error");
-        }, 10);
-        return;
+      setIsLoading(false); // jangan lupa set false
+      setTimeout(() => {
+        setToastMessage(`${errorMessage}`);
+        setToastVariant("error");
+      }, 10);
+      return;
     }
   };
 
@@ -114,7 +114,7 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmailInput(e.target.value)}
           ></FieldInput>
-          <div className="w-full relative">
+          <div className="w-full relative lg:mt-3">
             <FieldInput
               text=<span>
                 Password <span className="text-red-500">*</span>

@@ -82,7 +82,7 @@ export const useTambah = () => {
       // Gambar default
       let finalGambar = Gambar;
       if (!finalGambar) {
-        finalGambar = await getDefaultImageAsFile(defaultGambar);
+        finalGambar = await getDefaultImageAsFile(defaultImage);
       }
 
       formData.append("foto_profile", finalGambar);

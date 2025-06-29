@@ -69,6 +69,7 @@ export default function TahunAkademik() {
                 <th>Nama Kurikulum</th>
                 <th>Tahun Mulai</th>
                 <th>Tahun Berakhir</th>
+                <th>Semester</th>
                 <th>Status</th>
                 <th>Aksi</th>
               </tr>
@@ -96,7 +97,7 @@ export default function TahunAkademik() {
                 currentData.map((data, index) => (
                   <tr
                     className="border-b border-t border-border-grey"
-                    key={data.tahun_akademik_id}
+                    key={index + 1}
                   >
                     <td>{index + 1}</td>
                     <td className="whitespace-nowrap">{data.nama_kurikulum}</td>
@@ -105,6 +106,20 @@ export default function TahunAkademik() {
                     </td>
                     <td className="whitespace-nowrap">
                       {formatTahun(data.tahun_berakhir)}
+                    </td>
+                    <td className="whitespace-nowrap">
+                      {(() => {
+                        const lastDigit = parseInt(
+                          data.tahun_akademik_id.slice(-1)
+                        );
+
+                        // Validasi dan tampilkan hasil
+                        if (lastDigit % 2 === 0) {
+                          return <span className="">Genap</span>;
+                        } else {
+                          return <span className="">Ganjil</span>;
+                        }
+                      })()}
                     </td>
                     <td className="whitespace-nowrap">
                       <p
@@ -118,7 +133,7 @@ export default function TahunAkademik() {
                     <td>
                       <div className="flex items-center justify-evenly w-20">
                         <ButtonHref
-                          href={`/dashboard/akademik/tahun-akademik/update/${data.tahun_akademik_id}`}
+                          href={`/dashboard/akademik/tahun-akademik/update/${data.tahun_akademik_id}/${data.kurikulum_id}`}
                           variant="update"
                           text=<PencilSquareIcon className="w-5 h-5 text-amber-300"></PencilSquareIcon>
                         ></ButtonHref>

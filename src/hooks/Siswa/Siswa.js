@@ -134,6 +134,70 @@ export const useSiswa = () => {
     }
   };
 
+  // send Mail Per ID
+  const handleSendMailSiswa = async (e, nis) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const response = await axios.post(
+        `${baseUrl.apiUrl}/admin/siswa/sendemail/${nis}`,
+        null,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        setTimeout(() => {
+          setToastMessage("Berhasil Kirim Email");
+          setToastVariant("success");
+
+          setIsLoading(false);
+          document.getElementById("my_modal_4").close();
+        }, 1000);
+      }
+    } catch (error) {
+      console.log(error);
+      setToastMessage("Gagal kirim email");
+      setToastVariant("error");
+      document.getElementById("my_modal_4").close();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // send Mail Semua
+  const handleSendMail = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const response = await axios.post(
+        `${baseUrl.apiUrl}/admin/siswa/sendemail`,
+        null,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        setTimeout(() => {
+          setToastMessage("Berhasil Kirim Email");
+          setToastVariant("success");
+
+          setIsLoading(false);
+          document.getElementById("my_modal_5").close();
+        }, 1000);
+      }
+    } catch (error) {
+      console.log(error);
+      setToastMessage("Gagal kirim email");
+      setToastVariant("error");
+      document.getElementById("my_modal_5").close();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     defaultImage,
     dataKelas,
@@ -152,5 +216,7 @@ export const useSiswa = () => {
     indexOfFirstData,
     indexOfLastData,
     handleDeleteSiswa,
+    handleSendMailSiswa,
+    handleSendMail,
   };
 };

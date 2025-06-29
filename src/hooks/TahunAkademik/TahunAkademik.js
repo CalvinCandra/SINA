@@ -33,31 +33,33 @@ export const useTahunAkademik = () => {
     .slice(indexOfFirstData, indexOfLastData);
   const totalPages = Math.ceil(filteredData.length / dataPerPage);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(
-          `${baseUrl.apiUrl}/admin/tahunakademik`,
-          {
-            headers: {
-              Authorization: `Beazer ${token}`,
-            },
-          }
-        );
-
-        if (response.status == 200 || response.status == 201) {
-          setdataTahun(response.data);
+  const fetchData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(
+        `${baseUrl.apiUrl}/admin/tahunakademik`,
+        {
+          headers: {
+            Authorization: `Beazer ${token}`,
+          },
         }
-      } catch (error) {
-        console.log(error);
-        setToastMessage("Gagal Ambil Data");
-        setToastVariant("error");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+      );
 
+      console.log(response);
+
+      if (response.status == 200 || response.status == 201) {
+        setdataTahun(response.data);
+      }
+    } catch (error) {
+      console.log(error);
+      setToastMessage("Gagal Ambil Data");
+      setToastVariant("error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     // Tampilkan toast bila tambah atau update berhasil
     const invalidStatus = localStorage.getItem("tahunInvalid");
     const addedStatus = localStorage.getItem("tahunAdded");
@@ -94,7 +96,7 @@ export const useTahunAkademik = () => {
 
     try {
       await axios.delete(
-        `${baseUrl.apiUrl}/admin/tahunakademik/${selectedTahun.tahun_akademik_id}`,
+        `${baseUrl.apiUrl}/admin/tahunakademik/${selectedTahun.tahun_akademik_id}/${selectedTahun.kurikulum_id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -114,7 +116,11 @@ export const useTahunAkademik = () => {
         // Hapus data dari state tanpa perlu fetch ulang
         setdataTahun((prevData) =>
           prevData.filter(
-            (item) => item.tahun_akademik_id !== selectedTahun.tahun_akademik_id
+            (item) =>
+              !(
+                item.tahun_akademik_id === selectedTahun.tahun_akademik_id &&
+                item.kurikulum_id === selectedTahun.kurikulum_id
+              )
           )
         );
         document.getElementById("my_modal_3").close();

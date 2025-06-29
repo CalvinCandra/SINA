@@ -1,26 +1,32 @@
 import Calender from "../../../components/Calender/Calender";
 import Search from "../../../../component/Input/Search";
-import ButtonHref from "../../../../component/Button/ButtonHref";
-import { PencilSquareIcon } from "@heroicons/react/16/solid";
-import { useGuru } from "../../../../hooks/Guru/Guru";
 import baseUrl from "../../../../utils/config/baseUrl";
+import { useAbsenGuru } from "../../../../hooks/Guru/Absen/AbsenGuru";
+import Toast from "../../../../component/Toast/Toast";
 
 export default function AbsenGuru() {
   const {
+    defaultImage,
     dataGuru,
     currentData,
+    TahunOption,
+    TahunAkademik,
+    setTahunAkademik,
     isLoading,
+    toastMessage,
+    toastVariant,
     searchQuery,
     setSearchQuery,
     currentPage,
     setCurrentPage,
+    totalPages,
     indexOfFirstData,
     indexOfLastData,
-    totalPages,
-  } = useGuru();
+  } = useAbsenGuru();
 
   return (
     <div className="lg:py-5">
+      {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
       <div className="flex flex-col lg:flex-row w-full justify-between items-center">
         <h2 className="text-2xl font-semibold">Data Absensi Guru</h2>
         <Calender className="w-40 lg:w-full"></Calender>
@@ -28,7 +34,22 @@ export default function AbsenGuru() {
 
       <div className="w-full p-5 rounded-md bg-white mt-5">
         {/* header tabel */}
-        <div className="w-full flex justify-end items-center -mb-0.5">
+        <div className="w-full flex flex-col-reverse lg:flex-row justify-between lg:items-center -mb-0.5">
+          <select
+            className="select bg-white border border-border-grey w-40 rounded-lg mt-5 lg:mt-0"
+            value={TahunAkademik}
+            onChange={(e) => {
+              setTahunAkademik(e.target.value);
+              setCurrentPage(1);
+            }}
+          >
+            {TahunOption.map((tahun) => (
+              <option key={tahun.value} value={tahun.value}>
+                {tahun.label}
+              </option>
+            ))}
+          </select>
+
           <Search
             className="bg-white"
             value={searchQuery}
@@ -78,24 +99,20 @@ export default function AbsenGuru() {
                 currentData.map((data, index) => (
                   <tr
                     className="border-b border-t border-border-grey"
-                    key={data.nip}
+                    key={index + 1}
                   >
                     <td>{index + 1}</td>
                     <td className="whitespace-nowrap">
                       <div className="flex items-center space-x-3">
                         <div className="avatar">
                           <div className="mask mask-circle w-12 h-12">
-                            {data.foto_profil ? (
-                              <img
-                                src={`${baseUrl.apiUrlImage}/Upload/profile_image/${data.foto_profil}`}
-                                alt="Avatar"
-                              />
-                            ) : (
-                              <img
-                                src="https://manbengkuluselatan.sch.id/assets/img/profile/default.jpg"
-                                alt="Avatar"
-                              ></img>
-                            )}
+                            <img
+                              src={
+                                data.foto_profil
+                                  ? `${baseUrl.apiUrlImage}/Upload/profile_image/${data.foto_profil}`
+                                  : defaultImage
+                              }
+                            />
                           </div>
                         </div>
                         <div>
@@ -104,10 +121,10 @@ export default function AbsenGuru() {
                       </div>
                     </td>
                     <td className="whitespace-nowrap">{data.nip}</td>
-                    <td className="whitespace-nowrap">1</td>
-                    <td className="whitespace-nowrap">0</td>
-                    <td className="whitespace-nowrap">0</td>
-                    <td className="whitespace-nowrap">0</td>
+                    <td className="text-green-500">{data.hadir}</td>
+                    <td className="text-sky-500">{data.izin}</td>
+                    <td className="text-amber-500">{data.sakit}</td>
+                    <td className="text-red-500">{data.alpa}</td>
                   </tr>
                 ))
               )}
