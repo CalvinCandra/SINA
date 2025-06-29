@@ -13,6 +13,8 @@ export default function Dashboard() {
     dataCountGuru,
     dataCountPengumuman,
     dataCountSiswa,
+    rekapGuru,
+    rekapSiswa,
     toastMessage,
     toastVariant,
   } = useHighlight();
@@ -58,8 +60,8 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row justify-between w-full mt-8">
-        <div className="bg-white p-4 rounded-lg shadow-md my-2 lg:my-0">
+      <div className="flex flex-col lg:flex-row justify-between w-full mt-2 md:mt-8 gap-4">
+        <div className="w-1/2 bg-white p-4 rounded-lg shadow-md my-2 lg:my-0">
           <div className="flex flex-col lg:flex-row items-center justify-between">
             <h3 className="font-normal text-lg lg:mb-10">
               Rekapan Absen Siswa
@@ -68,18 +70,14 @@ export default function Dashboard() {
               Semua Kelas
             </h3>
           </div>
-          <div className="flex items-center justify-between">
-            <Grafik className="w-10"></Grafik>
-          </div>
+          <Grafik title="Siswa" data={rekapSiswa} />
         </div>
 
-        <div className="bg-white p-4 rounded-lg shadow-md my-2 lg:my-0">
+        <div className="w-1/2 bg-white p-4 rounded-lg shadow-md my-2 lg:my-0">
           <h3 className="font-normal text-lg lg:mb-10 text-center mb-10">
             Rekapan Guru
           </h3>
-          <div className="flex items-center justify-between">
-            <Grafik className="w-10"></Grafik>
-          </div>
+          <Grafik title="Guru" data={rekapGuru} />
         </div>
       </div>
     </div>

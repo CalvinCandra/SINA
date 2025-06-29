@@ -1,14 +1,11 @@
-import { useState, useEffect } from "react";
 import FieldInput from "../../../../component/Input/FieldInput";
 import Button from "../../../../component/Button/Button";
 import InputFile from "../../../../component/Input/InputFile";
 import ButtonHref from "../../../../component/Button/ButtonHref";
 import SelectField from "../../../../component/Input/SelectField";
 import Textarea from "../../../../component/Input/Textarea";
-import { useNavigate, useParams } from "react-router-dom";
 import Toast from "../../../../component/Toast/Toast";
 import Loading from "../../../../component/Loading/Loading";
-import axios from "axios";
 import baseUrl from "../../../../utils/config/baseUrl";
 import { useUpdateGuru } from "../../../../hooks/Guru/UpdateGuru";
 
@@ -17,6 +14,8 @@ export default function UpdateDataGuru() {
     isLoading,
     toastMessage,
     toastVariant,
+    nipError,
+    handleNipChange,
     preview,
     form,
     setform,
@@ -59,7 +58,7 @@ export default function UpdateDataGuru() {
           </div>
 
           {/* Input Field */}
-          <div className="w-full flex flex-col lg:flex-row justify-between mt-5">
+          <div className="w-full flex flex-col lg:flex-row justify-between mt-5 lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>
@@ -74,18 +73,27 @@ export default function UpdateDataGuru() {
 
             <div className="w-full lg:w-1/2 lg:ms-1">
               <FieldInput
-                text=<span>
-                  NIP Guru <span className="text-red-500">*</span>
-                </span>
+                text={
+                  <span>
+                    NIP Guru <span className="text-red-500">*</span>
+                  </span>
+                }
                 type="number"
                 value={form.nipGuru}
-                onChange={(e) => setform.setNipGuru(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value.slice(0, 18);
+                  setform.setNipGuru(value);
+                  handleNipChange(value);
+                }}
                 variant="biasa_text_sm"
-              ></FieldInput>
+              />
+              {nipError && (
+                <span className="text-sm italic text-red-500">{nipError}</span>
+              )}
             </div>
           </div>
 
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>
@@ -110,7 +118,7 @@ export default function UpdateDataGuru() {
             </div>
           </div>
 
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>

@@ -1,8 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import baseUrl from "../../utils/config/baseUrl";
+import { useNavigate } from "react-router-dom";
 
 export const useAdmin = () => {
+  const navigate = useNavigate();
+
   const [dataAdmin, setDataAdmin] = useState([]);
   const [selectedAdmin, setSelectedAdmin] = useState(null);
   const [currentData, setCurrentData] = useState([]);
@@ -45,7 +48,6 @@ export const useAdmin = () => {
     const invalidStatus = localStorage.getItem("adminInvalid");
     const addedStatus = localStorage.getItem("adminAdded");
     const updateStatus = localStorage.getItem("adminUpdate");
-    const deleteStatus = localStorage.getItem("adminDelete");
 
     if (invalidStatus === "error") {
       setToastMessage("Admin Tidak ditemukan");
@@ -63,12 +65,6 @@ export const useAdmin = () => {
       setToastMessage("Admin berhasil diupdate");
       setToastVariant("success");
       localStorage.removeItem("adminUpdate");
-    }
-
-    if (deleteStatus === "success") {
-      setToastMessage("Admin berhasil dihapus");
-      setToastVariant("success");
-      localStorage.removeItem("adminDelete");
     }
 
     fetchData();
@@ -99,6 +95,7 @@ export const useAdmin = () => {
     if (!selectedAdmin) return;
 
     setIsLoading(true);
+
     try {
       await axios.delete(
         `${baseUrl.apiUrl}/admin/admin2/${selectedAdmin.admin_id}`,
@@ -127,6 +124,70 @@ export const useAdmin = () => {
     }
   };
 
+  // send Mail Per ID
+  const handleSendMailAdmin = async (e, idAdmin) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const response = await axios.post(
+        `${baseUrl.apiUrl}/admin/sendemail/${idAdmin}`,
+        null,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        setTimeout(() => {
+          setToastMessage("Berhasil Kirim Email");
+          setToastVariant("success");
+
+          setIsLoading(false);
+          document.getElementById("my_modal_4").close();
+        }, 1000);
+      }
+    } catch (error) {
+      console.log(error);
+      setToastMessage("Gagal kirim email");
+      setToastVariant("error");
+      document.getElementById("my_modal_4").close();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // send Mail Semua
+  const handleSendMail = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const response = await axios.post(
+        `${baseUrl.apiUrl}/admin/sendemail`,
+        null,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        setTimeout(() => {
+          setToastMessage("Berhasil Kirim Email");
+          setToastVariant("success");
+
+          setIsLoading(false);
+          document.getElementById("my_modal_5").close();
+        }, 1000);
+      }
+    } catch (error) {
+      console.log(error);
+      setToastMessage("Gagal kirim email");
+      setToastVariant("error");
+      document.getElementById("my_modal_5").close();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     dataAdmin,
     selectedAdmin,
@@ -143,5 +204,7 @@ export const useAdmin = () => {
     currentPage,
     setCurrentPage,
     handleDeleteAdmin,
+    handleSendMailAdmin,
+    handleSendMail,
   };
 };

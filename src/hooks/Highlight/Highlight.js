@@ -7,6 +7,8 @@ export const useHighlight = () => {
   const [dataCountAdmin, setDataCountAdmin] = useState("");
   const [dataCountPengumuman, setDataCountPengumuman] = useState("");
   const [dataCountGuru, setDataCountGuru] = useState("");
+  const [rekapSiswa, setRekapSiswa] = useState({});
+  const [rekapGuru, setRekapGuru] = useState({});
 
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
@@ -51,18 +53,40 @@ export const useHighlight = () => {
         }
       );
 
-      console.log(responseCountGuru);
+      const responseRekapAbsenSiswa = await axios.get(
+        `${baseUrl.apiUrl}/admin/count/absensiswa`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const responseRekapAbsenGuru = await axios.get(
+        `${baseUrl.apiUrl}/admin/count/absenguru`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log(responseRekapAbsenSiswa);
 
       if (
         responseCountAdmin.status == 200 &&
         responseCountGuru.status == 200 &&
         responseCountInformasi.status == 200 &&
-        responseCountSiswa.status == 200
+        responseCountSiswa.status == 200 &&
+        responseRekapAbsenGuru.status == 200 &&
+        responseRekapAbsenSiswa.status == 200
       ) {
         setDataCountSiswa(responseCountSiswa.data.total_siswa);
         setDataCountGuru(responseCountGuru.data.total_guru);
         setDataCountPengumuman(responseCountInformasi.data.total_pengumuman);
         setDataCountAdmin(responseCountAdmin.data.total_admin);
+        setRekapGuru(responseRekapAbsenGuru.data);
+        setRekapSiswa(responseRekapAbsenSiswa.data);
       }
     } catch (error) {
       console.log(error);
@@ -95,6 +119,8 @@ export const useHighlight = () => {
     dataCountGuru,
     dataCountPengumuman,
     dataCountSiswa,
+    rekapGuru,
+    rekapSiswa,
     toastMessage,
     toastVariant,
   };

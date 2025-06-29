@@ -50,6 +50,11 @@ export const useUpdateSiswa = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
+
+  // untuk pesan error
+  const [nisnError, setNisnError] = useState("");
+  const [nikError, setNikError] = useState("");
+
   const token = sessionStorage.getItem("session");
 
   const agamaOption = [
@@ -182,6 +187,26 @@ export const useUpdateSiswa = () => {
     }
   };
 
+  const handleNISNChange = (value) => {
+    if (value.trim() === "") {
+      setNisnError("NISN tidak Boleh Kosong");
+    } else if (value.length < 10) {
+      setNisnError(`NISN kurang ${10 - value.length} angka`);
+    } else {
+      setNisnError("");
+    }
+  };
+
+  const handleNIKChange = (value) => {
+    if (value.trim() === "") {
+      setNikError("Nik tidak Boleh Kosong");
+    } else if (value.length < 16) {
+      setNikError(`Nik kurang ${16 - value.length} angka`);
+    } else {
+      setNikError("");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -225,10 +250,10 @@ export const useUpdateSiswa = () => {
       return;
     }
 
-    // Validasi panjang NIS, NISN, dan NIK
+    // Validasi panjang NISN
     if (nisnSiswa.length !== 10) {
       setTimeout(() => {
-        setToastMessage("NIS dan NISN harus 10 digit");
+        setToastMessage("NISN harus 10 digit");
         setToastVariant("error");
       }, 10);
       return;
@@ -251,7 +276,7 @@ export const useUpdateSiswa = () => {
       formData.append("nis", nisSiswa);
       formData.append("nisn", nisnSiswa);
       formData.append("tanggal_lahir", tglLahirSiswa);
-      formData.append("tempat_lahir", tglLahirSiswa);
+      formData.append("tempat_lahir", tempatLahirSiswa);
       formData.append("alamat", alamatSiswa);
       formData.append("jenis_kelamin", kelamin);
       formData.append("agama", agama);
@@ -412,5 +437,9 @@ export const useUpdateSiswa = () => {
         setAlamatWali,
       },
     },
+    nikError,
+    nisnError,
+    handleNISNChange,
+    handleNIKChange,
   };
 };

@@ -88,7 +88,7 @@ export const useTambahKelas = () => {
         }
       } catch (error) {
         console.error("Gagal mengambil data:", error);
-        setToastMessage("Gagal mengambil data");
+        setToastMessage("Gagal Tambah Kelas");
         setToastVariant("error");
       }
     };

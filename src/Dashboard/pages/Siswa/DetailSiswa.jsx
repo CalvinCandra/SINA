@@ -41,7 +41,7 @@ export default function DetailSiswa() {
 
           {/* Input Field Siswa*/}
           {/* Input Field Baris 1*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between mt-5">
+          <div className="w-full flex flex-col lg:flex-row justify-between mt-5 lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>Nama Lengkap</span>
@@ -62,7 +62,7 @@ export default function DetailSiswa() {
           </div>
 
           {/* Input Field Baris 2*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>Nis</span>
@@ -83,7 +83,7 @@ export default function DetailSiswa() {
           </div>
 
           {/* Input Field Baris 3*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>Tempat Lahir</span>
@@ -105,7 +105,7 @@ export default function DetailSiswa() {
           </div>
 
           {/* Input Field Baris 4*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>Agama</span>
@@ -139,7 +139,7 @@ export default function DetailSiswa() {
             <h1 className="font-semibold text-white text-lg">Ayah</h1>
           </div>
           {/* Input Field Baris 1*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between mt-3">
+          <div className="w-full flex flex-col lg:flex-row justify-between mt-3 lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>Nama Lengkap</span>
@@ -160,7 +160,7 @@ export default function DetailSiswa() {
           </div>
 
           {/* Input Field Baris 2*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>Tempat Lahir</span>
@@ -182,7 +182,7 @@ export default function DetailSiswa() {
           </div>
 
           {/* Input Field Baris 3*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>Pekerjaan</span>
@@ -216,7 +216,7 @@ export default function DetailSiswa() {
             <h1 className="font-semibold text-white text-lg">Ibu</h1>
           </div>
           {/* Input Field Baris 1*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between mt-3">
+          <div className="w-full flex flex-col lg:flex-row justify-between mt-3 lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>Nama Lengkap</span>
@@ -237,7 +237,7 @@ export default function DetailSiswa() {
           </div>
 
           {/* Input Field Baris 2*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>Tempat Lahir</span>
@@ -259,7 +259,7 @@ export default function DetailSiswa() {
           </div>
 
           {/* Input Field Baris 3*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>Pekerjaan</span>
@@ -293,7 +293,7 @@ export default function DetailSiswa() {
             <h1 className="font-semibold text-white text-lg">Wali</h1>
           </div>
           {/* Input Field Baris 1*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between mt-3">
+          <div className="w-full flex flex-col lg:flex-row justify-between mt-3 lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>Nama Lengkap</span>
@@ -314,7 +314,7 @@ export default function DetailSiswa() {
           </div>
 
           {/* Input Field Baris 2*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 type="text"
@@ -341,7 +341,7 @@ export default function DetailSiswa() {
           </div>
 
           {/* Input Field Baris 3*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>Pekerjaan</span>

@@ -127,6 +127,70 @@ export const useGuru = () => {
     }
   };
 
+  // send Mail Per ID
+  const handleSendMailGuru = async (e, nip) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const response = await axios.post(
+        `${baseUrl.apiUrl}/admin/guru/sendemail/${nip}`,
+        null,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        setTimeout(() => {
+          setToastMessage("Berhasil Kirim Email");
+          setToastVariant("success");
+
+          setIsLoading(false);
+          document.getElementById("my_modal_5").close();
+        }, 1000);
+      }
+    } catch (error) {
+      console.log(error);
+      setToastMessage("Gagal kirim email");
+      setToastVariant("error");
+      document.getElementById("my_modal_5").close();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // send Mail Semua
+  const handleSendMail = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const response = await axios.post(
+        `${baseUrl.apiUrl}/admin/guru/sendemail`,
+        null,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        setTimeout(() => {
+          setToastMessage("Berhasil Kirim Email");
+          setToastVariant("success");
+
+          setIsLoading(false);
+          document.getElementById("my_modal_6").close();
+        }, 1000);
+      }
+    } catch (error) {
+      console.log(error);
+      setToastMessage("Gagal kirim email");
+      setToastVariant("error");
+      document.getElementById("my_modal_6").close();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     dataGuru,
     selectedGuru,
@@ -143,5 +207,7 @@ export const useGuru = () => {
     indexOfLastData,
     totalPages,
     handleDeleteGuru,
+    handleSendMail,
+    handleSendMailGuru,
   };
 };

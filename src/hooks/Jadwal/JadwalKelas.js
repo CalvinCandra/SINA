@@ -14,7 +14,7 @@ export const useJadwalKelas = () => {
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get(`${baseUrl.apiUrl}/admin/kelas`, {
+      const response = await axios.get(`${baseUrl.apiUrl}/admin/kelas/aktif`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

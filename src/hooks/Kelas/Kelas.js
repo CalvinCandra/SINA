@@ -6,6 +6,7 @@ export const useKelas = () => {
   const [dataKelas, setDataKelas] = useState([]);
   const [currentData, setCurrentData] = useState([]);
   const [selectedKelas, setSelectedKelas] = useState(null);
+  const [activeFilter, setActiveFilter] = useState("aktif");
 
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
@@ -20,10 +21,15 @@ export const useKelas = () => {
   const token = sessionStorage.getItem("session");
 
   // Ambil Data Kelas
-  const fetchData = async () => {
+  const fetchData = async (filter = activeFilter) => {
     try {
       setIsLoading(true);
-      const response = await axios.get(`${baseUrl.apiUrl}/admin/kelas`, {
+      let url = `${baseUrl.apiUrl}/admin/kelas`;
+      if (filter === "aktif") {
+        url = `${baseUrl.apiUrl}/admin/kelas/aktif`;
+      }
+
+      const response = await axios.get(url, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -44,7 +50,7 @@ export const useKelas = () => {
   // refresh Data
   useEffect(() => {
     fetchData();
-  }, [token]);
+  }, [token, activeFilter]);
 
   // Pagination filter
   const filteredData = useMemo(() => {
@@ -103,6 +109,8 @@ export const useKelas = () => {
 
   return {
     dataKelas,
+    activeFilter,
+    setActiveFilter,
     currentData,
     searchQuery,
     setSearchQuery,

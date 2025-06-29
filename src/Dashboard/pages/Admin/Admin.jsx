@@ -1,7 +1,11 @@
 import Calender from "../../components/Calender/Calender";
 import ButtonHref from "../../../component/Button/ButtonHref";
 import Search from "../../../component/Input/Search";
-import { PencilSquareIcon, TrashIcon } from "@heroicons/react/16/solid";
+import {
+  PencilSquareIcon,
+  TrashIcon,
+  PaperAirplaneIcon,
+} from "@heroicons/react/16/solid";
 import Button from "../../../component/Button/Button";
 import Toast from "../../../component/Toast/Toast";
 import Loading from "../../../component/Loading/Loading";
@@ -26,6 +30,8 @@ export default function Admin() {
     currentPage,
     setCurrentPage,
     handleDeleteAdmin,
+    handleSendMailAdmin,
+    handleSendMail,
   } = useAdmin();
 
   return (
@@ -39,13 +45,25 @@ export default function Admin() {
         </div>
 
         <div className="w-full p-5 rounded-md bg-white mt-5">
-          <div className="w-full flex flex-col lg:flex-row justify-between items-center mb-5">
-            <div className="lg:w-40 mb-6 lg:mb-0">
-              <ButtonHref
-                text="Tambah Admin"
-                href="/dashboard/admin/tambah"
-                variant="tambah"
-              />
+          <div className="w-full flex flex-col lg:flex-row lg:justify-between lg:items-center gap-y-3 mb-5">
+            <div className="flex items-center gap-2 lg:gap-0">
+              <div className="lg:w-40">
+                <ButtonHref
+                  text="Tambah Admin"
+                  href="/dashboard/admin/tambah"
+                  variant="tambah"
+                />
+              </div>
+              <div className="">
+                <button
+                  className="lg:w-full px-3 bg-biru-primary text-sm hover:bg-biru-hover py-2 font-semibold text-white rounded cursor-pointer"
+                  onClick={() => {
+                    document.getElementById("my_modal_5").showModal();
+                  }}
+                >
+                  Kirim Semua Email
+                </button>
+              </div>
             </div>
             <Search
               className="bg-white"
@@ -116,7 +134,17 @@ export default function Admin() {
                         {formatTanggalLengkap(data.created_at)}
                       </td>
                       <td>
-                        <div className="flex items-center justify-between w-14">
+                        <div className="flex items-center justify-between w-14 gap-1.5">
+                          <button
+                            className="border-0 cursor-pointer"
+                            onClick={() => {
+                              setSelectedAdmin(data);
+                              document.getElementById("my_modal_4").showModal();
+                            }}
+                          >
+                            <PaperAirplaneIcon className="w-5 h-5 text-green-500" />
+                          </button>
+                          |
                           <ButtonHref
                             href={`/dashboard/admin/update/${data.admin_id}`}
                             variant="update"
@@ -194,6 +222,74 @@ export default function Admin() {
                   <div className="w-full">
                     <Button
                       text={isLoading ? <Loading /> : "Hapus Admin"}
+                      variant="button_submit_dash"
+                      disabled={isLoading}
+                    />
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </dialog>
+
+        {/* Modal Konfirmasi Send Mail */}
+        <dialog id="my_modal_4" className="modal">
+          <div className="modal-box bg-white rounded-lg">
+            <form method="dialog">
+              <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                ✕
+              </button>
+            </form>
+            <div className="mt-5">
+              <h1 className="font-bold text-3xl text-center">Konfirmasi!</h1>
+              {selectedAdmin && (
+                <p className="text-center my-2">
+                  Anda yakin ingin mengirim email kepada {""}
+                  <b>{selectedAdmin.username}</b>?
+                </p>
+              )}
+              <div className="w-56 mx-auto p-1 flex justify-between items-center mt-4">
+                <form method="dialog" className="w-full me-1">
+                  <Button variant="button_submit_cancel" text="Cancel" />
+                </form>
+                <form
+                  className="w-full ms-1"
+                  onSubmit={(e) => {
+                    handleSendMailAdmin(e, selectedAdmin.admin_id);
+                  }}
+                >
+                  <div className="w-full">
+                    <Button
+                      text={isLoading ? <Loading /> : "Kirim Email"}
+                      variant="button_submit_dash"
+                      disabled={isLoading}
+                    />
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </dialog>
+
+        {/* Modal Konfirmasi Send Mail All */}
+        <dialog id="my_modal_5" className="modal">
+          <div className="modal-box bg-white rounded-lg">
+            <form method="dialog">
+              <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                ✕
+              </button>
+            </form>
+            <div className="mt-5">
+              <h1 className="font-bold text-3xl text-center">Konfirmasi!</h1>
+              <p className="text-center my-2">Kirim Email Secara Bersamaan?</p>
+              <div className="w-56 mx-auto p-1 flex justify-between items-center mt-4">
+                <form method="dialog" className="w-full me-1">
+                  <Button variant="button_submit_cancel" text="Cancel" />
+                </form>
+                <form className="w-full ms-1" onSubmit={handleSendMail}>
+                  <div className="w-full">
+                    <Button
+                      text={isLoading ? <Loading /> : "Kirim Email"}
                       variant="button_submit_dash"
                       disabled={isLoading}
                     />

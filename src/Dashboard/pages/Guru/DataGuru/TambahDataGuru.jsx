@@ -13,6 +13,8 @@ export default function TambahDataGuru() {
     isLoading,
     toastMessage,
     toastVariant,
+    nipError,
+    handleNipChange,
     preview,
     defaultImage,
     form,
@@ -54,7 +56,7 @@ export default function TambahDataGuru() {
           </div>
 
           {/* Input Field */}
-          <div className="w-full flex flex-col lg:flex-row justify-between mt-5">
+          <div className="w-full flex flex-col lg:flex-row justify-between mt-5 lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>
@@ -69,18 +71,27 @@ export default function TambahDataGuru() {
 
             <div className="w-full lg:w-1/2 lg:ms-1">
               <FieldInput
-                text=<span>
-                  NIP Guru <span className="text-red-500">*</span>
-                </span>
+                text={
+                  <span>
+                    NIP Guru <span className="text-red-500">*</span>
+                  </span>
+                }
                 type="number"
                 value={form.nipGuru}
-                onChange={(e) => setform.setNipGuru(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value.slice(0, 18);
+                  setform.setNipGuru(value);
+                  handleNipChange(value);
+                }}
                 variant="biasa_text_sm"
-              ></FieldInput>
+              />
+              {nipError && (
+                <span className="text-sm italic text-red-500">{nipError}</span>
+              )}
             </div>
           </div>
 
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>
@@ -105,7 +116,7 @@ export default function TambahDataGuru() {
             </div>
           </div>
 
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>
@@ -131,7 +142,7 @@ export default function TambahDataGuru() {
             </div>
           </div>
 
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <SelectField
                 text="Agama"

@@ -12,7 +12,7 @@ export const useSiswaKelas = () => {
   const fecthData = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get(`${baseUrl.apiUrl}/admin/kelas`, {
+      const response = await axios.get(`${baseUrl.apiUrl}/admin/kelas/aktif`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

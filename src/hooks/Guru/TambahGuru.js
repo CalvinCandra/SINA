@@ -20,9 +20,12 @@ export const useTambahGuru = () => {
   const [kelaminGuru, setKelamin] = useState("");
   const [Gambar, setGambar] = useState(null);
   const [alamat, setAlamat] = useState("");
+
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
+  // untuk simpan error nip
+  const [nipError, setNipError] = useState("");
   // token
   const token = sessionStorage.getItem("session");
 
@@ -97,6 +100,16 @@ export const useTambahGuru = () => {
     }
   };
 
+  const handleNipChange = (value) => {
+    if (value.trim() === "") {
+      setNipError("NIP tidak boleh kosong");
+    } else if (value.length < 18) {
+      setNipError(`NIP kurang ${18 - value.length} angka`);
+    } else {
+      setNipError("");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -104,10 +117,11 @@ export const useTambahGuru = () => {
     setToastMessage("");
     setToastVariant("");
 
-    // validasi
+    // validasi field kosong
     if (
       namaGuru.trim() === "" ||
       emailGuru.trim() === "" ||
+      nipGuru.trim() === "" ||
       telp.trim() === "" ||
       agamaGuru.trim() === "" ||
       tempat_lahir.trim() === "" ||
@@ -117,6 +131,15 @@ export const useTambahGuru = () => {
     ) {
       setTimeout(() => {
         setToastMessage("Kolom Input tidak boleh kosong");
+        setToastVariant("error");
+      }, 10);
+      return;
+    }
+
+    // validasi nip - gunakan pesan yang sama dengan validasi real-time
+    if (nipGuru.length !== 18) {
+      setTimeout(() => {
+        setToastMessage("NIP tidak boleh lebih atau kurang dari 18 Angka");
         setToastVariant("error");
       }, 10);
       return;
@@ -185,6 +208,8 @@ export const useTambahGuru = () => {
     isLoading,
     toastMessage,
     toastVariant,
+    nipError,
+    handleNipChange,
     preview,
     form: {
       emailGuru,

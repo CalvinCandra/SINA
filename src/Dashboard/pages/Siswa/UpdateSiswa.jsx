@@ -23,6 +23,10 @@ export default function UpdateSiswa() {
     preview,
     Gambar,
     form,
+    nikError,
+    nisnError,
+    handleNISNChange,
+    handleNIKChange,
   } = useUpdateSiswa();
 
   return (
@@ -60,7 +64,7 @@ export default function UpdateSiswa() {
 
           {/* Input Field Siswa*/}
           {/* Input Field Baris 1*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between mt-5">
+          <div className="w-full flex flex-col lg:flex-row justify-between mt-5 lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>
@@ -84,7 +88,7 @@ export default function UpdateSiswa() {
           </div>
 
           {/* Input Field Baris 2*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>
@@ -98,18 +102,28 @@ export default function UpdateSiswa() {
 
             <div className="w-full lg:w-1/2 lg:ms-1">
               <FieldInput
-                text=<span>
-                  NISN <span className="text-red-500">*</span>
-                </span>
+                text={
+                  <span>
+                    NISN <span className="text-red-500">*</span>
+                  </span>
+                }
+                type="number"
                 value={form.siswa.nisnSiswa}
+                onChange={(e) => {
+                  const value = e.target.value.slice(0, 10);
+                  form.siswa.setNisnSiswa(value);
+                  handleNISNChange(value);
+                }}
                 variant="biasa_text_sm"
-                onChange={(e) => form.siswa.setNisnSiswa(e.target.value)}
-              ></FieldInput>
+              />
+              {nisnError && (
+                <span className="text-sm italic text-red-500">{nisnError}</span>
+              )}
             </div>
           </div>
 
           {/* Input Field Baris 3*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>
@@ -135,7 +149,7 @@ export default function UpdateSiswa() {
           </div>
 
           {/* Input Field Baris 4*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <SelectField
                 text=<span>
@@ -185,7 +199,7 @@ export default function UpdateSiswa() {
             <h1 className="font-semibold text-white text-lg">Ayah</h1>
           </div>
           {/* Input Field Baris 1*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between mt-3">
+          <div className="w-full flex flex-col lg:flex-row justify-between mt-3 lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>
@@ -199,19 +213,28 @@ export default function UpdateSiswa() {
 
             <div className="w-full lg:w-1/2 lg:ms-1">
               <FieldInput
+                text={
+                  <span>
+                    NIK <span className="text-red-500">*</span>
+                  </span>
+                }
                 type="number"
-                text=<span>
-                  NIK <span className="text-red-500">*</span>
-                </span>
                 value={form.ayah.nikAyah}
-                onChange={(e) => form.ayah.setNikAyah(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value.slice(0, 16);
+                  form.ayah.setNikAyah(value);
+                  handleNIKChange(value);
+                }}
                 variant="biasa_text_sm"
-              ></FieldInput>
+              />
+              {nikError && (
+                <span className="text-sm italic text-red-500">{nikError}</span>
+              )}
             </div>
           </div>
 
           {/* Input Field Baris 2*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>
@@ -237,7 +260,7 @@ export default function UpdateSiswa() {
           </div>
 
           {/* Input Field Baris 3*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <SelectPekerjaan
                 label="Pekerjaan Ayah"
@@ -274,7 +297,7 @@ export default function UpdateSiswa() {
             <h1 className="font-semibold text-white text-lg">Ibu</h1>
           </div>
           {/* Input Field Baris 1*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between mt-3">
+          <div className="w-full flex flex-col lg:flex-row justify-between mt-3 lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>
@@ -288,18 +311,28 @@ export default function UpdateSiswa() {
 
             <div className="w-full lg:w-1/2 lg:ms-1">
               <FieldInput
-                text=<span>
-                  Nik <span className="text-red-500">*</span>
-                </span>
+                text={
+                  <span>
+                    NIK <span className="text-red-500">*</span>
+                  </span>
+                }
+                type="number"
                 value={form.ibu.nikIbu}
-                onChange={(e) => form.ibu.setNikIbu(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value.slice(0, 16);
+                  form.ibu.setNikIbu(value);
+                  handleNIKChange(value);
+                }}
                 variant="biasa_text_sm"
-              ></FieldInput>
+              />
+              {nikError && (
+                <span className="text-sm italic text-red-500">{nikError}</span>
+              )}
             </div>
           </div>
 
           {/* Input Field Baris 2*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>
@@ -325,7 +358,7 @@ export default function UpdateSiswa() {
           </div>
 
           {/* Input Field Baris 3*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <SelectPekerjaan
                 label="Pekerjaan Ibu"
@@ -362,7 +395,7 @@ export default function UpdateSiswa() {
             <h1 className="font-semibold text-white text-lg">Wali</h1>
           </div>
           {/* Input Field Baris 1*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between mt-3">
+          <div className="w-full flex flex-col lg:flex-row justify-between mt-3 lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>Nama Lengkap</span>
@@ -374,16 +407,28 @@ export default function UpdateSiswa() {
 
             <div className="w-full lg:w-1/2 lg:ms-1">
               <FieldInput
-                text=<span> Nik</span>
+                text={
+                  <span>
+                    NIK <span className="text-red-500">*</span>
+                  </span>
+                }
+                type="number"
                 value={form.wali.nikWali}
-                onChange={(e) => form.wali.setNikWali(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value.slice(0, 16);
+                  form.wali.setNikWali(value);
+                  handleNIKChange(value);
+                }}
                 variant="biasa_text_sm"
-              ></FieldInput>
+              />
+              {nikError && (
+                <span className="text-sm italic text-red-500">{nikError}</span>
+              )}
             </div>
           </div>
 
           {/* Input Field Baris 2*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <FieldInput
                 text=<span>Tempat Lahir</span>
@@ -405,14 +450,14 @@ export default function UpdateSiswa() {
           </div>
 
           {/* Input Field Baris 3*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between">
+          <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
-              <FieldInput
-                text=<span>Pekerjaan</span>
+              <SelectPekerjaan
+                label="Pekerjaan Wali"
                 value={form.wali.pekerjaanWali}
-                onChange={(e) => form.wali.setPekerjaanWali(e.target.value)}
-                variant="biasa_text_sm"
-              ></FieldInput>
+                onChange={(val) => form.wali.setPekerjaanWali(val)}
+                required
+              />
             </div>
 
             <div className="w-full lg:w-1/2 lg:ms-1">

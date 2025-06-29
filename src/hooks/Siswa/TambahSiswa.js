@@ -25,6 +25,7 @@ export const useTambahSiswa = () => {
   // variabel ayah
   const [namaAyah, setNamaAyah] = useState("");
   const [nikAyah, setNikAyah] = useState("");
+  const [emailAyah, setEmailAyah] = useState("");
   const [tempatLahirAyah, settempatLahirAyah] = useState("");
   const [tglLahirAyah, settglLahirAyah] = useState("");
   const [pekerjaanAyah, setPekerjaanAyah] = useState("");
@@ -33,6 +34,7 @@ export const useTambahSiswa = () => {
   // variabel ibu
   const [namaIbu, setNamaIbu] = useState("");
   const [nikIbu, setNikIbu] = useState("");
+  const [emailIbu, setEmailIbu] = useState("");
   const [tempatLahirIbu, settempatLahirIbu] = useState("");
   const [tglLahirIbu, settglLahirIbu] = useState("");
   const [pekerjaanIbu, setPekerjaanIbu] = useState("");
@@ -41,6 +43,7 @@ export const useTambahSiswa = () => {
   // variabel wali
   const [namaWali, setNamaWali] = useState("");
   const [nikWali, setNikWali] = useState("");
+  const [emailWali, setEmailWali] = useState("");
   const [tempatLahirWali, settempatLahirWali] = useState("");
   const [tglLahirWali, settglLahirWali] = useState("");
   const [pekerjaanWali, setPekerjaanWali] = useState("");
@@ -49,6 +52,10 @@ export const useTambahSiswa = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
+
+  // untuk pesan error
+  const [nisnError, setNisnError] = useState("");
+  const [nikError, setNikError] = useState("");
 
   const token = sessionStorage.getItem("session");
 
@@ -120,6 +127,26 @@ export const useTambahSiswa = () => {
     }
   };
 
+  const handleNISNChange = (value) => {
+    if (value.trim() === "") {
+      setNisnError("NISN tidak Boleh Kosong");
+    } else if (value.length < 10) {
+      setNisnError(`NISN kurang ${10 - value.length} angka`);
+    } else {
+      setNisnError("");
+    }
+  };
+
+  const handleNIKChange = (value) => {
+    if (value.trim() === "") {
+      setNikError("Nik tidak Boleh Kosong");
+    } else if (value.length < 16) {
+      setNikError(`Nik kurang ${16 - value.length} angka`);
+    } else {
+      setNikError("");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -163,15 +190,16 @@ export const useTambahSiswa = () => {
       return;
     }
 
-    // Validasi panjang NIS, NISN, dan NIK
-    if (nisSiswa.length !== 10 || nisnSiswa.length !== 10) {
+    // Validasi panjang NISN
+    if (nisnSiswa.length !== 10) {
       setTimeout(() => {
-        setToastMessage("NIS dan NISN harus 10 digit");
+        setToastMessage("NISN harus 10 digit");
         setToastVariant("error");
       }, 10);
       return;
     }
 
+    // Validasi panjang NIK
     if (nikAyah.length !== 16 || nikIbu.length !== 16) {
       setTimeout(() => {
         setToastMessage("NIK harus 16 digit");
@@ -189,7 +217,7 @@ export const useTambahSiswa = () => {
       formData.append("nis", nisSiswa);
       formData.append("nisn", nisnSiswa);
       formData.append("tanggal_lahir", tglLahirSiswa);
-      formData.append("tempat_lahir", tglLahirSiswa);
+      formData.append("tempat_lahir", tempatLahirSiswa);
       formData.append("alamat", alamatSiswa);
       formData.append("jenis_kelamin", kelamin);
       formData.append("agama", agama);
@@ -306,6 +334,8 @@ export const useTambahSiswa = () => {
         setNamaAyah,
         nikAyah,
         setNikAyah,
+        emailAyah,
+        setEmailAyah,
         tempatLahirAyah,
         settempatLahirAyah,
         tglLahirAyah,
@@ -322,6 +352,8 @@ export const useTambahSiswa = () => {
         setNamaIbu,
         nikIbu,
         setNikIbu,
+        emailIbu,
+        setEmailIbu,
         tempatLahirIbu,
         settempatLahirIbu,
         tglLahirIbu,
@@ -338,6 +370,8 @@ export const useTambahSiswa = () => {
         setNamaWali,
         nikWali,
         setNikWali,
+        emailWali,
+        setEmailWali,
         tempatLahirWali,
         settempatLahirWali,
         tglLahirWali,
@@ -350,5 +384,9 @@ export const useTambahSiswa = () => {
         setAlamatWali,
       },
     },
+    nikError,
+    nisnError,
+    handleNISNChange,
+    handleNIKChange,
   };
 };
