@@ -8,6 +8,7 @@ export const useRapotSiswa = () => {
   const [dataKelas, setdataKelas] = useState([]);
   const [dataSiswa, setdataSiswa] = useState([]);
   const [currentData, setCurrentData] = useState([]);
+  const [selectedSiswa, setSelectedSiswa] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -48,7 +49,7 @@ export const useRapotSiswa = () => {
 
   useEffect(() => {
     fecthData();
-  }, [kelas_id]);
+  }, [token, kelas_id]);
 
   // Pagination filter
   const filteredData = useMemo(() => {
@@ -70,6 +71,37 @@ export const useRapotSiswa = () => {
     setCurrentData(filteredData.slice(indexOfFirstData, indexOfLastData));
   }, [filteredData, currentPage]);
 
+  // Handler function
+  const handleRapot = async (e, nis) => {
+    e.preventDefault();
+    if (!nis) return;
+
+    try {
+      setIsLoading(true);
+
+      const response = await axios.get(
+        `${baseUrl.apiUrl}/admin/siswa/rapor/${nis}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      console.log(response);
+
+      if (response.status === 200 || response.status === 201) {
+        // Buka di tab baru
+        window.open(response.data.rapor_url, "_blank");
+      }
+    } catch (error) {
+      if (error.response?.status === 404) {
+        document.getElementById("my_modal_3").showModal();
+      } else {
+        setToastMessage("Gagal Mengambil Rapot");
+        setToastVariant("error");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     dataKelas,
     dataSiswa,
@@ -84,5 +116,6 @@ export const useRapotSiswa = () => {
     totalPages,
     indexOfLastData,
     indexOfFirstData,
+    handleRapot,
   };
 };

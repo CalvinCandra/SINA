@@ -12,7 +12,7 @@ export default function Krs() {
     <div className="lg:py-5">
       {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
       <div className="flex flex-col lg:flex-row w-full justify-between items-center">
-        <h2 className="text-2xl font-semibold">Rapot</h2>
+        <h2 className="text-2xl font-semibold">Rapor</h2>
         <Calender className="w-40 lg:w-full"></Calender>
       </div>
 
@@ -76,7 +76,7 @@ export default function Krs() {
                     <td>
                       <div className="flex items-center lg:flex-row">
                         <ButtonHref
-                          href={`/dashboard/akademik/rapot/${data.kelas_id}`}
+                          href={`/dashboard/akademik/rapor/${data.kelas_id}`}
                           text=<span className="flex items-center gap-2 hover:underline">
                             <DocumentMagnifyingGlassIcon className="w-5 h-5 text-sky-500"></DocumentMagnifyingGlassIcon>
                             <span className="whitespace-nowrap">

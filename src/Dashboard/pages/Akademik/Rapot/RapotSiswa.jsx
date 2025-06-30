@@ -1,11 +1,13 @@
 import Calender from "../../../components/Calender/Calender";
 import ButtonHref from "../../../../component/Button/ButtonHref";
+import Button from "../../../../component/Button/Button";
 import Search from "../../../../component/Input/Search";
 import { DocumentMagnifyingGlassIcon } from "@heroicons/react/16/solid";
 import { ArrowLeftCircleIcon } from "@heroicons/react/24/solid";
 import { useRapotSiswa } from "../../../../hooks/Rapot/RapotSiswa";
 import baseUrl from "../../../../utils/config/baseUrl";
 import Toast from "../../../../component/Toast/Toast";
+import Loading from "../../../../component/Loading/Loading";
 
 export default function DataSiswaPage() {
   const {
@@ -22,6 +24,7 @@ export default function DataSiswaPage() {
     totalPages,
     indexOfLastData,
     indexOfFirstData,
+    handleRapot,
   } = useRapotSiswa();
   return (
     <>
@@ -115,17 +118,23 @@ export default function DataSiswaPage() {
                         {data.jenis_kelamin}
                       </td>
                       <td>
-                        <div className="flex items-center justify-between w-14">
-                          <a
-                            href="/pdf/krs.pdf"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center hover:underline text-sky-500 cursor-pointer"
-                          >
-                            <DocumentMagnifyingGlassIcon className="w-5 h-5 me-2" />
-                            Preview
-                          </a>
-                        </div>
+                        <button
+                          className="border-0 cursor-pointer  hover:underline"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleRapot(e, data.nis);
+                          }}
+                          disabled={isLoading}
+                        >
+                          {isLoading ? (
+                            <Loading />
+                          ) : (
+                            <span className="flex items-center gap-1.5">
+                              <DocumentMagnifyingGlassIcon className="w-5 h-5 text-sky-500" />
+                              Preview
+                            </span>
+                          )}
+                        </button>
                       </td>
                     </tr>
                   ))
@@ -161,6 +170,26 @@ export default function DataSiswaPage() {
             ))}
           </div>
         </div>
+
+        {/* Modal Konfirmasi Send Mail All */}
+        <dialog id="my_modal_3" className="modal">
+          <div className="modal-box bg-white rounded-lg">
+            <form method="dialog">
+              <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                ✕
+              </button>
+            </form>
+            <div className="mt-5">
+              <h1 className="font-bold text-3xl text-center">Informasi!</h1>
+              <p className="text-center my-2">Masih Belum Tahap Yudisium</p>
+              <div className="w-56 mx-auto p-1 flex justify-between items-center mt-4">
+                <form method="dialog" className="w-full me-1">
+                  <Button variant="button_submit_dash" text="Kembali" />
+                </form>
+              </div>
+            </div>
+          </div>
+        </dialog>
       </div>
     </>
   );

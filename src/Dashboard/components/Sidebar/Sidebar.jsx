@@ -34,7 +34,7 @@ function Sidebar() {
   const isMataPelajaranActive = path.startsWith(
     "/dashboard/akademik/mata-pelajaran"
   );
-  const isRapotActive = path.startsWith("/dashboard/akademik/rapot");
+  const isRapotActive = path.startsWith("/dashboard/akademik/rapor");
   const isGuruActive = path.startsWith("/dashboard/guru"); //untuk dropdown
   const isDataGuruActive =
     path === "/dashboard/guru" ||
@@ -291,12 +291,12 @@ function Sidebar() {
               {/* sub menu */}
               <li className="mb-2">
                 <Link
-                  to="/dashboard/akademik/rapot"
+                  to="/dashboard/akademik/rapor"
                   className={`block py-1 ${
                     isRapotActive ? "text-black font-semibold" : "text-gray-500"
                   }`}
                 >
-                  Rapot
+                  Rapor
                 </Link>
               </li>
             </ul>

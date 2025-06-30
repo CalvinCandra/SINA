@@ -127,8 +127,8 @@ function App() {
         />
 
         {/* Rapot */}
-        <Route path="akademik/rapot" element={<Rapot />} />
-        <Route path="akademik/rapot/:kelas_id" element={<RapotSiswa />} />
+        <Route path="akademik/rapor" element={<Rapot />} />
+        <Route path="akademik/rapor/:kelas_id" element={<RapotSiswa />} />
 
         {/* Guru */}
         {/* Data Guru */}
