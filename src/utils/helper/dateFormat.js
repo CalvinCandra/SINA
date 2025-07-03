@@ -35,3 +35,8 @@ export const formatTahun = (tanggalISO) => {
 
   return `${tahun}`;
 };
+
+export const formatTanggalSingkat = (dateString) => {
+  const options = { day: "numeric", month: "short", year: "numeric" };
+  return new Date(dateString).toLocaleDateString("id-ID", options);
+};
