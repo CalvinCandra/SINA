@@ -226,7 +226,9 @@ export default function TambahSiswa() {
             <div className="w-full lg:w-1/3">
               <FieldInput
                 type="email"
-                text=<span>Email</span>
+                text=<span>
+                  Email <span className="text-red-500">*</span>
+                </span>
                 value={form.ayah.emailAyah}
                 onChange={(e) => form.ayah.setEmailAyah(e.target.value)}
                 variant="biasa_text_sm"
@@ -334,7 +336,9 @@ export default function TambahSiswa() {
             <div className="w-full lg:w-1/3">
               <FieldInput
                 type="email"
-                text=<span>Email</span>
+                text=<span>
+                  Email <span className="text-red-500">*</span>
+                </span>
                 value={form.ibu.emailIbu}
                 onChange={(e) => form.ibu.setEmailIbu(e.target.value)}
                 variant="biasa_text_sm"

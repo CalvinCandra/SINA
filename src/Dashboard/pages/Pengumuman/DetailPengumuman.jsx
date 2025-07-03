@@ -48,7 +48,7 @@ export default function DetailPengumuman() {
         <div className="flex justify-end items-center mt-10">
           <div className="">
             <ButtonHref
-              text="Keluar"
+              text="Kembali"
               variant="cancel"
               href="/dashboard/pengumuman"
             ></ButtonHref>

@@ -35,7 +35,7 @@ export default function DataSiswaPage() {
             <div className="me-3">
               <ButtonHref
                 text=<ArrowLeftCircleIcon className="w-6 h-6 "></ArrowLeftCircleIcon>
-                href="/dashboard/akademik/rapot"
+                href="/dashboard/akademik/rapor"
               />
             </div>
             <h2 className="text-2xl font-semibold mb-3 lg:mb-0">
@@ -76,7 +76,7 @@ export default function DataSiswaPage() {
                   <tr>
                     <td
                       colSpan="6"
-                      className="italic text-gray-400 mt-5 text-center py-4"
+                      className=" text-base italic text-gray-400 mt-5 text-center py-4"
                     >
                       Loading...
                     </td>
@@ -84,8 +84,8 @@ export default function DataSiswaPage() {
                 ) : currentData.length == 0 ? (
                   <tr>
                     <td
-                      colSpan="4"
-                      className="italic text-gray-400 mt-5 text-center py-4"
+                      colSpan="6"
+                      className="text-base italic text-gray-400 mt-5 text-center py-4"
                     >
                       Data Siswa Belum Ada
                     </td>
