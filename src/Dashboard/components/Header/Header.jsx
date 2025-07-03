@@ -4,6 +4,8 @@ import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import {
   ArrowLeftStartOnRectangleIcon,
   UserCircleIcon,
+  GlobeAltIcon,
+  WindowIcon,
 } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import baseUrl from "../../../utils/config/baseUrl";
@@ -111,6 +113,16 @@ function Header() {
                 <UserCircleIcon className="w-6 h-6 me-1" />
                 <span>Profile</span>
               </Link>
+            </li>
+            <div className="divider mt-0 mb-0"></div>
+            <li className="hover:bg-biru-hover hover:text-white">
+              <button
+                onClick={() => navigate("/landing-page")}
+                className="flex items-center w-full rounded-sm"
+              >
+                <WindowIcon className="w-6 h-6 me-1" />
+                <span>Landing Page</span>
+              </button>
             </li>
             <div className="divider mt-0 mb-0"></div>
             <li className="hover:bg-biru-hover hover:text-white">

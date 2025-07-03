@@ -44,12 +44,34 @@ import Rapot from "./Dashboard/pages/Akademik/Rapot/Rapot";
 import RapotSiswa from "./Dashboard/pages/Akademik/Rapot/RapotSiswa";
 import ErrorPage from "./pages/Errors";
 import DetailKurikulum from "./Dashboard/pages/Akademik/Kurikulum/DetailKurikulum";
+import Landing_layout from "./Landing/Landing_layout";
+import Landing from "./Landing/pages/landing";
+import SemuaInformasi from "./Landing/pages/SemuaInformasi";
+import DetailInformasi from "./Landing/pages/DetailInformasi";
+import DetailTentangSina from "./Landing/pages/DetailTentangSina";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<AppShell />}>
         <Route index element={<LoginPage />} />
+      </Route>
+
+      {/* Landing Page */}
+      <Route path="/landing-page" element={<Landing_layout />}>
+        <Route index element={<Landing />} />
+      </Route>
+      {/* Detail Tentang Sina */}
+      <Route path="/tentang-sina" element={<Landing_layout />}>
+        <Route index element={<DetailTentangSina />} />
+      </Route>
+      {/* Informasi */}
+      <Route element={<Landing_layout />}>
+        {/* Grup Route Informasi */}
+        <Route path="informasi">
+          <Route index element={<SemuaInformasi />} /> // /informasi
+          <Route path=":id" element={<DetailInformasi />} /> // /informasi/1
+        </Route>
       </Route>
 
       {/* Semua halaman dashboard dibungkus Layout */}
