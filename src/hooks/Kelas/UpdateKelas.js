@@ -195,16 +195,16 @@ export const useUpdateKelas = () => {
     } catch (error) {
       console.error("Error:", error);
       // Menangani error yang dikirimkan oleh server
-      let errorMessage = "Gagal Tambah";
+      let errorMessage = "Gagal Update";
 
-      if (error.response && error.response.data.message) {
+      if (error.response && error.response.data.error) {
         // Jika error dari server ada di response.data
-        if (error.response.data.message) {
-          errorMessage = error.response.data.message; // Tampilkan pesan dari server jika ada
+        if (error.response.data.error) {
+          errorMessage = error.response.data.error; // Tampilkan pesan dari server jika ada
         }
       } else {
         // Jika error tidak ada response dari server
-        errorMessage = error.message;
+        errorMessage = error.error;
       }
 
       setIsLoading(false); // jangan lupa set false

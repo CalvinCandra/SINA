@@ -44,8 +44,8 @@ export default function Krs() {
               {isLoading ? (
                 <tr>
                   <td
-                    colSpan="4"
-                    className="italic text-gray-400 mt-5 text-center py-4"
+                    colSpan="6"
+                    className="text-base italic text-gray-400 mt-5 text-center py-4"
                   >
                     Loading...
                   </td>
@@ -53,8 +53,8 @@ export default function Krs() {
               ) : dataKelas.length == 0 ? (
                 <tr>
                   <td
-                    colSpan="4"
-                    className="italic text-gray-400 mt-5 text-center py-4"
+                    colSpan="6"
+                    className="text-base italic text-gray-400 mt-5 text-center py-4"
                   >
                     Data Kelas Belum Ada
                   </td>

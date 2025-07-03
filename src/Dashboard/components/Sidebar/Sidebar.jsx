@@ -152,6 +152,86 @@ function Sidebar() {
           </details>
         </li>
 
+        {/* Akademik Dropdown */}
+        <li className="mb-3">
+          <details open={isAkademikActive}>
+            <summary
+              className={`flex items-center cursor-pointer rounded-sm ${
+                isAkademikActive ? "bg-biru-active text-white" : ""
+              }`}
+            >
+              <BookOpenIcon className="w-6 h-6 me-1" />
+              <span>Akademik</span>
+            </summary>
+            <ul className="pl-6 mt-2 text-sm">
+              {/* sub menu */}
+              <li className="mb-2">
+                <Link
+                  to="/dashboard/akademik/mata-pelajaran"
+                  className={`block py-1 ${
+                    isMataPelajaranActive
+                      ? "text-black font-semibold"
+                      : "text-gray-500"
+                  }`}
+                >
+                  Mata Pelajaran
+                </Link>
+              </li>
+
+              {/* sub menu */}
+              <li className="mb-2">
+                <Link
+                  to="/dashboard/akademik/kurikulum"
+                  className={`block py-1 ${
+                    isKurikulumActive
+                      ? "text-black font-semibold"
+                      : "text-gray-500"
+                  }`}
+                >
+                  Kurikulum
+                </Link>
+              </li>
+              {/* sub menu */}
+              <li className="mb-2">
+                <Link
+                  to="/dashboard/akademik/tahun-akademik"
+                  className={`block py-1 ${
+                    isTahunAkademikActive
+                      ? "text-black font-semibold"
+                      : "text-gray-500"
+                  }`}
+                >
+                  Tahun Akademik
+                </Link>
+              </li>
+              {/* sub menu */}
+              <li className="mb-2">
+                <Link
+                  to="/dashboard/akademik/jadwal"
+                  className={`block py-1 ${
+                    isJadwalActive
+                      ? "text-black font-semibold"
+                      : "text-gray-500"
+                  }`}
+                >
+                  Jadwal
+                </Link>
+              </li>
+              {/* sub menu */}
+              <li className="mb-2">
+                <Link
+                  to="/dashboard/akademik/rapor"
+                  className={`block py-1 ${
+                    isRapotActive ? "text-black font-semibold" : "text-gray-500"
+                  }`}
+                >
+                  Rapor
+                </Link>
+              </li>
+            </ul>
+          </details>
+        </li>
+
         {/* Kelas */}
         <li
           className={`mb-3 ${
@@ -218,85 +298,6 @@ function Sidebar() {
                   }`}
                 >
                   Absen Siswa
-                </Link>
-              </li>
-            </ul>
-          </details>
-        </li>
-
-        {/* Akademik Dropdown */}
-        <li className="mb-3">
-          <details open={isAkademikActive}>
-            <summary
-              className={`flex items-center cursor-pointer rounded-sm ${
-                isAkademikActive ? "bg-biru-active text-white" : ""
-              }`}
-            >
-              <BookOpenIcon className="w-6 h-6 me-1" />
-              <span>Akademik</span>
-            </summary>
-            <ul className="pl-6 mt-2 text-sm">
-              {/* sub menu */}
-              <li className="mb-2">
-                <Link
-                  to="/dashboard/akademik/kurikulum"
-                  className={`block py-1 ${
-                    isKurikulumActive
-                      ? "text-black font-semibold"
-                      : "text-gray-500"
-                  }`}
-                >
-                  Kurikulum
-                </Link>
-              </li>
-              {/* sub menu */}
-              <li className="mb-2">
-                <Link
-                  to="/dashboard/akademik/tahun-akademik"
-                  className={`block py-1 ${
-                    isTahunAkademikActive
-                      ? "text-black font-semibold"
-                      : "text-gray-500"
-                  }`}
-                >
-                  Tahun Akademik
-                </Link>
-              </li>
-              {/* sub menu */}
-              <li className="mb-2">
-                <Link
-                  to="/dashboard/akademik/mata-pelajaran"
-                  className={`block py-1 ${
-                    isMataPelajaranActive
-                      ? "text-black font-semibold"
-                      : "text-gray-500"
-                  }`}
-                >
-                  Mata Pelajaran
-                </Link>
-              </li>
-              {/* sub menu */}
-              <li className="mb-2">
-                <Link
-                  to="/dashboard/akademik/jadwal"
-                  className={`block py-1 ${
-                    isJadwalActive
-                      ? "text-black font-semibold"
-                      : "text-gray-500"
-                  }`}
-                >
-                  Jadwal
-                </Link>
-              </li>
-              {/* sub menu */}
-              <li className="mb-2">
-                <Link
-                  to="/dashboard/akademik/rapor"
-                  className={`block py-1 ${
-                    isRapotActive ? "text-black font-semibold" : "text-gray-500"
-                  }`}
-                >
-                  Rapor
                 </Link>
               </li>
             </ul>

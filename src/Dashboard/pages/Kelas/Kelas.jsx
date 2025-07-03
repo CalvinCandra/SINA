@@ -82,18 +82,20 @@ export default function Kelas() {
               <tr className="border-b border-t border-border-grey">
                 <th>No</th>
                 <th>Nama Kelas</th>
+                <th>Jenjang</th>
                 <th>Tingkat Kelas</th>
                 <th>Wali Kelas</th>
                 <th>Kurikulum</th>
                 <th>Tahun Akademik</th>
                 <th>Dibuat</th>
+                <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
               {isLoading ? (
                 <tr>
                   <td
-                    colSpan="7"
+                    colSpan="8"
                     className="text-base italic text-gray-400 mt-5 text-center py-4"
                   >
                     Loading...
@@ -102,7 +104,7 @@ export default function Kelas() {
               ) : currentData.length == 0 ? (
                 <tr>
                   <td
-                    colSpan="7"
+                    colSpan="8"
                     className="text-base italic text-gray-400 mt-5 text-center py-4"
                   >
                     Data Kelas Belum Ada
@@ -115,8 +117,9 @@ export default function Kelas() {
                     key={data.kelas_id}
                   >
                     <td>{index + 1}</td>
-                    <td className="whitespace-nowrap">{data.nama_kelas}</td>
-                    <td className="whitespace-nowrap">{data.tingkat}</td>
+                    <td className="">{data.nama_kelas}</td>
+                    <td className="uppercase">{data.jenjang}</td>
+                    <td className="">{data.tingkat}</td>
                     <td className="whitespace-nowrap">
                       {data.nama_guru || `Belum Ada`}
                     </td>
