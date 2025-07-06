@@ -49,6 +49,28 @@ export const useKelas = () => {
 
   // refresh Data
   useEffect(() => {
+    const invalidStatus = localStorage.getItem("kelasInvalid");
+    const addedStatus = localStorage.getItem("kelasAdded");
+    const updateStatus = localStorage.getItem("kelasUpdate");
+
+    if (invalidStatus === "error") {
+      setToastMessage("Kelas tidak ditemukan");
+      setToastVariant("error");
+      localStorage.removeItem("kelasInvalid");
+    }
+
+    if (addedStatus === "success") {
+      setToastMessage("Kelas berhasil ditambahkan");
+      setToastVariant("success");
+      localStorage.removeItem("kelasAdded");
+    }
+
+    if (updateStatus === "success") {
+      setToastMessage("Kelas berhasil diupdate");
+      setToastVariant("success");
+      localStorage.removeItem("kelasUpdate");
+    }
+
     fetchData();
   }, [token, activeFilter]);
 
