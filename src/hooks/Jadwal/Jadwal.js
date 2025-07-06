@@ -77,7 +77,6 @@ export const useJadwal = () => {
   };
 
   useEffect(() => {
-    // Toast sukses/error
     const invalidStatus = localStorage.getItem("jadwalInvalid");
     const addedStatus = localStorage.getItem("jadwalAdded");
     const updateStatus = localStorage.getItem("jadwalUpdate");

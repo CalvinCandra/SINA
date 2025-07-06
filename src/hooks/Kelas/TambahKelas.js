@@ -59,42 +59,42 @@ export const useTambahKelas = () => {
     ],
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const responseGuru = await axios.get(`${baseUrl.apiUrl}/admin/guru`, {
+  const fetchData = async () => {
+    try {
+      const responseGuru = await axios.get(`${baseUrl.apiUrl}/admin/guru`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const responseTahun = await axios.get(
+        `${baseUrl.apiUrl}/admin/tahunakademik`,
+        {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        });
-
-        const responseTahun = await axios.get(
-          `${baseUrl.apiUrl}/admin/tahunakademik`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        console.log(responseTahun);
-
-        if (responseGuru.status == 200) {
-          setGuru(responseGuru.data);
         }
+      );
 
-        if (responseTahun.status == 200) {
-          setAkademik(responseTahun.data);
-        }
-      } catch (error) {
-        console.error("Gagal mengambil data:", error);
-        setToastMessage("Gagal Tambah Kelas");
-        setToastVariant("error");
+      console.log(responseTahun);
+
+      if (responseGuru.status == 200) {
+        setGuru(responseGuru.data);
       }
-    };
 
+      if (responseTahun.status == 200) {
+        setAkademik(responseTahun.data);
+      }
+    } catch (error) {
+      console.error("Gagal mengambil data:", error);
+      setToastMessage("Gagal Tambah Kelas");
+      setToastVariant("error");
+    }
+  };
+
+  useEffect(() => {
     fetchData();
-  }, []);
+  }, [token]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -160,9 +160,8 @@ export const useTambahKelas = () => {
       );
 
       if (response.status == 200 || response.status == 201) {
-        localStorage.setItem("kelasAdded", "success");
-
         setTimeout(() => {
+          localStorage.setItem("kelasAdded", "success");
           setIsLoading(false);
           navigate("/dashboard/kelas");
         }, 2000);
