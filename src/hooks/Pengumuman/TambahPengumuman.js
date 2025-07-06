@@ -107,7 +107,7 @@ export const useTambahPengumuman = () => {
       );
 
       if (response.status === 201 || response.status === 200) {
-        localStorage.setItem("beritaAdded", "success");
+        localStorage.setItem("informasiAdded", "success");
         setTimeout(() => {
           setIsLoading(false);
           navigate("/dashboard/pengumuman");
@@ -118,10 +118,10 @@ export const useTambahPengumuman = () => {
       // Menangani error yang dikirimkan oleh server
       let errorMessage = "Login Gagal";
 
-      if (error.response && error.response.data.message) {
+      if (error.response && error.response.data.error.message) {
         // Jika error dari server ada di response.data
-        if (error.response.data.message) {
-          errorMessage = error.response.data.message; // Tampilkan pesan dari server jika ada
+        if (error.response.data.error.message) {
+          errorMessage = error.response.data.error.message; // Tampilkan pesan dari server jika ada
         }
       } else {
         // Jika error tidak ada response dari server
