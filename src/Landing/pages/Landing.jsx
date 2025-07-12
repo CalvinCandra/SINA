@@ -3,6 +3,7 @@ import BeritaTerkini from "../components/BeritaTerkini";
 import Tentang from "../components/Tentang";
 import ImageImport from "../../data/ImageImport";
 import { useCount } from "../../hooks/Landing/Count";
+import { useInformasiSekolah } from "../../hooks/Landing/ProfileWebsite";
 
 // Komponen Counter dengan animasi
 const CounterItem = ({ target, label, duration = 2000 }) => {
@@ -37,12 +38,16 @@ const CounterItem = ({ target, label, duration = 2000 }) => {
 
 // Komponen Fakta Sina
 const FaktaSina = () => {
+  const { informasi } = useInformasiSekolah();
+
   const { dataCountGuru, dataCountSiswa, dataCountAdmin } = useCount();
 
   return (
     <div className="py-10 bg-biru-primary text-white" id="">
       <div className="container mx-auto px-4">
-        <h2 className="text-4xl font-semibold text-center mb-6">Fakta SINA</h2>
+        <h2 className="text-4xl font-semibold text-center mb-6">
+          Fakta {informasi.singkatan || "SINA"}
+        </h2>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div className="card bg-base-200 p-6">
@@ -54,7 +59,7 @@ const FaktaSina = () => {
           </div>
 
           <div className="card bg-base-200 p-6">
-            <CounterItem target={90773} label="Alumni" />
+            <CounterItem target={9077} label="Alumni" />
           </div>
 
           <div className="card bg-base-200 p-6">
@@ -68,6 +73,8 @@ const FaktaSina = () => {
 
 // Komponen Landing Page utama
 export default function Landing() {
+  const { informasi } = useInformasiSekolah();
+
   return (
     <>
       <div
@@ -83,12 +90,12 @@ export default function Landing() {
 
         <div className="hero-content text-neutral-content text-center">
           <div className="max-w-screen px-4">
-            <h1 className="mb-2 text-5xl font-bold text-white">
-              SISTEM INFORMASI AKADEMIK
+            <h1 className="mb-2 text-5xl font-bold text-white uppercase">
+              {informasi.nama_sekolah || "SISTEM INFORMASI AKADEMIK"}
             </h1>
             <p className="mb-5 text-white">
-              Transformasi Digital Pendidikan dengan Sistem Akademik
-              Terintegrasi
+              {informasi.tag ||
+                "Transformasi Digital Pendidikan dengan Sistem Akademik Terintegrasi"}
             </p>
             <button
               className="rounded-full p-2 border-2 border-white hover:bg-white/10 transition-colors"

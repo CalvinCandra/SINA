@@ -49,6 +49,7 @@ import Landing from "./Landing/pages/landing";
 import SemuaInformasi from "./Landing/pages/SemuaInformasi";
 import DetailInformasi from "./Landing/pages/DetailInformasi";
 import DetailTentangSina from "./Landing/pages/DetailTentangSina";
+import SettingLanding from "./Dashboard/pages/SettingLanding";
 
 function App() {
   return (
@@ -87,6 +88,9 @@ function App() {
 
         {/* Profile */}
         <Route path="profile" element={<Profile />} />
+
+        {/* CRUD Landing */}
+        <Route path="setting-landing" element={<SettingLanding />} />
 
         {/* Admin*/}
         <Route path="admin" element={<Admin />} />

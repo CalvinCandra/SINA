@@ -6,6 +6,8 @@ import {
   BookOpenIcon,
   UserGroupIcon,
   InformationCircleIcon,
+  WindowIcon,
+  WrenchScrewdriverIcon,
 } from "@heroicons/react/24/outline";
 import ImageImport from "../../../data/ImageImport";
 import { useEffect } from "react";
@@ -51,6 +53,7 @@ function Sidebar() {
     path === "/dashboard/siswa/absen" ||
     /^\/dashboard\/siswa\/absen\/[0-9]+$/.test(path);
   const isPengumumanActive = path.startsWith("/dashboard/pengumuman");
+  const isSettingActive = path.startsWith("/dashboard/setting-landing");
 
   return (
     <div className="drawer-side z-30 shadow-black shadow-md font-semibold">
@@ -316,6 +319,21 @@ function Sidebar() {
           >
             <InformationCircleIcon className="w-6 h-6 me-1" />
             <span>Kelola Informasi</span>
+          </Link>
+        </li>
+
+        {/* CRUD Landing */}
+        <li
+          className={`mb-3 ${
+            isSettingActive ? "bg-biru-active text-white  rounded-sm" : ""
+          }`}
+        >
+          <Link
+            to="/dashboard/setting-landing"
+            className="flex items-center w-full rounded-sm"
+          >
+            <WindowIcon className="w-6 h-6 me-1" />
+            <span>Profile Website</span>
           </Link>
         </li>
       </ul>
