@@ -39,11 +39,14 @@ export const useUpdateJadwal = () => {
       });
 
       // Mapel
-      const responseMapel = await axios.get(`${baseUrl.apiUrl}/admin/mapel`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const responseMapel = await axios.get(
+        `${baseUrl.apiUrl}/admin/mapel-kelas/${kelas_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       // Mapel
       const responseJadwal = await axios.get(
@@ -61,7 +64,7 @@ export const useUpdateJadwal = () => {
         responseJadwal.status == 200
       ) {
         // option
-        setMapel(responseMapel.data);
+        setMapel(responseMapel.data.data.mapel);
         setGuru(responseGuru.data);
 
         // data

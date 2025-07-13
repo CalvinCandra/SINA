@@ -5,6 +5,7 @@ import Button from "../../../../component/Button/Button";
 import Loading from "../../../../component/Loading/Loading";
 import Toast from "../../../../component/Toast/Toast";
 import { useUpdateJadwal } from "../../../../hooks/Jadwal/UpdateJadwal";
+import { useEffect } from "react";
 
 export default function EditJadwalKelas() {
   const {
@@ -24,6 +25,12 @@ export default function EditJadwalKelas() {
     setSelectedMapel,
     selectedMapel,
   } = useUpdateJadwal();
+
+  // useEffect(() => {
+  //   console.log("MapelOption updated:", MapelOption);
+  //   console.log("Selected Mapel:", selectedMapel);
+  //   // Reset the jadwalList when the component mounts
+  // }, [MapelOption]);
   return (
     <div className="lg:py-5">
       {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
@@ -68,11 +75,7 @@ export default function EditJadwalKelas() {
               />
               <div className="w-full">
                 <SelectField
-                  text={
-                    <span>
-                      Sesi <span className="text-red-500">*</span>
-                    </span>
-                  }
+                  text={<span>Sesi</span>}
                   option={sesiOptions}
                   value={item.jam_ke}
                   onChange={(e) => {

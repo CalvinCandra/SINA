@@ -40,7 +40,8 @@ const CounterItem = ({ target, label, duration = 2000 }) => {
 const FaktaSina = () => {
   const { informasi } = useInformasiSekolah();
 
-  const { dataCountGuru, dataCountSiswa, dataCountAdmin } = useCount();
+  const { dataCountGuru, dataCountSiswa, dataCountAdmin, dataCountAlumni } =
+    useCount();
 
   return (
     <div className="py-10 bg-biru-primary text-white" id="">
@@ -55,11 +56,11 @@ const FaktaSina = () => {
           </div>
 
           <div className="card bg-base-200 p-6">
-            <CounterItem target={dataCountSiswa} label="Siswa" />
+            <CounterItem target={dataCountSiswa || 0} label="Siswa" />
           </div>
 
           <div className="card bg-base-200 p-6">
-            <CounterItem target={9077} label="Alumni" />
+            <CounterItem target={dataCountAlumni || 0} label="Alumni" />
           </div>
 
           <div className="card bg-base-200 p-6">

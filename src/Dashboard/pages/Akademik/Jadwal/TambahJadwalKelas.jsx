@@ -5,6 +5,7 @@ import Button from "../../../../component/Button/Button";
 import Loading from "../../../../component/Loading/Loading";
 import Toast from "../../../../component/Toast/Toast";
 import { useTambahJadwal } from "../../../../hooks/Jadwal/TambahJadwal";
+import { useEffect } from "react";
 
 export default function TambahJadwalKelas() {
   const {
@@ -25,6 +26,11 @@ export default function TambahJadwalKelas() {
     setSelectedMapel,
     selectedMapel,
   } = useTambahJadwal();
+
+  useEffect(() => {
+    console.log("MapelOption updated:", MapelOption);
+    // Reset the jadwalList when the component mounts
+  }, [MapelOption]);
   return (
     <div className="lg:py-5">
       {toastMessage && <Toast text={toastMessage} variant={toastVariant} />}
