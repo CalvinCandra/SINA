@@ -45,14 +45,18 @@ function Sidebar() {
     path.startsWith("/dashboard/guru/update/");
   const isAbsenGuruActive = path === "/dashboard/guru/absen";
   const isSiswaActive = path.startsWith("/dashboard/siswa");
-  const isDataSiswaActive =
-    path === "/dashboard/siswa" ||
-    /^\/dashboard\/siswa\/[0-9]+$/.test(path) ||
-    /^\/dashboard\/siswa(\/\d+)?(\/(tambah|update|detail\/\d+))?$/.test(path) ||
-    /^\/dashboard\/siswa\/\d+\/tambahExcel$/.test(path);
   const isAbsenSiswaActive =
     path === "/dashboard/siswa/absen" ||
-    /^\/dashboard\/siswa\/absen\/[0-9]+$/.test(path);
+    /^\/dashboard\/siswa\/absen\/[\w-]+$/.test(path);
+
+  const isDataSiswaActive =
+    !isAbsenSiswaActive &&
+    (path === "/dashboard/siswa" ||
+      /^\/dashboard\/siswa\/[\w-]+$/.test(path) ||
+      /^\/dashboard\/siswa(\/[\w-]+)?(\/(tambah|update|detail\/[\w-]+))?$/.test(
+        path
+      ) ||
+      /^\/dashboard\/siswa\/[\w-]+\/tambahExcel$/.test(path));
   const isPengumumanActive = path.startsWith("/dashboard/pengumuman");
   const isUnlockActive = path.startsWith("/dashboard/unlockAkun");
   const isLogsActive = path.startsWith("/dashboard/detaillog");
@@ -285,7 +289,7 @@ function Sidebar() {
                 <Link
                   to="/dashboard/siswa"
                   className={`block py-1 ${
-                    isDataSiswaActive && !isAbsenSiswaActive
+                    isDataSiswaActive
                       ? "text-black font-semibold"
                       : "text-gray-500"
                   }`}
@@ -298,7 +302,7 @@ function Sidebar() {
                 <Link
                   to="/dashboard/siswa/absen"
                   className={`block py-1 ${
-                    isAbsenSiswaActive && !isDataSiswaActive
+                    isAbsenSiswaActive
                       ? "text-black font-semibold"
                       : "text-gray-500"
                   }`}
@@ -325,7 +329,7 @@ function Sidebar() {
           </Link>
         </li>
 
- {/* CRUD Landing */}
+        {/* CRUD Landing */}
         <li
           className={`mb-3 ${
             isSettingActive ? "bg-biru-active text-white  rounded-sm" : ""
@@ -367,9 +371,8 @@ function Sidebar() {
           >
             <ChartBarSquareIcon className="w-6 h-6 me-1" />
             <span>Logs</span>
-            </Link>
+          </Link>
         </li>
-        
       </ul>
     </div>
   );

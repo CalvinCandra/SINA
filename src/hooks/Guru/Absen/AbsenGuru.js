@@ -28,7 +28,7 @@ export const useAbsenGuru = () => {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `${baseUrl.apiUrl}/admin/tahunakademik`,
+        `${baseUrl.apiUrl}/admin/tahunakademik/aktif`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

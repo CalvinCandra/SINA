@@ -45,9 +45,9 @@ export const useJadwal = () => {
           groupedByHari[hari].push({
             jadwal_id: item.jadwal_id,
             sesi: item.jam_ke,
-            jam: `${item.start_time} - ${item.finish_time}`,
+            jam: `${item.start} - ${item.finish}`,
             ruangan: item.ruangan,
-            pengajar: item.guru_pengampu,
+            pengajar: item.nama_guru,
             nama_mapel: item.nama_mapel,
             mapel_id: item.mapel_id,
           });

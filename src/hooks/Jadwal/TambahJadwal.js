@@ -173,7 +173,7 @@ export const useTambahJadwal = () => {
       }
     } catch (error) {
       setIsLoading(false);
-      console.error(error.response.data.massage);
+      console.error(error);
       setToastMessage(error?.response?.data?.message || "Gagal Tambah Jadwal");
       setToastVariant("error");
     }
