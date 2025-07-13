@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useInformasi } from "../../hooks/Landing/Informasi";
 import baseUrl from "../../utils/config/baseUrl";
-import sanitize from "sanitize-html";
+import { sanitizeContent } from "../../utils/helper/sanitize";
 
 const DetailInformasi = () => {
   const { id } = useParams();
@@ -24,16 +24,6 @@ const DetailInformasi = () => {
       berita: "bg-orange-100 text-orange-800",
     };
     return colors[category] || "bg-gray-100 text-gray-800";
-  };
-
-  // Fungsi untuk membersihkan HTML tapi pertahankan formatting dasar
-  const sanitizeContent = (html) => {
-    if (!html) return "Tidak ada deskripsi";
-
-    return sanitize(html, {
-      allowedTags: ["b", "strong", "i", "em", "u", "br", "p", "ul", "ol", "li"],
-      allowedAttributes: {},
-    });
   };
 
   const getImageUrl = (foto) => {

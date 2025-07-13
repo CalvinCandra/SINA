@@ -15,6 +15,7 @@ export const useTambahKelas = () => {
   const [walikelas, setWaliKelas] = useState("");
   const [namakelas, setNamaKelas] = useState("");
   const [tahun, setTahunAkademik] = useState("");
+
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastVariant, setToastVariant] = useState("");
@@ -26,7 +27,7 @@ export const useTambahKelas = () => {
   }));
 
   const TahunAkademik = akademik.map((item) => ({
-    value: `${item.tahun_akademik_id}`,
+    value: `${item.tahun_akademik_id} - ${item.kurikulum_id}`,
     label: `${item.nama_kurikulum} (${formatTahun(
       item.tahun_mulai
     )} - ${formatTahun(item.tahun_berakhir)})`,
@@ -68,7 +69,7 @@ export const useTambahKelas = () => {
       });
 
       const responseTahun = await axios.get(
-        `${baseUrl.apiUrl}/admin/tahunakademik`,
+        `${baseUrl.apiUrl}/admin/tahunakademik/aktif`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -142,11 +143,14 @@ export const useTambahKelas = () => {
 
     setIsLoading(true);
 
+    const [idTahun, idKurikulum] = tahun.split(" - ");
+
     try {
       const response = await axios.post(
         `${baseUrl.apiUrl}/admin/kelas`,
         {
-          tahun_akademik_id: tahun,
+          tahun_akademik_id: idTahun,
+          kurikulum_id: idKurikulum,
           guru_nip: walikelas,
           nama_kelas: namakelas,
           jenjang: jenjang,

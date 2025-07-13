@@ -6,9 +6,10 @@ import {
   BookOpenIcon,
   UserGroupIcon,
   InformationCircleIcon,
+  ChartBarSquareIcon,
+  LockOpenIcon,
 } from "@heroicons/react/24/outline";
 import ImageImport from "../../../data/ImageImport";
-import { useEffect } from "react";
 import GetRole from "../../../utils/GetRole";
 
 function Sidebar() {
@@ -51,6 +52,8 @@ function Sidebar() {
     path === "/dashboard/siswa/absen" ||
     /^\/dashboard\/siswa\/absen\/[0-9]+$/.test(path);
   const isPengumumanActive = path.startsWith("/dashboard/pengumuman");
+  const isUnlockActive = path.startsWith("/dashboard/unlockAkun");
+  const isLogsActive = path.startsWith("/dashboard/detaillog");
 
   return (
     <div className="drawer-side z-30 shadow-black shadow-md font-semibold">
@@ -316,6 +319,36 @@ function Sidebar() {
           >
             <InformationCircleIcon className="w-6 h-6 me-1" />
             <span>Kelola Informasi</span>
+          </Link>
+        </li>
+
+        {/* Unlock */}
+        <li
+          className={`mb-3 ${
+            isUnlockActive ? "bg-biru-active text-white  rounded-sm" : ""
+          }`}
+        >
+          <Link
+            to="/dashboard/unlockAkun"
+            className="flex items-center w-full rounded-sm"
+          >
+            <LockOpenIcon className="w-6 h-6 me-1" />
+            <span>Buka Blokir</span>
+          </Link>
+        </li>
+
+        {/* Logs */}
+        <li
+          className={`mb-3 ${
+            isLogsActive ? "bg-biru-active text-white  rounded-sm" : ""
+          }`}
+        >
+          <Link
+            to="/dashboard/detaillog"
+            className="flex items-center w-full rounded-sm"
+          >
+            <ChartBarSquareIcon className="w-6 h-6 me-1" />
+            <span>Logs</span>
           </Link>
         </li>
       </ul>

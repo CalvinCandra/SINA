@@ -2,6 +2,7 @@ import ButtonHref from "../../../component/Button/ButtonHref";
 import baseUrl from "../../../utils/config/baseUrl";
 import { useDetailPengumuman } from "../../../hooks/Pengumuman/DetailPengumuman";
 import Toast from "../../../component/Toast/Toast";
+import { sanitizeContent } from "../../../utils/helper/sanitize";
 
 export default function DetailPengumuman() {
   const {
@@ -13,7 +14,6 @@ export default function DetailPengumuman() {
     kategori,
     username,
     tgl,
-    isLoading,
   } = useDetailPengumuman();
 
   return (
@@ -41,7 +41,9 @@ export default function DetailPengumuman() {
           <h1 className="mt-6 font-bold text-2xl">{Judul}</h1>
           <p
             className="mt-3 text-base text-justify"
-            dangerouslySetInnerHTML={{ __html: deskirpsi }}
+            dangerouslySetInnerHTML={{
+              __html: sanitizeContent(deskirpsi),
+            }}
           ></p>
         </div>
         {/* Button */}

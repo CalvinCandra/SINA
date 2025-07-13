@@ -93,10 +93,7 @@ export const useTambahKurikulum = () => {
     }
 
     setIsLoading(true);
-
-    console.log(jenjang);
-    console.log(tingkat);
-
+    
     const mapelsPayload = selectedMapel.map((id) => ({ mapel_id: id }));
 
     try {

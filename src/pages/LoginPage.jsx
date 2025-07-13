@@ -104,17 +104,19 @@ export default function LoginPage() {
         </div>
         {/* form */}
         <form className=" p-1 mt-10 mx-auto w-[90%]" onSubmit={handleSubmit}>
-          <FieldInput
-            text=<span>
-              Email <span className="text-red-500">*</span>
-            </span>
-            type="email"
-            name="email"
-            variant="biasa_text_base"
-            value={email}
-            onChange={(e) => setEmailInput(e.target.value)}
-          ></FieldInput>
-          <div className="w-full relative lg:mt-3">
+          <div className="w-full lg:mb-4">
+            <FieldInput
+              text=<span>
+                Email <span className="text-red-500">*</span>
+              </span>
+              type="email"
+              name="email"
+              variant="biasa_text_base"
+              value={email}
+              onChange={(e) => setEmailInput(e.target.value)}
+            ></FieldInput>
+          </div>
+          <div className="w-full relative lg:mb-4">
             <FieldInput
               text=<span>
                 Password <span className="text-red-500">*</span>

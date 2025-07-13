@@ -266,7 +266,9 @@ export default function TambahSiswa() {
           <div className="w-full flex flex-col lg:flex-row justify-between">
             <div className="w-full lg:w-1/2 lg:me-1">
               <SelectPekerjaan
-                label="Pekerjaan Ayah"
+                label=<span>
+                  Pekerjaaan <span className="text-red-500">*</span>
+                </span>
                 value={form.ayah.pekerjaanAyah}
                 onChange={(val) => form.ayah.setPekerjaanAyah(val)}
                 required
@@ -376,7 +378,9 @@ export default function TambahSiswa() {
           <div className="w-full flex flex-col lg:flex-row justify-between">
             <div className="w-full lg:w-1/2 lg:me-1">
               <SelectPekerjaan
-                label="Pekerjaan Ibu"
+                label=<span>
+                  Pekerjaaan <span className="text-red-500">*</span>
+                </span>
                 value={form.ibu.pekerjaanIbu}
                 onChange={(val) => form.ibu.setPekerjaanIbu(val)}
                 required
@@ -422,11 +426,7 @@ export default function TambahSiswa() {
 
             <div className="w-full lg:w-1/3">
               <FieldInput
-                text={
-                  <span>
-                    NIK <span className="text-red-500">*</span>
-                  </span>
-                }
+                text={<span>NIK</span>}
                 type="number"
                 value={form.wali.nikWali}
                 onChange={(e) => {
@@ -478,7 +478,7 @@ export default function TambahSiswa() {
           <div className="w-full flex flex-col lg:flex-row justify-between">
             <div className="w-full lg:w-1/2 lg:me-1">
               <SelectPekerjaan
-                label="Pekerjaan Wali"
+                label="Pekerjaan"
                 value={form.wali.pekerjaanWali}
                 onChange={(val) => form.wali.setPekerjaanWali(val)}
                 required

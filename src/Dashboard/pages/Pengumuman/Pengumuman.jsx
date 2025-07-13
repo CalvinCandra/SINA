@@ -100,7 +100,7 @@ export default function Pengumuman() {
                   >
                     <td>{index + 1}</td>
                     <td className="whitespace-nowrap">{data.judul}</td>
-                    <td className="whitespace-nowrap">{data.username}</td>
+                    <td className="whitespace-nowrap">{data.nama_pembuat}</td>
                     <td className="whitespace-nowrap">
                       {formatTanggalLengkap(data.created_at)}
                     </td>

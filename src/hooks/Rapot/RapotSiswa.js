@@ -2,13 +2,14 @@ import axios from "axios";
 import { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import baseUrl from "../../utils/config/baseUrl";
+import ImageImport from "../../data/ImageImport";
 
 export const useRapotSiswa = () => {
+  const defaultImage = ImageImport.defaultGambar;
   const { kelas_id } = useParams();
   const [dataKelas, setdataKelas] = useState([]);
   const [dataSiswa, setdataSiswa] = useState([]);
   const [currentData, setCurrentData] = useState([]);
-  const [selectedSiswa, setSelectedSiswa] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -103,6 +104,7 @@ export const useRapotSiswa = () => {
   };
 
   return {
+    defaultImage,
     dataKelas,
     dataSiswa,
     currentData,
