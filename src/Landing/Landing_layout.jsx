@@ -18,7 +18,7 @@ function Landing_layout() {
       <div className="drawer-content flex flex-col">
         <Navbar />
         <main
-          className="flex-1 overflow-y-auto bg-base-200"
+          className="flex-1 overflow-y-auto bg-base-200 pt-16"
           ref={mainContentRef}
         >
           <Outlet />

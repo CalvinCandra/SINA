@@ -52,6 +52,7 @@ import DetailTentangSina from "./Landing/pages/DetailTentangSina";
 import Log from "./Dashboard/pages/Log/LogPages";
 import UnlockAkun from "./Dashboard/pages/UnlockAkun/UnlockAkun";
 import NaikKelas from "./Dashboard/pages/Siswa/NaikKelas";
+import SettingLanding from "./Dashboard/pages/SettingLanding";
 
 function App() {
   return (
@@ -90,6 +91,9 @@ function App() {
 
         {/* Profile */}
         <Route path="profile" element={<Profile />} />
+
+        {/* CRUD Landing */}
+        <Route path="setting-landing" element={<SettingLanding />} />
 
         {/* Admin*/}
         <Route path="admin" element={<Admin />} />

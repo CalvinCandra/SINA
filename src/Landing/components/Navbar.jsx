@@ -1,16 +1,50 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ImageImport from "../../data/ImageImport";
+import { useInformasiSekolah } from "../../hooks/Landing/ProfileWebsite";
+import baseUrl from "../../utils/config/baseUrl";
 
 function Navbar() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const { informasi } = useInformasiSekolah();
+
+  useEffect(() => {
+    // Cek kedua storage sekaligus
+    const token = sessionStorage.getItem("session"); // Dari login
+    const localStorageStatus = localStorage.getItem("login") === "success"; // Dari login
+
+    setIsLoggedIn(!!token || localStorageStatus);
+
+    // Handle perubahan storage
+    const handleStorageChange = () => {
+      const updatedToken = sessionStorage.getItem("session");
+      const updatedLocalStatus = localStorage.getItem("login") === "success";
+      setIsLoggedIn(!!updatedToken || updatedLocalStatus);
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
   return (
-    <div className="navbar bg-base-100 shadow-sm px-8">
+    <div className="navbar bg-white shadow-sm px-8 fixed top-0 z-50">
       {/* Logo di kiri */}
       <div className="navbar-start">
-        <img
-          className="h-8 object-cover"
-          src={ImageImport.logoNav}
-          alt="Logo"
-        />
+        <div className="flex items-center space-x-2">
+          {" "}
+          <img
+            className="h-8 object-cover"
+            src={
+              informasi.logo
+                ? `${baseUrl.apiUrl}/admin/sekolah/${informasi.logo}`
+                : ImageImport.logoIcon
+            }
+            alt="Logo"
+          />
+          <span className="font-bold text-2xl">
+            {informasi.singkatan || "SINA"}
+          </span>{" "}
+        </div>
       </div>
 
       {/* Menu di kanan*/}
@@ -25,6 +59,11 @@ function Navbar() {
           <li>
             <a href="/informasi">Berita & Pengumuman</a>
           </li>
+          {isLoggedIn && (
+            <li>
+              <a href="/dashboard">Dashboard</a>
+            </li>
+          )}
         </ul>
       </div>
 
@@ -75,6 +114,16 @@ function Navbar() {
                 Berita & Pengumuman
               </a>
             </li>
+            {isLoggedIn && (
+              <li>
+                <a
+                  className="hover:bg-biru-hover hover:text-white"
+                  href="/dashboard"
+                >
+                  Dashboard
+                </a>
+              </li>
+            )}
           </ul>
         </div>
       </div>

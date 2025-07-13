@@ -8,6 +8,8 @@ import {
   InformationCircleIcon,
   ChartBarSquareIcon,
   LockOpenIcon,
+  WindowIcon,
+  WrenchScrewdriverIcon,
 } from "@heroicons/react/24/outline";
 import ImageImport from "../../../data/ImageImport";
 import GetRole from "../../../utils/GetRole";
@@ -54,6 +56,7 @@ function Sidebar() {
   const isPengumumanActive = path.startsWith("/dashboard/pengumuman");
   const isUnlockActive = path.startsWith("/dashboard/unlockAkun");
   const isLogsActive = path.startsWith("/dashboard/detaillog");
+  const isSettingActive = path.startsWith("/dashboard/setting-landing");
 
   return (
     <div className="drawer-side z-30 shadow-black shadow-md font-semibold">
@@ -322,6 +325,21 @@ function Sidebar() {
           </Link>
         </li>
 
+ {/* CRUD Landing */}
+        <li
+          className={`mb-3 ${
+            isSettingActive ? "bg-biru-active text-white  rounded-sm" : ""
+          }`}
+        >
+          <Link
+            to="/dashboard/setting-landing"
+            className="flex items-center w-full rounded-sm"
+          >
+            <WindowIcon className="w-6 h-6 me-1" />
+            <span>Profile Website</span>
+          </Link>
+        </li>
+
         {/* Unlock */}
         <li
           className={`mb-3 ${
@@ -349,8 +367,9 @@ function Sidebar() {
           >
             <ChartBarSquareIcon className="w-6 h-6 me-1" />
             <span>Logs</span>
-          </Link>
+            </Link>
         </li>
+        
       </ul>
     </div>
   );
