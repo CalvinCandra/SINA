@@ -11,6 +11,7 @@ import Loading from "../../../../component/Loading/Loading";
 
 export default function DataSiswaPage() {
   const {
+    defaultImage,
     dataKelas,
     dataSiswa,
     currentData,
@@ -102,7 +103,11 @@ export default function DataSiswaPage() {
                           <div className="avatar">
                             <div className="mask mask-circle w-12 h-12">
                               <img
-                                src={`${baseUrl.apiUrlImageSiswa}/Upload/profile_image/${data.foto_profil}`}
+                                src={
+                                  data.foto_profil
+                                    ? `${baseUrl.apiUrlImageSiswa}/Upload/profile_image/${data.foto_profil}`
+                                    : defaultImage
+                                }
                                 alt="Avatar"
                               />
                             </div>

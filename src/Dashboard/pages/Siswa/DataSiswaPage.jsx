@@ -60,30 +60,35 @@ export default function DataSiswaPage() {
 
         <div className="w-full p-5 rounded-md bg-white mt-5">
           <div className="w-full flex flex-col lg:flex-row lg:justify-between lg:items-center mb-5 gap-y-3">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:gap-2">
-              <div className="">
-                <ButtonHref
-                  text="Tambah Siswa"
-                  href={`/dashboard/siswa/${dataKelas.kelas_id}/tambah`}
-                  variant="tambah"
-                />
+            <div className="flex flex-col lg:gap-5">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:gap-2">
+                <div className="">
+                  <ButtonHref
+                    text="Tambah Siswa"
+                    href={`/dashboard/siswa/${dataKelas.kelas_id}/tambah`}
+                    variant="tambah"
+                  />
+                </div>
+                <div className="mt-5 mb-4 lg:mt-0 lg:mb-0">
+                  <ButtonHref
+                    text="Tambah Siswa Via Excel"
+                    href={`/dashboard/siswa/${dataKelas.kelas_id}/tambahExcel`}
+                    variant="tambah"
+                  />
+                </div>
               </div>
-              <div className="mt-5 mb-4 lg:mt-0 lg:mb-0">
-                <ButtonHref
-                  text="Tambah Siswa Via Excel"
-                  href={`/dashboard/siswa/${dataKelas.kelas_id}/tambahExcel`}
-                  variant="tambah"
-                />
-              </div>
-              <div className="">
-                <button
-                  className="lg:w-full px-3 bg-biru-primary text-sm hover:bg-biru-hover py-2 font-semibold text-white rounded cursor-pointer"
-                  onClick={() => {
-                    document.getElementById("my_modal_5").showModal();
-                  }}
-                >
-                  Kirim Semua Email
-                </button>
+
+              <div className="flex flex-col lg:flex-row lg:items-center lg:gap-2">
+                <div className="">
+                  <button
+                    className="lg:w-full px-3 bg-green-500 text-sm hover:bg-green-600 py-2 font-semibold text-white rounded cursor-pointer"
+                    onClick={() => {
+                      document.getElementById("my_modal_5").showModal();
+                    }}
+                  >
+                    Kirim Semua Email
+                  </button>
+                </div>
               </div>
             </div>
             <Search

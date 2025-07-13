@@ -18,8 +18,18 @@ export const useSiswaKelas = () => {
         },
       });
 
+      console.log(response.data);
+
       if (response.status == 200) {
-        setDataKelas(response.data);
+        const sortedData = response.data.sort((a, b) => {
+          // Bandingkan tingkat (VII, VIII, IX, dst)
+          if (a.tingkat !== b.tingkat) {
+            return a.tingkat.localeCompare(b.tingkat);
+          }
+          // Jika tingkat sama, bandingkan nama_kelas (A, B, C)
+          return a.nama_kelas.localeCompare(b.nama_kelas);
+        });
+        setDataKelas(sortedData);
       }
     } catch (error) {
       console.log(error);

@@ -13,14 +13,22 @@ export const useRapotKelas = () => {
     const fecthData = async () => {
       try {
         setIsLoading(true);
-        const respones = await axios.get(`${baseUrl.apiUrl}/admin/kelas`, {
+        const respones = await axios.get(`${baseUrl.apiUrl}/admin/kelas/aktif`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
         if (respones.status == 200 || respones.status == 201) {
-          setdataKelas(respones.data);
+          const sortedData = respones.data.sort((a, b) => {
+            // Bandingkan tingkat (VII, VIII, IX, dst)
+            if (a.tingkat !== b.tingkat) {
+              return a.tingkat.localeCompare(b.tingkat);
+            }
+            // Jika tingkat sama, bandingkan nama_kelas (A, B, C)
+            return a.nama_kelas.localeCompare(b.nama_kelas);
+          });
+          setdataKelas(sortedData);
         }
       } catch (error) {
         console.log(error);

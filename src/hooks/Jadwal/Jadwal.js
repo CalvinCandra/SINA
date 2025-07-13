@@ -100,7 +100,7 @@ export const useJadwal = () => {
     }
 
     fetchData();
-  }, [kelas_id]);
+  }, [token, kelas_id]);
 
   const handleDelete = async (e) => {
     e.preventDefault();

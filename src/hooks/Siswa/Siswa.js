@@ -54,6 +54,7 @@ export const useSiswa = () => {
     const invalidStatus = localStorage.getItem("siswaInvalid");
     const addedStatus = localStorage.getItem("siswaAdded");
     const updateStatus = localStorage.getItem("siswaUpdate");
+    const NaikKelas = localStorage.getItem("siswaNaik");
 
     if (invalidStatus === "error") {
       setToastMessage("Siswa Tidak ditemukan");
@@ -71,6 +72,12 @@ export const useSiswa = () => {
       setToastMessage("Siswa berhasil diupdate");
       setToastVariant("success");
       localStorage.removeItem("siswaUpdate");
+    }
+
+    if (NaikKelas === "success") {
+      setToastMessage("Data Siswa berhasil dipindah (Naik Kelas)");
+      setToastVariant("success");
+      localStorage.removeItem("siswaNaik");
     }
 
     fetchData();
@@ -138,6 +145,10 @@ export const useSiswa = () => {
   const handleSendMailSiswa = async (e, nis) => {
     e.preventDefault();
     setIsLoading(true);
+
+    setToastMessage("");
+    setToastVariant("");
+
     try {
       const response = await axios.post(
         `${baseUrl.apiUrl}/admin/siswa/sendemail/${nis}`,
@@ -151,7 +162,6 @@ export const useSiswa = () => {
         setTimeout(() => {
           setToastMessage("Berhasil Kirim Email");
           setToastVariant("success");
-
           setIsLoading(false);
           document.getElementById("my_modal_4").close();
         }, 1000);

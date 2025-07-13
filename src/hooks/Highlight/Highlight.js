@@ -71,8 +71,6 @@ export const useHighlight = () => {
         }
       );
 
-      console.log(responseRekapAbsenSiswa);
-
       if (
         responseCountAdmin.status == 200 &&
         responseCountGuru.status == 200 &&

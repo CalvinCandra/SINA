@@ -199,8 +199,8 @@ export default function UpdateSiswa() {
             <h1 className="font-semibold text-white text-lg">Ayah</h1>
           </div>
           {/* Input Field Baris 1*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between mt-3 lg:mb-4">
-            <div className="w-full lg:w-1/2 lg:me-1">
+          <div className="w-full flex flex-col lg:flex-row justify-between mt-3 lg:mb-4 gap-2">
+            <div className="w-full lg:w-1/3">
               <FieldInput
                 text=<span>
                   Nama Lengkap <span className="text-red-500">*</span>
@@ -211,7 +211,7 @@ export default function UpdateSiswa() {
               ></FieldInput>
             </div>
 
-            <div className="w-full lg:w-1/2 lg:ms-1">
+            <div className="w-full lg:w-1/3">
               <FieldInput
                 text={
                   <span>
@@ -230,6 +230,16 @@ export default function UpdateSiswa() {
               {nikError && (
                 <span className="text-sm italic text-red-500">{nikError}</span>
               )}
+            </div>
+
+            <div className="w-full lg:w-1/3">
+              <FieldInput
+                type="email"
+                text=<span>Email</span>
+                value={form.ayah.emailAyah}
+                onChange={(e) => form.ayah.setEmailAyah(e.target.value)}
+                variant="biasa_text_sm"
+              ></FieldInput>
             </div>
           </div>
 
@@ -263,7 +273,11 @@ export default function UpdateSiswa() {
           <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <SelectPekerjaan
-                label="Pekerjaan Ayah"
+                label={
+                  <span>
+                    Pekerjaan <span className="text-red-500">*</span>
+                  </span>
+                }
                 value={form.ayah.pekerjaanAyah}
                 onChange={(val) => form.ayah.setPekerjaanAyah(val)}
                 required
@@ -297,8 +311,8 @@ export default function UpdateSiswa() {
             <h1 className="font-semibold text-white text-lg">Ibu</h1>
           </div>
           {/* Input Field Baris 1*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between mt-3 lg:mb-4">
-            <div className="w-full lg:w-1/2 lg:me-1">
+          <div className="w-full flex flex-col lg:flex-row justify-between mt-3 lg:mb-4 gap-2">
+            <div className="w-full lg:w-1/3">
               <FieldInput
                 text=<span>
                   Nama Lengkap <span className="text-red-500">*</span>
@@ -309,7 +323,7 @@ export default function UpdateSiswa() {
               ></FieldInput>
             </div>
 
-            <div className="w-full lg:w-1/2 lg:ms-1">
+            <div className="w-full lg:w-1/3">
               <FieldInput
                 text={
                   <span>
@@ -328,6 +342,16 @@ export default function UpdateSiswa() {
               {nikError && (
                 <span className="text-sm italic text-red-500">{nikError}</span>
               )}
+            </div>
+
+            <div className="w-full lg:w-1/3">
+              <FieldInput
+                type="email"
+                text=<span>Email</span>
+                value={form.ibu.emailIbu}
+                onChange={(e) => form.wali.setEmailIbu(e.target.value)}
+                variant="biasa_text_sm"
+              ></FieldInput>
             </div>
           </div>
 
@@ -361,7 +385,11 @@ export default function UpdateSiswa() {
           <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <SelectPekerjaan
-                label="Pekerjaan Ibu"
+                label={
+                  <span>
+                    Pekerjaan <span className="text-red-500">*</span>
+                  </span>
+                }
                 value={form.ibu.pekerjaanIbu}
                 onChange={(val) => form.ibu.setPekerjaanIbu(val)}
                 required
@@ -395,8 +423,8 @@ export default function UpdateSiswa() {
             <h1 className="font-semibold text-white text-lg">Wali</h1>
           </div>
           {/* Input Field Baris 1*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between mt-3 lg:mb-4">
-            <div className="w-full lg:w-1/2 lg:me-1">
+          <div className="w-full flex flex-col lg:flex-row justify-between mt-3 lg:mb-4 gap-2">
+            <div className="w-full lg:w-1/3">
               <FieldInput
                 text=<span>Nama Lengkap</span>
                 value={form.wali.namaWali}
@@ -405,7 +433,7 @@ export default function UpdateSiswa() {
               ></FieldInput>
             </div>
 
-            <div className="w-full lg:w-1/2 lg:ms-1">
+            <div className="w-full lg:w-1/3">
               <FieldInput
                 text={
                   <span>
@@ -424,6 +452,16 @@ export default function UpdateSiswa() {
               {nikError && (
                 <span className="text-sm italic text-red-500">{nikError}</span>
               )}
+            </div>
+
+            <div className="w-full lg:w-1/3">
+              <FieldInput
+                type="email"
+                text=<span>Email</span>
+                value={form.wali.emailWali}
+                onChange={(e) => form.wali.setEmailWali(e.target.value)}
+                variant="biasa_text_sm"
+              ></FieldInput>
             </div>
           </div>
 
@@ -453,7 +491,7 @@ export default function UpdateSiswa() {
           <div className="w-full flex flex-col lg:flex-row justify-between lg:mb-4">
             <div className="w-full lg:w-1/2 lg:me-1">
               <SelectPekerjaan
-                label="Pekerjaan Wali"
+                label="Pekerjaan"
                 value={form.wali.pekerjaanWali}
                 onChange={(val) => form.wali.setPekerjaanWali(val)}
                 required

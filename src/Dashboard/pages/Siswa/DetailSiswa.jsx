@@ -139,8 +139,8 @@ export default function DetailSiswa() {
             <h1 className="font-semibold text-white text-lg">Ayah</h1>
           </div>
           {/* Input Field Baris 1*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between mt-3 lg:mb-4">
-            <div className="w-full lg:w-1/2 lg:me-1">
+          <div className="w-full flex flex-col lg:flex-row justify-between mt-3 lg:mb-4 gap-2">
+            <div className="w-full lg:w-1/3">
               <FieldInput
                 text=<span>Nama Lengkap</span>
                 readonly
@@ -149,11 +149,20 @@ export default function DetailSiswa() {
               ></FieldInput>
             </div>
 
-            <div className="w-full lg:w-1/2 lg:ms-1">
+            <div className="w-full lg:w-1/3">
               <FieldInput
                 text=<span>Nik</span>
                 readonly
                 value={siswa.ayah_nik}
+                variant="biasa_text_sm_disabled"
+              ></FieldInput>
+            </div>
+
+            <div className="w-full lg:w-1/3">
+              <FieldInput
+                text=<span>Email</span>
+                readonly
+                value={siswa.ayah_email}
                 variant="biasa_text_sm_disabled"
               ></FieldInput>
             </div>
@@ -216,8 +225,8 @@ export default function DetailSiswa() {
             <h1 className="font-semibold text-white text-lg">Ibu</h1>
           </div>
           {/* Input Field Baris 1*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between mt-3 lg:mb-4">
-            <div className="w-full lg:w-1/2 lg:me-1">
+          <div className="w-full flex flex-col lg:flex-row justify-between mt-3 lg:mb-4 gap-2">
+            <div className="w-full lg:w-1/3">
               <FieldInput
                 text=<span>Nama Lengkap</span>
                 readonly
@@ -226,11 +235,20 @@ export default function DetailSiswa() {
               ></FieldInput>
             </div>
 
-            <div className="w-full lg:w-1/2 lg:ms-1">
+            <div className="w-full lg:w-1/3">
               <FieldInput
                 text=<span>Nik</span>
                 readonly
                 value={siswa.ibu_nik}
+                variant="biasa_text_sm_disabled"
+              ></FieldInput>
+            </div>
+
+            <div className="w-full lg:w-1/3">
+              <FieldInput
+                text=<span>Email</span>
+                readonly
+                value={siswa.ibu_email}
                 variant="biasa_text_sm_disabled"
               ></FieldInput>
             </div>
@@ -293,8 +311,8 @@ export default function DetailSiswa() {
             <h1 className="font-semibold text-white text-lg">Wali</h1>
           </div>
           {/* Input Field Baris 1*/}
-          <div className="w-full flex flex-col lg:flex-row justify-between mt-3 lg:mb-4">
-            <div className="w-full lg:w-1/2 lg:me-1">
+          <div className="w-full flex flex-col lg:flex-row justify-between mt-3 lg:mb-4 gap-2">
+            <div className="w-full lg:w-1/3">
               <FieldInput
                 text=<span>Nama Lengkap</span>
                 readonly
@@ -303,11 +321,20 @@ export default function DetailSiswa() {
               ></FieldInput>
             </div>
 
-            <div className="w-full lg:w-1/2 lg:ms-1">
+            <div className="w-full lg:w-1/3">
               <FieldInput
                 text=<span>Nik</span>
                 readonly
                 value={siswa.wali_nik ? siswa.wali_nik : "-"}
+                variant="biasa_text_sm_disabled"
+              ></FieldInput>
+            </div>
+
+            <div className="w-full lg:w-1/3">
+              <FieldInput
+                text=<span>Email</span>
+                readonly
+                value={siswa.wali_email}
                 variant="biasa_text_sm_disabled"
               ></FieldInput>
             </div>

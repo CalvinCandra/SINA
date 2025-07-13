@@ -9,12 +9,9 @@ export const useAbsenSiswa = () => {
   const defaultImage = ImageImport.defaultGambar;
   const [dataSiswa, setdataSiswa] = useState([]);
   const [dataKelas, setdataKelas] = useState([]);
-  const [selectedSiswa, setSelectedSiswa] = useState(null);
   const [currentData, setCurrentData] = useState([]);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastVariant, setToastVariant] = useState("");
 
   const dataPerPage = 10;
   const [searchQuery, setSearchQuery] = useState("");

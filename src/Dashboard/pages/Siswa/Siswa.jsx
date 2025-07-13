@@ -1,9 +1,6 @@
 import Calender from "../../components/Calender/Calender";
 import ButtonHref from "../../../component/Button/ButtonHref";
-import {
-  TrashIcon,
-  DocumentMagnifyingGlassIcon,
-} from "@heroicons/react/16/solid";
+import { DocumentMagnifyingGlassIcon } from "@heroicons/react/16/solid";
 import Toast from "../../../component/Toast/Toast";
 import { useSiswaKelas } from "../../../hooks/Siswa/SiswaKelas";
 import { formatTahun } from "../../../utils/helper/dateFormat";
@@ -24,6 +21,13 @@ export default function Siswa() {
         <div className="w-full flex flex-col lg:flex-row justify-between items-center mb-5">
           <div className="lg:w-40 mb-6 lg:mb-0">
             <h1 className="text-lg font-semibold">Daftar Kelas</h1>
+          </div>
+          <div className="mt-2">
+            <ButtonHref
+              text="Naik Kelas"
+              href={`/dashboard/siswa/naikKelas`}
+              variant="update_btn"
+            />
           </div>
         </div>
 

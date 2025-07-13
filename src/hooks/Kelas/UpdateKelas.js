@@ -56,7 +56,7 @@ export const useUpdateKelas = () => {
   }));
 
   const TahunAkademik = akademik.map((item) => ({
-    value: `${item.tahun_akademik_id}`,
+    value: `${item.tahun_akademik_id} - ${item.kurikulum_id}`,
     label: `${item.nama_kurikulum} (${formatTahun(
       item.tahun_mulai
     )} - ${formatTahun(item.tahun_berakhir)})`,
@@ -74,7 +74,7 @@ export const useUpdateKelas = () => {
 
       // get tahun
       const responseTahun = await axios.get(
-        `${baseUrl.apiUrl}/admin/tahunakademik`,
+        `${baseUrl.apiUrl}/admin/tahunakademik/aktif`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -105,7 +105,9 @@ export const useUpdateKelas = () => {
         setWaliKelas(responseKelas.data.guru_nip);
         setTingkat(responseKelas.data.tingkat);
         setJenjang(responseKelas.data.jenjang);
-        setTahunAkademik(responseKelas.data.tahun_akademik_id);
+        setTahunAkademik(
+          `${responseKelas.data.tahun_akademik_id} - ${responseKelas.data.kurikulum_id}`
+        );
       }
     } catch (error) {
       console.log(error);
@@ -115,6 +117,8 @@ export const useUpdateKelas = () => {
       setIsLoading(false);
     }
   };
+
+  // console.log(tahun);
 
   useEffect(() => {
     fetchData();
@@ -167,11 +171,14 @@ export const useUpdateKelas = () => {
 
     setIsLoading(true);
 
+    const [idTahun, idKurikulum] = tahun.split(" - ");
+
     try {
       const response = await axios.put(
         `${baseUrl.apiUrl}/admin/kelas/${id}`,
         {
-          tahun_akademik_id: tahun,
+          tahun_akademik_id: idTahun,
+          kurikulum_id: idKurikulum,
           guru_nip: walikelas,
           nama_kelas: namakelas,
           jenjang: jenjang,
@@ -197,10 +204,10 @@ export const useUpdateKelas = () => {
       // Menangani error yang dikirimkan oleh server
       let errorMessage = "Gagal Update";
 
-      if (error.response && error.response.data.error) {
+      if (error.response && error.response.data.message) {
         // Jika error dari server ada di response.data
-        if (error.response.data.error) {
-          errorMessage = error.response.data.error; // Tampilkan pesan dari server jika ada
+        if (error.response.data.message) {
+          errorMessage = error.response.data.message; // Tampilkan pesan dari server jika ada
         }
       } else {
         // Jika error tidak ada response dari server

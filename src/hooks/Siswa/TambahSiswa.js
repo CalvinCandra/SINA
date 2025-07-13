@@ -225,6 +225,7 @@ export const useTambahSiswa = () => {
       formData.append("kelas_id", kelas_id);
       formData.append("ayah_nama", namaAyah);
       formData.append("ayah_nik", nikAyah);
+      formData.append("ayah_email", emailAyah);
       formData.append("ayah_tempat_lahir", tempatLahirAyah);
       formData.append("ayah_tanggal_lahir", tglLahirAyah);
       formData.append("ayah_alamat", alamatAyah);
@@ -232,6 +233,7 @@ export const useTambahSiswa = () => {
       formData.append("ayah_no_telepon", telpAyah);
       formData.append("ibu_nama", namaIbu);
       formData.append("ibu_nik", nikIbu);
+      formData.append("ibu_email", emailIbu);
       formData.append("ibu_tempat_lahir", tempatLahirIbu);
       formData.append("ibu_tanggal_lahir", tglLahirIbu);
       formData.append("ibu_alamat", alamatIbu);
@@ -239,6 +241,7 @@ export const useTambahSiswa = () => {
       formData.append("ibu_no_telepon", telpIbu);
       formData.append("wali_nama", namaWali);
       formData.append("wali_nik", nikWali);
+      formData.append("wali_email", emailWali);
       formData.append("wali_tempat_lahir", tempatLahirWali);
       formData.append("wali_tanggal_lahir", tglLahirWali);
       formData.append("wali_alamat", alamatWali);

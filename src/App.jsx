@@ -49,6 +49,9 @@ import Landing from "./Landing/pages/landing";
 import SemuaInformasi from "./Landing/pages/SemuaInformasi";
 import DetailInformasi from "./Landing/pages/DetailInformasi";
 import DetailTentangSina from "./Landing/pages/DetailTentangSina";
+import Log from "./Dashboard/pages/Log/LogPages";
+import UnlockAkun from "./Dashboard/pages/UnlockAkun/UnlockAkun";
+import NaikKelas from "./Dashboard/pages/Siswa/NaikKelas";
 import SettingLanding from "./Dashboard/pages/SettingLanding";
 
 function App() {
@@ -174,6 +177,7 @@ function App() {
         />
         <Route path="siswa/:kelas_id/tambah" element={<TambahSiswa />} />
         <Route path="siswa/:kelas_id/update/:nis" element={<UpdateSiswa />} />
+        <Route path="siswa/naikKelas" element={<NaikKelas />} />
         {/* Absen Siswa */}
         <Route path="siswa/absen/" element={<AbsenkelasSiswa />} />
         <Route path="siswa/absen/:kelas_id" element={<AbsenSiswaPage />} />
@@ -183,6 +187,12 @@ function App() {
         <Route path="pengumuman/tambah" element={<TambahPengumuman />} />
         <Route path="pengumuman/detail/:id" element={<DetailPengumuman />} />
         <Route path="pengumuman/update/:id" element={<UpdatePengumuman />} />
+
+        {/* Unlock */}
+        <Route path="unlockAkun" element={<UnlockAkun />} />
+
+        {/* Log */}
+        <Route path="detaillog" element={<Log />} />
       </Route>
 
       {/* Error Pages */}

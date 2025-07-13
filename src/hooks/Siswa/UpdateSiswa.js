@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import baseUrl from "../../utils/config/baseUrl";
 import { formatToDateInput } from "../../utils/helper/dateFormat";
+import { getDefaultImageAsFile } from "../../utils/helper/defaultImage";
 import ImageImport from "../../data/ImageImport";
 
 export const useUpdateSiswa = () => {
@@ -25,6 +26,7 @@ export const useUpdateSiswa = () => {
   // variabel ayah
   const [namaAyah, setNamaAyah] = useState("");
   const [nikAyah, setNikAyah] = useState("");
+  const [emailAyah, setEmailAyah] = useState("");
   const [tempatLahirAyah, settempatLahirAyah] = useState("");
   const [tglLahirAyah, settglLahirAyah] = useState("");
   const [pekerjaanAyah, setPekerjaanAyah] = useState("");
@@ -33,6 +35,7 @@ export const useUpdateSiswa = () => {
   // variabel ibu
   const [namaIbu, setNamaIbu] = useState("");
   const [nikIbu, setNikIbu] = useState("");
+  const [emailIbu, setEmailIbu] = useState("");
   const [tempatLahirIbu, settempatLahirIbu] = useState("");
   const [tglLahirIbu, settglLahirIbu] = useState("");
   const [pekerjaanIbu, setPekerjaanIbu] = useState("");
@@ -41,6 +44,7 @@ export const useUpdateSiswa = () => {
   // variabel wali
   const [namaWali, setNamaWali] = useState("");
   const [nikWali, setNikWali] = useState("");
+  const [emailWali, setEmailWali] = useState("");
   const [tempatLahirWali, settempatLahirWali] = useState("");
   const [tglLahirWali, settglLahirWali] = useState("");
   const [pekerjaanWali, setPekerjaanWali] = useState("");
@@ -122,6 +126,7 @@ export const useUpdateSiswa = () => {
         setTelpSiswa(response.data.no_telepon);
         setNamaAyah(response.data.ayah_nama);
         setNikAyah(response.data.ayah_nik);
+        setEmailAyah(response.data.ayah_email);
         settempatLahirAyah(response.data.ayah_tempat_lahir);
         settglLahirAyah(formatToDateInput(response.data.ayah_tanggal_lahir));
         setPekerjaanAyah(response.data.ayah_pekerjaan);
@@ -129,6 +134,7 @@ export const useUpdateSiswa = () => {
         setAlamatAyah(response.data.ayah_alamat);
         setNamaIbu(response.data.ibu_nama);
         setNikIbu(response.data.ibu_nik);
+        setEmailIbu(response.data.ibu_email);
         settempatLahirIbu(response.data.ibu_tempat_lahir);
         settglLahirIbu(formatToDateInput(response.data.ibu_tanggal_lahir));
         setPekerjaanIbu(response.data.ibu_pekerjaan);
@@ -136,6 +142,7 @@ export const useUpdateSiswa = () => {
         setAlamatIbu(response.data.ibu_alamat);
         setNamaWali(response.data.wali_nama);
         setNikWali(response.data.wali_nik);
+        setEmailWali(response.data.wali_email);
         settempatLahirWali(response.data.wali_tempat_lahir);
         if (response.data.wali_tanggal_lahir) {
           settglLahirWali(formatToDateInput(response.data.wali_tanggal_lahir));
@@ -226,6 +233,7 @@ export const useUpdateSiswa = () => {
       alamatSiswa,
       namaAyah,
       nikAyah,
+      emailAyah,
       tempatLahirAyah,
       tglLahirAyah,
       pekerjaanAyah,
@@ -233,6 +241,7 @@ export const useUpdateSiswa = () => {
       alamatAyah,
       namaIbu,
       nikIbu,
+      emailIbu,
       tempatLahirIbu,
       tglLahirIbu,
       pekerjaanIbu,
@@ -284,6 +293,7 @@ export const useUpdateSiswa = () => {
       formData.append("kelas_id", kelas_id);
       formData.append("ayah_nama", namaAyah);
       formData.append("ayah_nik", nikAyah);
+      formData.append("ayah_email", emailAyah);
       formData.append("ayah_tempat_lahir", tempatLahirAyah);
       formData.append("ayah_tanggal_lahir", tglLahirAyah);
       formData.append("ayah_alamat", alamatAyah);
@@ -291,6 +301,7 @@ export const useUpdateSiswa = () => {
       formData.append("ayah_no_telepon", telpAyah);
       formData.append("ibu_nama", namaIbu);
       formData.append("ibu_nik", nikIbu);
+      formData.append("ibu_email", emailIbu);
       formData.append("ibu_tempat_lahir", tempatLahirIbu);
       formData.append("ibu_tanggal_lahir", tglLahirIbu);
       formData.append("ibu_alamat", alamatIbu);
@@ -298,6 +309,7 @@ export const useUpdateSiswa = () => {
       formData.append("ibu_no_telepon", telpIbu);
       formData.append("wali_nama", namaWali);
       formData.append("wali_nik", nikWali);
+      formData.append("wali_email", emailWali);
       formData.append("wali_tempat_lahir", tempatLahirWali);
       formData.append("wali_tanggal_lahir", tglLahirWali);
       formData.append("wali_alamat", alamatWali);
@@ -326,7 +338,7 @@ export const useUpdateSiswa = () => {
 
       if (response.status == 200) {
         // Simpan status berhasil tambah
-        localStorage.setItem("siswaAdded", "success");
+        localStorage.setItem("siswaUpdate", "success");
 
         setTimeout(() => {
           setIsLoading(false);
@@ -393,6 +405,8 @@ export const useUpdateSiswa = () => {
         setNamaAyah,
         nikAyah,
         setNikAyah,
+        emailAyah,
+        setEmailAyah,
         tempatLahirAyah,
         settempatLahirAyah,
         tglLahirAyah,
@@ -409,6 +423,8 @@ export const useUpdateSiswa = () => {
         setNamaIbu,
         nikIbu,
         setNikIbu,
+        emailIbu,
+        setEmailIbu,
         tempatLahirIbu,
         settempatLahirIbu,
         tglLahirIbu,
@@ -425,6 +441,8 @@ export const useUpdateSiswa = () => {
         setNamaWali,
         nikWali,
         setNikWali,
+        emailWali,
+        setEmailWali,
         tempatLahirWali,
         settempatLahirWali,
         tglLahirWali,

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 export default function SelectPekerjaan(props) {
   const {
-    text = "Pekerjaan",
+    label = "",
     value = "",
     onChange = () => {},
     required = false,
@@ -57,9 +57,7 @@ export default function SelectPekerjaan(props) {
   };
   return (
     <fieldset className="fieldset mb-4">
-      <legend className="fieldset-legend text-sm font-semibold">
-        {text} {required && <span className="text-red-500">*</span>}
-      </legend>
+      <legend className="fieldset-legend text-sm font-semibold">{label}</legend>
 
       <select
         value={selectedJob}

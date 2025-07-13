@@ -39,7 +39,7 @@ export default function Kelas() {
         <div className="flex items-center">
           <h2 className="text-2xl font-semibold me-2">Data Kelas</h2>
           <select
-            className="select bg-white border border-border-grey w-30 rounded-lg"
+            className="select bg-white border border-border-grey w-36 rounded-lg"
             value={activeFilter}
             onChange={(e) => {
               setActiveFilter(e.target.value);
@@ -56,7 +56,7 @@ export default function Kelas() {
       <div className="w-full p-5 rounded-md bg-white mt-5">
         {/* Header Table */}
         <div className="w-full flex flex-col lg:flex-row justify-between items-center mb-5">
-          <div className="lg:w-40 mb-6 lg:mb-0">
+          <div className="lg:w-36">
             <ButtonHref
               text="Tambah Kelas"
               href="/dashboard/kelas/tambah"
