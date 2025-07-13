@@ -8,6 +8,7 @@ export default function FieldInput(props) {
     onChange,
     defaultValue,
     readonly,
+    placeholder,
   } = props;
   const variants = {
     biasa_text_sm: (
@@ -22,7 +23,7 @@ export default function FieldInput(props) {
           className={`border border-border-grey rounded-lg input w-full ${
             readonly ? "cursor-not-allowed bg-gray-100" : ""
           }`}
-          placeholder="Type here..."
+          placeholder={placeholder || "Type here..."}
           readOnly={readonly}
         />
       </>
