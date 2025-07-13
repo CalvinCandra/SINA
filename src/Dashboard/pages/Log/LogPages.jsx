@@ -27,7 +27,7 @@ export default function Log() {
 
       <div className="flex flex-col lg:flex-row lg:justify-between lg:gap-3">
         {/* Form */}
-        <div className="w-full lg:w-[35%]">
+        <div className="w-full lg:w-[30%]">
           <div className="lg:sticky top-20 z-10">
             <div className="lg:h-[25%] p-5 rounded-md bg-white mt-5">
               <form
@@ -36,7 +36,7 @@ export default function Log() {
                 }`}
                 onSubmit={handleLogs}
               >
-                <div className="flex flex-col lg:flex-row lg:items-center gap-5">
+                <div className="w-full">
                   <div>
                     <FieldInput
                       type="datetime-local"
@@ -69,7 +69,7 @@ export default function Log() {
         </div>
 
         {/* hasil Logs */}
-        <div className="w-full lg:w-[64%] p-5 rounded-md bg-white mt-5 relative right-0">
+        <div className="w-full lg:w-[70%] p-5 rounded-md bg-white mt-5 relative right-0">
           <div>
             <h3 className="text-xl font-semibold">LOGS</h3>
           </div>
