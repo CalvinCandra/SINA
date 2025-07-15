@@ -29,8 +29,6 @@ export const useDetailKurikulum = () => {
           }
         );
 
-        console.log(response);
-
         if (response.status == 200) {
           setNamaKurikulum(response.data.nama_kurikulum);
           setDeskripsi(response.data.deskripsi);

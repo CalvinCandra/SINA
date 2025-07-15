@@ -26,8 +26,6 @@ export const useNaikKelas = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      console.log(response);
-
       if (response.status === 200) {
         const sorted = response.data.data_kelas.sort((a, b) => {
           if (a.tingkat !== b.tingkat) {

@@ -50,8 +50,6 @@ export const useTambahJadwal = () => {
           }
         );
 
-        console.log(responseGuru);
-
         if (responseGuru.status == 200 && responseMapel.status == 200) {
           setMapel(responseMapel.data.data.mapel);
           setGuru(responseGuru.data.data);

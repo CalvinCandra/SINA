@@ -62,8 +62,6 @@ export const useUpdateKurikulum = () => {
         },
       });
 
-      console.log(response);
-
       if (response.status == 200 || response.status == 201) {
         setNamaKurikulum(response.data.nama_kurikulum);
         setDeskripsi(response.data.deskripsi);
