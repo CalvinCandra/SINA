@@ -56,7 +56,7 @@ export default function Admin() {
               </div>
               <div className="">
                 <button
-                  className="lg:w-full px-3 bg-biru-primary text-sm hover:bg-biru-hover py-2 font-semibold text-white rounded cursor-pointer"
+                  className="lg:w-full px-3 bg-green-500 text-sm hover:bg-green-600 py-2 font-semibold text-white rounded cursor-pointer"
                   onClick={() => {
                     document.getElementById("my_modal_5").showModal();
                   }}

@@ -18,8 +18,6 @@ export const useSiswaKelas = () => {
         },
       });
 
-      console.log(response.data);
-
       if (response.status == 200) {
         const sortedData = response.data.sort((a, b) => {
           // Bandingkan tingkat (VII, VIII, IX, dst)

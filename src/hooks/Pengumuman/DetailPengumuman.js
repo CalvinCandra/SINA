@@ -27,8 +27,6 @@ export const useDetailPengumuman = () => {
         },
       });
 
-      console.log(response.data);
-
       if (response.status == 200 || response.status == 201) {
         setDeskripsi(response.data.isi);
         setJudul(response.data.judul);

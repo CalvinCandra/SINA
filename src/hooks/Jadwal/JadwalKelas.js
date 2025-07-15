@@ -20,8 +20,6 @@ export const useJadwalKelas = () => {
         },
       });
 
-      console.log(response);
-
       if (response.status == 200 || response.status == 201) {
         const sortedData = response.data.sort((a, b) => {
           // Bandingkan tingkat (VII, VIII, IX, dst)

@@ -85,8 +85,6 @@ export const useRapotSiswa = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      console.log(response);
-
       if (response.status === 200 || response.status === 201) {
         // Buka di tab baru
         window.open(response.data.rapor_url, "_blank");

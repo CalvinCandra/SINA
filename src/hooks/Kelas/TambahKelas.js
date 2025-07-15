@@ -77,8 +77,6 @@ export const useTambahKelas = () => {
         }
       );
 
-      console.log(responseTahun);
-
       if (responseGuru.status == 200) {
         setGuru(responseGuru.data);
       }
